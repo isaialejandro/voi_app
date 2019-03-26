@@ -1,0 +1,235 @@
+{% extends 'base/base.html' %}
+{% load static from staticfiles %}
+
+{% block title %}
+    SOX Registry
+{% endblock %}
+
+{% block extracss %}
+    <link href="{% static 'css/plugins/dataTables/datatables.min.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="wrapper wrapper-content">
+        <!--<div class="container">-->
+
+            {% if messages %}
+                {% for message in messages %}
+
+                    <div class="alert alert-success">
+                        {{message}}.
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="row">
+
+                <div class="col-lg-12">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>Sox Reg </h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="ibox-content">
+                            <div class="row">
+                                <div class="table-responsive">
+                                    <table class="table table-striped" id="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Folio</th>
+                                                <th>Application </th>
+                                                <th>Request Type </th>
+                                                <th> Execution Date </th>
+                                                <th> Affected User </th>
+                                                <th> Executor </th>
+                                                <th> Execution Date </th>
+                                                <th> Status </th>
+                                                <th> Sent mail to Executor </th>
+                                                <th> Confirmed by Executor </th>
+                                                <th> Confirmed Date </th>
+                                                <th> 1st Source </th>
+                                                <th> 1st Source Date </th>
+                                                <th> 1st Source Executor </th>
+                                                <th> 2nd Source </th>
+                                                <th> 2nd Source Date </th>
+                                                <th> 2nd Srouce Executor </th>
+
+                                                <th>Actions </th>
+                                                {% if user.is_superuser %}
+                                                    <th>User </th>
+                                                {% endif %}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for reg in sox_registries %}
+                                                <tr>
+                                                    <td>{{ reg.folio_number }}</td>
+                                                    <td>{{ reg.application|upper }}</td>
+                                                    <td>{{ reg.request_type|upper }}</td>
+                                                    <!--
+                                                    <td>
+                                                        <a href="#" onClick="changeCurrentUser({{ticket.id}});">
+                                                            <span
+                                                                {% if ticket.status == 'open' %}
+                                                                    class="label label-primary"
+                                                                {% elif ticket.status == 'pending' %}
+                                                                    class="label label-warning"
+                                                                {% elif ticket.status == 'in progress' %}
+                                                                    class="label label-info"
+                                                                {% elif ticket.status == 'assigned' %}
+                                                                    class="label label-info"
+                                                                {% elif ticket.status == 'provider approval proccess' %}
+                                                                class="label label-danger"
+                                                                {% endif %}
+                                                            >
+                                                                
+                                                                {{ ticket.status|upper }}
+                                                                
+                                                            </span>
+                                                        </a>
+                                                    </td>
+                                                    -->
+                                                    <td>{{ reg.execution_date }}</td>
+                                                    <td>{{ reg.affected_user }}</td>
+                                                    <td>{{ reg.executor.first_name }}</td>
+                                                    <!--
+                                                    <td>
+                                                        <a href="#" onClick="changeCurrentUser({{ticket.id}});">
+                                                            <span class="label label-success">
+                                                                {{ ticket.assigned_to }}
+                                                            </span>
+                                                        </a>
+                                                    </td>
+                                                    -->
+                                                    <td>{{ reg.execution_date }}</td>
+                                                    <td>{{ reg.status |capfirst}}</td>
+                                                    <td>{{ reg.sent_email_to_exec|upper }}</td>
+                                                    <td>{{ reg.confirmed_by_exec|upper }}</td>
+                                                    <td>
+                                                        {% if reg.exec_confirmed_date is None %}
+                                                             <span class="label label-warning">
+                                                                Pending
+                                                            </span>
+                                                        {% else %}
+                                                            {{ reg.exec_confirmed_date }}
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>{{ reg.first_source|upper|default:"" }}</td>
+                                                    <td>
+                                                        {% if reg.first_source_date is None %}
+                                                             <span class="label label-warning">
+                                                                Pending
+                                                            </span>
+                                                        {% else %}
+                                                            {{ reg.first_source_date }}
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% if reg.first_source_executor.username == "Pending" %}
+                                                             <span class="label label-warning">
+                                                                Pending
+                                                            </span>
+                                                        {% else %}
+                                                            {{ reg.first_source_executor.first_name }}
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% if reg.second_source == '' %}
+                                                            <span class="label label-warning">
+                                                                Pending
+                                                            </span>
+                                                        {% else %}
+                                                            {{ reg.second_source|upper}}
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% if reg.second_source_date is None %}
+                                                             <span class="label label-warning">
+                                                                Pending
+                                                            </span>
+                                                        {% else %}
+                                                            {{ reg.second_source_date }}
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% if reg.second_source_executor.username == "Pending" %}
+                                                             <span class="label label-warning">
+                                                                {{ reg.second_source_executor }}
+                                                            </span>
+                                                        {% else %}
+                                                            {{ reg.second_source_executor }} 
+                                                        {% endif %}
+                                                    </td>
+
+                                                    <td align="center">
+                                                        <a href="#"><i class="fa fa-pencil square"></i></a>
+                                                    </td>
+                                                    {% if user.is_superuser %}
+                                                        <th>{{ reg.user }} </th>
+                                                    {% endif %}
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        <!--</div>-->
+    </div>
+{% endblock %}
+
+{% block extrajs %}
+    <script src="{% static 'js/plugins/dataTables/datatables.min.js' %}"></script>
+
+    <script>
+        /*
+        function changeCurrentUser(){
+            alert('HELLO');
+        }
+        */
+
+        $(document).ready(function(){
+            $('.table').DataTable({
+                pageLength: 10,
+                responsive: true,
+                dom: '<"html5buttons"B>lTfgitp',
+                buttons: [
+                    {
+                        extend: 'copy'
+                    },
+                    {
+                        extend: 'csv', title: 'TicketHistory'
+                    },
+                    /*{extend: 'excel', title: 'ExampleFile'},
+                    {extend: 'pdf', title: 'ExampleFile'},
+
+                    {
+                        extend: 'print',
+                        customize: function (win){
+                                $(win.document.body).addClass('white-bg');
+                                $(win.document.body).css('font-size', '10px');
+
+                                $(win.document.body).find('table')
+                                        .addClass('compact')
+                                        .css('font-size', 'inherit');
+                        }
+                    }*/
+                ]
+
+            });
+
+
+        });
+
+    </script>
+{% endblock %}

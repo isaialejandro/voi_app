@@ -1,0 +1,102 @@
+{% if user.is_authenticated %}
+
+    <div class="row border-bottom white-bg">
+        <nav class="navbar navbar-static-top" role="navigation">
+            <div class="navbar-header">
+                <button aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
+                    <i class="fa fa-reorder"></i>
+                </button>
+                    <a 
+                    {% if not dashboard %}
+                        href="{% url 'dashboard' %}" 
+                    {% else %}
+                        href="#" 
+                    {% endif %}
+                    class="navbar-brand">VOIRegistry</a>
+            </div>
+            <div class="navbar-collapse collapse" id="navbar">
+                <ul class="nav navbar-nav">
+                    
+                    <li class="active">
+                        <a aria-expanded="false" role="button" 
+                        {% if not new_ticket %}
+                            href="{% url 'ticket:new' %}"
+                        {% else %}
+                            href="#"
+                        {% endif %}
+                        > Add new ticket</a>
+                    </li>
+
+                    <li class="dropdown">
+                        <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> SOX <span class="caret"></span></a>
+                        <ul role="menu" class="dropdown-menu">
+                            <li>
+                                <a aria-expanded="false" role="button" href="{% url 'sox:list' %}">Sox apps</a>
+                            </li>
+                            <li>
+                                {% if not new_ticket or update_ticket %}
+                                    <a href="{% url 'sox:new' %}">Add new  SOX registry</a>
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="dropdown">
+                        <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> Applications <span class="caret"></span></a>
+                        <ul role="menu" class="dropdown-menu">
+                            <li><a href="{% url 'application:list' %}">Applications</a></li>
+                            <li>
+                                {% if not new_ticket or update_ticket %}
+                                    <a href="{% url 'application:new' %}">Add new Application</a>
+                                {% endif %}
+                            </li>
+                            <li>
+                                {% if not new_ticket or update_ticket %}
+                                    <a aria-expanded="false" role="button" href="{% url 'applicant:new' %}"> Add new Applicant</a>
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </li>
+
+                    {% if user.is_superuser %}
+                        <li class="dropdown">
+                            <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> Users <span class="caret"></span></a>
+                            <ul role="menu" class="dropdown-menu">
+                                <li><a href="#">User List</a></li>
+                                {% if user_list %}
+                                    <li>
+                                        {% if not new_ticket or update_ticket %}
+                                            <a href="{% url 'application:new' %}">Add new User</a>
+                                        {% endif %}
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                    {% endif %}
+                </ul>
+                <ul class="nav navbar-top-links navbar-right">
+                    <li>
+                        <span class="m-r-sm text-muted welcome-message">
+                            Welcome, 
+                            <strong>
+                            {% if user.username %}
+                                {{ user.username}}.
+                            {% elif user.first_name %}
+                                {{ user.first_name}}.
+                            {% endif %}
+                            </strong>
+                        </span>
+                    </li>
+                    Last login - 
+                    {{user.last_login}}
+                    <li>
+                        <a href="{% url 'logout' %}">
+                            <i class="fa fa-sign-out"></i> Log out
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+
+{% endif %}
