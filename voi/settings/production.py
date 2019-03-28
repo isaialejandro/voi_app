@@ -14,15 +14,11 @@ DATABASES = {
     'default': dj_database_url.config()
     }
 
+
+#StaticFiles for production
 STATIC_URL = '/staticfiles/'
 STATIC_ROOT = 'static/'
 
-
-#Indica la ruta para cargar la carpeta  static en el ambiente local.
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "staticfiles"),
-
-]
 
 
 #Storage
