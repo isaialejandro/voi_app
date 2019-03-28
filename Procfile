@@ -1,1 +1,1 @@
-web: gunicorn voi_app.wsgi --log-file -
+web: gunicorn voi.wsgi
