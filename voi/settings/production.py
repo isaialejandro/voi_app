@@ -22,5 +22,5 @@ STATIC_ROOT = 'voi/staticfiles/'
 STATIC_URL = 'static/'
 
 
-#Storage
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+#Cloud Storage
+#STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
