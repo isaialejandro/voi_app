@@ -17,8 +17,8 @@ DATABASES = {
 
 #StaticFiles for production
 #STATIC_URL = '/staticfiles/'
-STATIC_ROOT = 'static/'
-
+#STATIC_ROOT = 'static/'
+STATIC_URL = '/static/'
 
 
 #Storage
