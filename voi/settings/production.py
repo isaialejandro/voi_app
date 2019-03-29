@@ -18,8 +18,8 @@ DATABASES = {
 #StaticFiles for production
 #STATIC_URL = '/staticfiles/'
 
-STATIC_ROOT = 'staticfiles/'
-STATIC_URL = 'voi_app/static/'
+STATIC_ROOT = 'voi/staticfiles/'
+STATIC_URL = 'static/'
 
 
 #Storage
