@@ -84,7 +84,7 @@ class NewTicket(NeverCacheMixin, CSRFExemptMixin, CreateView):
         
         if Ticket.objects.filter(title = title):
 
-            msg = 'Title ticket ' + title + ' already exist!'
+            msg = 'Title ticket ' + title + ' already exist. Reassign the user again'
             messages.error(request, msg)
 
             f = TicketForm(
@@ -111,8 +111,10 @@ class NewTicket(NeverCacheMixin, CSRFExemptMixin, CreateView):
             h = HistoryTicketForm(initial={'summary': summary_data})
 
             context = {}
+            context['new_ticket'] = True
             context['form'] = f
             context['history_form'] = h
+            context['assigned_to'] = User.objects.filter(is_active=True,is_superuser=False).exclude(username='Pending')
             return render(request, 'ticket_form.html', context)
 
         elif Ticket.objects.filter(folio_number = folio_no):
@@ -184,7 +186,7 @@ class NewTicket(NeverCacheMixin, CSRFExemptMixin, CreateView):
             hist.save()
 
             messages.success(request, 'Ticket ' + new_ticket.folio_number + ' created successfully')
-        return HttpResponseRedirect('')
+        return HttpResponseRedirect('/')
 
 
 class UpdateTicket(NeverCacheMixin, CSRFExemptMixin, View):
@@ -254,6 +256,7 @@ class UpdateTicket(NeverCacheMixin, CSRFExemptMixin, View):
         path = request.POST.get('path')
         desc = request.POST.get('description')
 
+        #Falta validación de Actualización
         update = Ticket.objects.get(id=ticket_id)
         update.priority=prior
         update.applicant=Applicant.objects.get(id=applicant)
