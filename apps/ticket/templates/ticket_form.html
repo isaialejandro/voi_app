@@ -93,7 +93,12 @@
                         <div class="hr-line-dashed"></div>
                         <div class="form-group"><label class="col-lg-2 control-label">Assigned To </label>
                             <div class="col-lg-10">
-                                {{form.assigned_to}}
+                                {#{{form.assigned_to}}#}
+                                <select name="assigned_to" class="form-control">
+                                    {% for e in assigned_to %}
+                                        <option value="{{e.id}}">{{e.username}}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
