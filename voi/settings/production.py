@@ -19,7 +19,7 @@ DATABASES = {
 #STATIC_URL = '/staticfiles/'
 
 STATIC_ROOT = 'staticfiles/'
-STATIC_URL = 'static/'
+STATIC_URL = 'voi_app/static/'
 
 
 #Storage
