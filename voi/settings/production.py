@@ -18,11 +18,11 @@ DATABASES = {
 #StaticFiles for production
 #STATIC_URL = '/staticfiles/'
 
-STATIC_ROOT = 'staticfiles'
-STATIC_URL = '/static/'
+STATIC_ROOT = 'static/'
+STATIC_URL = '/staticfiles/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "staticfiles"),
 
 ]
 
