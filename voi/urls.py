@@ -58,7 +58,7 @@ urlpatterns = [
     path('c4r0nt3/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
 
-    path('dashboard/', Dashboard.as_view(), name='dashboard'),
+    path('', Dashboard.as_view(), name='dashboard'),
     path('tickets/', include(('apps.ticket.urls', ticket), namespace='ticket')),
     path('application/', include(('apps.application.urls', application), namespace='application')),
     path('applicant/', include(('apps.applicant.urls', applicant), namespace='applicant')),
