@@ -53,6 +53,7 @@ class NewTicket(NeverCacheMixin, CSRFExemptMixin, CreateView):
             context['new_ticket'] = True
             context['form'] = TicketForm
             context['history_form'] = HistoryTicketForm
+            context['assigned_to'] = User.objects.filter(is_active=True,is_superuser=False).exclude(username='Pending')
             return render(request, 'ticket_form.html', context)
         else:
             return render(request, '404.html')
@@ -79,7 +80,7 @@ class NewTicket(NeverCacheMixin, CSRFExemptMixin, CreateView):
         desc = request.POST.get('description')
         is_active = True
 
-        #summary_data = request.POST.get('summary')
+        summary_data = request.POST.get('summary')
         
         if Ticket.objects.filter(title = title):
 
@@ -183,7 +184,7 @@ class NewTicket(NeverCacheMixin, CSRFExemptMixin, CreateView):
             hist.save()
 
             messages.success(request, 'Ticket ' + new_ticket.folio_number + ' created successfully')
-        return HttpResponseRedirect('/dashboard/')
+        return HttpResponseRedirect('')
 
 
 class UpdateTicket(NeverCacheMixin, CSRFExemptMixin, View):
