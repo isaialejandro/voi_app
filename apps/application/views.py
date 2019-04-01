@@ -68,6 +68,7 @@ class ApplicationList(NeverCacheMixin, CSRFExemptMixin, View):
             return render(request, '404.html')
         else:
             context = {}
+            context['app_list'] = True
             context['applications'] = Application.objects.filter(is_active=True)
             context['applicants'] = Applicant.objects.filter(is_active=True)
             return render(request, 'list.html', context)
