@@ -37,9 +37,11 @@ class SOXRegistry(models.Model):
 
     BAJA_TALENTO='baja talento'
     SHAREPOINT = 'sharepoint'
+    SERVICE_NOW = 'service now'
     APP_SOURCES = (
         (BAJA_TALENTO, 'Baja de Talento'),
         (SHAREPOINT, 'Sharepoint'),
+        (SERVICE_NOW, 'Service Now'),
     )
 
     folio_number = models.CharField(max_length=25, blank=True, null=True)

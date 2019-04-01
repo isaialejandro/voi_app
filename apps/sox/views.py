@@ -37,6 +37,7 @@ class SoxList(NeverCacheMixin, CSRFExemptMixin, View):
             return render(request, '404.html')
         else:
             context = {}
+            context['sox_list'] = True
             context['sox_registries'] = SOXRegistry.objects.filter(is_active=True)
             return render(request, 'sox_list.html', context)
     

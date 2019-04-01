@@ -4,7 +4,10 @@ import sys
 
 if __name__ == '__main__':
     #os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'voi.settings')
+<<<<<<< HEAD
     
+=======
+>>>>>>> develop
     #os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'voi.settings.local')
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'voi.settings.production')
     try:
