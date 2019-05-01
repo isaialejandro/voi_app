@@ -87,7 +87,16 @@
                         <div class="form-group"><label class="col-lg-2 control-label">Application</label>
 
                             <div class="col-lg-10">
-                                {{form.application}}
+                                {#{{form.application}}#}
+                                <select id="s_app" name="application" class="form-control">
+                                    {% if new_ticket %}
+                                        {% for a in application %}
+                                            <option value="{{a.id}}">{{a.name}}</option>
+                                        {% endfor %}
+                                    {% elif update_ticket %}
+                                        {{history_form.application}}
+                                    {% endif %}
+                                </select>
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
@@ -204,12 +213,14 @@
 {% block extrajs %}
     <script>
         $(document).ready(function(){
-            var s_application = $('#id_application');
+            //var s_application = $('#id_application');
             var s_applicant = $('#id_applicant');
+            var s_app = $('#s_app');
 
 
-            s_application.select2();
+            //s_application.select2();
             s_applicant.select2();
+            s_app.select2();
         });
     </script>
 {% endblock %}

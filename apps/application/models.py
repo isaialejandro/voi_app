@@ -24,4 +24,4 @@ class Application(models.Model):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, default='')
 
     def __str__(self):
-        return self.name.capitalize()
+        return self.name.capitalize() + '  |  ' +  self.app_type.capitalize()
