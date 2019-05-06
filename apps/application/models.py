@@ -24,4 +24,15 @@ class Application(models.Model):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, default='')
 
     def __str__(self):
-        return self.name.capitalize() + '  |  ' +  self.app_type.capitalize()
+        #return self.name.capitalize() + '  |  ' +  self.app_type.capitalize()
+        return self.name.capitalize()
+
+
+    class Meta:
+
+        permissions = (
+            ('view_application_list', 'Can visualize the applications list'),
+            ('create_application', 'Can create application'),
+            ('update_application', 'Can update application'),
+            ('disable_application', 'Can disable Application'),
+        )

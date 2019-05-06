@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.contrib.auth import authenticate
+from django.contrib.auth.models import Permission, User
 
 from django.urls import path, include
 
@@ -51,6 +52,10 @@ class Dashboard(View):
             context = {}
             context['dashboard'] = True
             context['pending_tickets'] = Ticket.objects.filter(is_active=True)
+
+            permissions = Permission.objects.filter(user=request.user.id)
+            print(permissions)
+
             return render(request, 'index.html', context)
 
 

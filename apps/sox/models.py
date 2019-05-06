@@ -69,6 +69,16 @@ class SOXRegistry(models.Model):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, default='')
 
 
+    class Meta:
+
+        permissions = (
+            ('view_sox_list', 'Can visualize sox apps list'),
+            ('create_sox', 'Can create new SOX'),
+            ('update_sox', 'Can update a SOX reg'),
+            ('disable_sox', 'Can disable SOX'),
+        )
+
+
 class SoxHistory(models.Model):
 
     sox = models.ForeignKey('SOXRegistry', on_delete=models.DO_NOTHING, default='')
