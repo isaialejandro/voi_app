@@ -16,49 +16,64 @@
             </div>
             <div class="navbar-collapse collapse" id="navbar">
                 <ul class="nav navbar-nav">
-                    {% if not new_ticket %}
-                        <li class="active">
-                            <a aria-expanded="false" role="button" 
-                                href="{% url 'ticket:new' %}"
-                            > Add new ticket</a>
+                    {% if perms.ticket.create_ticket %}
+                        {% if not new_ticket %}
+                            <li class="active">
+                                <a aria-expanded="false" role="button" 
+                                    href="{% url 'ticket:new' %}"
+                                > Add new ticket</a>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                    
+                    {% if perms.sox.view_sox_list or perms.sox.create_sox %}
+                        <li class="dropdown">
+                            <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> SOX <span class="caret"></span></a>
+                            <ul role="menu" class="dropdown-menu">
+                                {% if perms.sox.view_sox_list%}    
+                                    {% if not sox_list %}
+                                        <li>
+                                            <a aria-expanded="false" role="button" href="{% url 'sox:list' %}">Sox List</a>
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+                                {% if perms.sox.create_sox %}
+                                    {% if not new_sox %}
+                                        <li>
+                                            <a href="{% url 'sox:new' %}">Add new SOX registry</a>
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+                            </ul>
                         </li>
                     {% endif %}
-
-                    <li class="dropdown">
-                        <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> SOX <span class="caret"></span></a>
-                        <ul role="menu" class="dropdown-menu">
-                            {% if not sox_list %}
-                                <li>
-                                    <a aria-expanded="false" role="button" href="{% url 'sox:list' %}">Sox List</a>
-                                </li>
-                            {% endif %}
-
-                            {% if not new_sox %}
-                                <li>
-                                    <a href="{% url 'sox:new' %}">Add new SOX registry</a>
-                                </li>
-                            {% endif %}
-                        </ul>
-                    </li>
-
-                    <li class="dropdown">
-                        <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> Applications <span class="caret"></span></a>
-                        <ul role="menu" class="dropdown-menu">
-                            {% if not app_list %}
-                                <li><a href="{% url 'application:list' %}">Applications</a></li>
-                            {% endif %}
-                            {% if not new_app %}
-                                <li>
-                                    <a href="{% url 'application:new' %}">Add new Application</a>
-                                </li>
-                            {% endif %}
-                            {% if not new_applicant %}
-                                <li>
-                                    <a aria-expanded="false" role="button" href="{% url 'applicant:new' %}"> Add new Applicant</a>
-                                </li>
-                            {% endif %}
-                        </ul>
-                    </li>
+                    
+                    {% if perms.application.view_application_list or perms.application.create_application or perms.application.view_applicant_list or perms.applicant.create_applicant %}
+                        <li class="dropdown">
+                            <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> Applications <span class="caret"></span></a>
+                            <ul role="menu" class="dropdown-menu">
+                                {% if perms.application.view_application_list %}
+                                    {% if not app_list %}
+                                        <li><a href="{% url 'application:list' %}">Applications</a></li>
+                                    {% endif %}
+                                {% endif %}
+                                {% if perms.application.create_application %}
+                                    {% if not new_app %}
+                                        <li>
+                                            <a href="{% url 'application:new' %}">Add new Application</a>
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+                                {% if perms.applicant.create_applicant %}
+                                    {% if not new_applicant %}
+                                        <li>
+                                            <a aria-expanded="false" role="button" href="{% url 'applicant:new' %}"> Add new Applicant</a>
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+                            </ul>
+                        </li>
+                    {% endif %}
 
                     {% if user.is_superuser %}
                         <li class="dropdown">

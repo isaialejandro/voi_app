@@ -22,7 +22,7 @@ from braces.views import LoginRequiredMixin
 
 now = datetime.datetime.now()
 
-
+"""
 class ApplicantList(View):
 
     def get(self, request):
@@ -35,7 +35,8 @@ class ApplicantList(View):
         if not request.user.is_authenticated:
             return render(request, '404.html')
         else:
-            return render(request, 'applicants.html',context)
+            return render(request, 'list.html')
+"""
 
 
 class CreateApplicant(NeverCacheMixin, CSRFExemptMixin, View):
