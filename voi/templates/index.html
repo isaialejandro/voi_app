@@ -294,7 +294,7 @@
                                                     
                                                     <td align="center">
                                                         {% if perms.ticket.close_ticket %}
-                                                            <a href="#"><i class="fa fa-check text-navy"></i></a>
+                                                            <a href="#" onClick="changeCurrentUser();"><i class="fa fa-check text-navy"></i></a>
                                                             &nbsp;
                                                         {% endif %}
                                                         {% if perms.ticket.change_ticket %}
