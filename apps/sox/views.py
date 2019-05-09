@@ -37,6 +37,7 @@ class SoxList(NeverCacheMixin, CSRFExemptMixin, View):
             return render(request, '404.html')
         else:
             context = {}
+            context['sox_list'] = True
             context['sox_registries'] = SOXRegistry.objects.filter(is_active=True)
             return render(request, 'sox_list.html', context)
     
@@ -50,7 +51,7 @@ class CreateSOX(NeverCacheMixin, CSRFExemptMixin, View):
             context = {}
             context['form'] = SOXForm
             context['new_sox'] = True
-            context['application'] = Application.objects.filter(is_active=True, app_type='SOX')
+            context['sox_applications'] = Application.objects.filter(is_active=True, app_type='SOX')
             context['executor'] = User.objects.filter(is_active=True,is_superuser=False).exclude(username='Pending')
             context['1st_2nd_source_executor'] = User.objects.filter(is_active=True,is_superuser=False)
             return render(request, 'sox_form.html', context)

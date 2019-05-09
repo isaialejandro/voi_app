@@ -89,6 +89,17 @@ class Ticket(models.Model):
     def __str__(self):
         return self.folio_number + '  |  ' + '{}'.format(self.status.upper()) + '  |  ' + '{}'.format(self.application)
 
+    class Meta:
+
+        permissions = (
+            ('view_ticket_list', 'Can view the tickets list'),
+            ('create_ticket', 'Can create new ticket'),
+            ('update_ticket', 'Can update current ticket'),
+            ('close_ticket', 'Can close current ticket'),
+            ('view_ticket_detail', 'Can visualize current ticket detail'),
+            ('disable_ticket', 'Can disable ticket'),
+        )
+
 
 class TicketHistory(models.Model):
 

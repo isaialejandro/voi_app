@@ -15,3 +15,11 @@ class Applicant(models.Model):
 
     def __str__(self):
         return self.first_name.capitalize() + ' ' + self.last_name.title()
+
+    class Meta:
+
+        permissions = (
+            ('view_applicant_list', 'Can visualize applicant list'),
+            ('create_applicant', 'Can create applicant'),
+            ('can_disable_applicant', 'Can disable Applicant'),
+        )

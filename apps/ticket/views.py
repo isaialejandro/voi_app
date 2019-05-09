@@ -44,7 +44,6 @@ class TicketDetail(NeverCacheMixin, CSRFExemptMixin, View):
 
 class NewTicket(NeverCacheMixin, CSRFExemptMixin, CreateView):
 
-    #model = Ticket
 
     def get(self, request):
 
@@ -53,6 +52,7 @@ class NewTicket(NeverCacheMixin, CSRFExemptMixin, CreateView):
             context['new_ticket'] = True
             context['form'] = TicketForm
             context['history_form'] = HistoryTicketForm
+            context['application'] = Application.objects.filter(is_active=True,app_type='NORMAL')
             context['assigned_to'] = User.objects.filter(is_active=True,is_superuser=False).exclude(username='Pending')
             return render(request, 'ticket_form.html', context)
         else:
@@ -134,7 +134,7 @@ class NewTicket(NeverCacheMixin, CSRFExemptMixin, CreateView):
                         'request_type': request_type,
                         'beneficiary_name': beneficiary_name,
                         'beneficiary_last_name': beneficiary_last_name,
-                        'approval_owner': approval_owner,
+                        'approval_owner': approval_owner,   
                         'approval_executor': approval_executor,
                         'approve': approve,
                         'created_by': created_by,
@@ -194,6 +194,7 @@ class UpdateTicket(NeverCacheMixin, CSRFExemptMixin, View):
     def get(self, request, pk):
         context = {}
         context['update_ticket'] = True
+        context['application'] = Application.objects.filter(is_active=True,app_type='NORMAL')
 
         current_ticket = Ticket.objects.get(id=pk)
 

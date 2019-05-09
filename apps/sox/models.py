@@ -37,9 +37,11 @@ class SOXRegistry(models.Model):
 
     BAJA_TALENTO='baja talento'
     SHAREPOINT = 'sharepoint'
+    SERVICE_NOW = 'service now'
     APP_SOURCES = (
         (BAJA_TALENTO, 'Baja de Talento'),
         (SHAREPOINT, 'Sharepoint'),
+        (SERVICE_NOW, 'Service Now'),
     )
 
     folio_number = models.CharField(max_length=25, blank=True, null=True)
@@ -65,6 +67,16 @@ class SOXRegistry(models.Model):
     registry_date = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, default='')
+
+
+    class Meta:
+
+        permissions = (
+            ('view_sox_list', 'Can visualize sox apps list'),
+            ('create_sox', 'Can create new SOX'),
+            ('update_sox', 'Can update a SOX reg'),
+            ('disable_sox', 'Can disable SOX'),
+        )
 
 
 class SoxHistory(models.Model):

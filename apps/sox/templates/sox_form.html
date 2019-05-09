@@ -58,7 +58,12 @@
                         <div class="form-group"><label class="col-sm-2 control-label">Application </label>
 
                             <div class="col-sm-10">
-                                {{ form.application }}
+                                {#{{ form.application }}#}
+                                <select id="sox_apps" name="application" class="form-control">
+                                    {% for a in sox_applications %}
+                                        <option value="{{a.id}}">{{a.name}}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                         </div>
                         <div class="form-group"><label class="col-sm-2 control-label"> Request Type</label>
@@ -228,6 +233,9 @@
         var exec_conf_date = $('#id_exec_confirmed_date');
         var frst_source_date = $('#id_first_source_date');
         var scnd_source_date = $('#id_second_source_date');
+
+        var s_app = $('#sox_apps');
+        s_app.select2();
 
         exec_date.prop('disabled', true);
         exec_conf_date.prop('disabled', true);
