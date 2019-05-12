@@ -45,3 +45,9 @@ class UserPermissions(AbstractUser):
 
 		)
 """
+
+"""
+class UserRol(models.Model):
+
+	roll = models.ForeignKey()
+"""
