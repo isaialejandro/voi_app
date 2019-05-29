@@ -113,5 +113,6 @@ class TicketHistory(models.Model):
     summary = models.TextField(max_length=450)
     registry_date = models.DateTimeField(auto_now=now)
     update = models.BooleanField(default=True)     #Bandera que indica si el registro se actualizó o no.
-    not_finished_type = models.BooleanField(default=False)  #Indica si no se ha finalizado en el registro actual guardado.
+    #not_finished_type = models.BooleanField(default=False)  #Indica si no se ha finalizado en el registro actual guardado.
+    finished = models.BooleanField(default=False)  #Indica si no se ha finalizado en el registro actual guardado.
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, default='')

@@ -15,13 +15,12 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.detail import DetailView
 
 from braces.views import LoginRequiredMixin
-from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin
 
+from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin
 from apps.ticket.models import Ticket, TicketHistory
 from apps.application.models import Application
 from apps.applicant.models import Applicant
 from apps.ticket.forms import TicketForm, TicketUpdateForm, HistoryTicketForm
-
 
 
 now = datetime.datetime.now()
@@ -60,7 +59,7 @@ class NewTicket(NeverCacheMixin, CSRFExemptMixin, CreateView):
 
     @transaction.atomic
     def post(self, request):
-        
+
         title = request.POST.get('title').upper()
         folio_no = request.POST.get('folio_number').upper()
         priority = request.POST.get('priority')
@@ -81,7 +80,7 @@ class NewTicket(NeverCacheMixin, CSRFExemptMixin, CreateView):
         is_active = True
 
         summary_data = request.POST.get('summary')
-        
+
         if Ticket.objects.filter(title = title):
 
             msg = 'Title ticket ' + title + ' already exist. Reassign the user again'
@@ -134,7 +133,7 @@ class NewTicket(NeverCacheMixin, CSRFExemptMixin, CreateView):
                         'request_type': request_type,
                         'beneficiary_name': beneficiary_name,
                         'beneficiary_last_name': beneficiary_last_name,
-                        'approval_owner': approval_owner,   
+                        'approval_owner': approval_owner,
                         'approval_executor': approval_executor,
                         'approve': approve,
                         'created_by': created_by,
@@ -182,7 +181,7 @@ class NewTicket(NeverCacheMixin, CSRFExemptMixin, CreateView):
                 not_finished_type = True,
                 user = User.objects.get(id=request.user.id)
             )
-            
+
             hist.save()
 
             messages.success(request, 'Ticket ' + new_ticket.folio_number + ' created successfully')

@@ -39,15 +39,15 @@ sox = apps.get_app_config('sox').verbose_name
 class Dashboard(View):
 
     def get(self, request):
-        
+
         usr = request.POST.get('username')
         pwd = request.POST.get('password')
 
-        user = authenticate(request, user= usr, password=pwd)
+        user = authenticate(request, user=usr, password=pwd)
 
         if not request.user.is_authenticated:
             return render(request, '404.html')
-            
+
         else:
             context = {}
             context['dashboard'] = True
@@ -70,4 +70,5 @@ urlpatterns = [
     path('sox/', include(('apps.sox.urls', sox), namespace='sox')),
 
     path('api-auth/', include('rest_framework.urls')),
+    path('tickets-api-v1/', include(('apps.ticket.api.v1.urls', ticket), namespace='ticket-api-v1')),
 ]
