@@ -22,7 +22,8 @@
 
 </head>
 
-<body class="top-navigation">
+<body class="top-navigation" oncontextmenu="return false;" onload="noBack();"
+	onpageshow="if (event.persisted) noBack();" onunload="">
 
     <div id="wrapper">
         <div id="page-wrapper" class="gray-bg">
@@ -542,7 +543,7 @@
                     var close_comment = $('#close_comment').val();
 
                     if(close_comment == ''){
-                      alert('Insert a comment');
+                      alert('Summary is required.');
                     }else{
                       $.ajax({
                         url: '{% url 'ticket-api-v1:close_ticket' %}',
@@ -551,7 +552,14 @@
                         data: {
                           "id": args['id'],
                           "close_comment": close_comment,
-                          'user_id': args['user_id']
+                          'user_id': args['user_id'],
+                          csrfmiddlewaretoken: window.CSRF_TOKEN
+                        },
+                        beforeSend: function(xhr, settings) {
+                            if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                                // Only send the token to relative URLs i.e. locally.
+                                xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                            }
                         },
                         success: function(data){
                           ShowModal(data.title, data.message, '', data.button);
@@ -571,6 +579,28 @@
                 window.location.href = '/'
               });
 
+            }
+
+            //Get Cookie Function for CSRF_Token
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie != '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = jQuery.trim(cookies[i]);
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            //Block History forward
+  	        function noBack() {
+              window.history.forward();
             }
         </script>
     {% endblock %}

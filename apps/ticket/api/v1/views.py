@@ -1,5 +1,6 @@
 import datetime
 
+from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -17,11 +18,12 @@ from apps.tools.decorators import LoginRequiredMixin, NeverCacheMixin, CSRFExemp
 now = datetime.datetime.now()
 
 
-class CloseCurrentTicket(LoginRequiredMixin, NeverCacheMixin, CSRFExemptMixin, APIView):
+class CloseCurrentTicket(NeverCacheMixin, CSRFExemptMixin, APIView):
 
-    authentication_classes = []
-    permission_classes = []
-
+    #authentication_classes = []
+    #permission_classes = []
+    
+    @transaction.atomic
     def post(self, request):
 
         data = {"success": True}
@@ -35,12 +37,12 @@ class CloseCurrentTicket(LoginRequiredMixin, NeverCacheMixin, CSRFExemptMixin, A
 
             #Ticket History
             close_comment = request.POST.get('close_comment')
-            print(close_comment)
 
             hist = TicketHistory(
                 ticket=ticket,
                 summary= close_comment,
                 registry_date=now,
+                update=False,
                 finished=True,
                 user=User.objects.get(id=request.POST.get('user_id'))
             )

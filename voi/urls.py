@@ -54,7 +54,7 @@ class Dashboard(View):
             context['pending_tickets'] = Ticket.objects.filter(is_active=True)
 
             permissions = Permission.objects.filter(user=request.user.id)
-            print(permissions)
+            print('Current user permssions from Dashboard View: ', permissions,', ', request.user.id)
 
             return render(request, 'index.html', context)
 

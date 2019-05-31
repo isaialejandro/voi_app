@@ -260,7 +260,7 @@
                                                     <td>{{ ticket.folio_number }}</td>
                                                     <td>{{ ticket.priority|upper }}</td>
                                                     <td>
-                                                        <a href="#" onClick="changeCurrentUser({{ticket.id}});">
+                                                        <!--<a href="#" onClick="changeCurrentUser({{ticket.id}});">-->
                                                             <span
                                                                 {% if ticket.status == 'open' %}
                                                                     class="label label-primary"
@@ -268,6 +268,8 @@
                                                                     class="label label-warning"
                                                                 {% elif ticket.status == 'in progress' %}
                                                                     class="label label-info"
+                                                                {% elif ticket.status == 'closed' %}
+                                                                    class="label label-default"
                                                                 {% elif ticket.status == 'assigned' %}
                                                                     class="label label-info"
                                                                 {% elif ticket.status == 'provider approval proccess' %}
@@ -278,7 +280,7 @@
                                                                 {{ ticket.status|upper }}
 
                                                             </span>
-                                                        </a>
+                                                        <!--</a>-->
                                                     </td>
                                                     <td>{{ ticket.registry_date }}</td>
                                                     <td>{{ ticket.applicant }}</td>
@@ -340,12 +342,8 @@
                         '<input id="close_comment" name="close_comment" type="text" placeholder="Enter a comment" class="form-control">';
           var btn = '<button id="btn_modal_close" class="btn btn-sm btn-danger pull-right m-t-n-xs" type="button"><strong>Close</strong></button>';
           //Creating args tuple for diff keywords.
-          //var args = id;
           var args = [];
-          args = {
-            "id": id,
-            "user_id": {{user.id}}
-          }
+          args = {"id": id, "user_id": {{user.id}}}
           ShowModal(title, content, args, btn);
         }
 
@@ -380,9 +378,7 @@
                         }
                     }*/
                 ]
-
             });
         });
-
     </script>
 {% endblock %}
