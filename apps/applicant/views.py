@@ -55,7 +55,7 @@ class CreateApplicant(NeverCacheMixin, CSRFExemptMixin, View):
             context['new_applicant'] = True
             context['form'] = ApplicantForm
             return render(request, 'applicant_form.html', context)
-            
+
     @transaction.atomic
     def post(self, request):
 
@@ -78,7 +78,7 @@ class CreateApplicant(NeverCacheMixin, CSRFExemptMixin, View):
             context = {}
             context['form'] = form
             return render(request, 'applicant_form.html', context)
-        
+
         elif Applicant.objects.filter(is_active=True, email=email):
 
             msg = 'Applicant email ' + email + ' already exist!'
@@ -108,4 +108,3 @@ class CreateApplicant(NeverCacheMixin, CSRFExemptMixin, View):
             msg = 'Applicant ' + new.first_name + ' ' + new.last_name + ' saved successfully.'
             messages.success(request, msg)
         return HttpResponseRedirect('/application/list/')
-    
