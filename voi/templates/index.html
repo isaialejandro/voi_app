@@ -213,7 +213,7 @@
             {% endif %}
 
             <div class="row">
-                
+
                 {% if perms.ticket.view_ticket_list %}
                     <div class="col-lg-12">
                         <div class="ibox float-e-margins">
@@ -274,9 +274,9 @@
                                                                 class="label label-danger"
                                                                 {% endif %}
                                                             >
-                                                                
+
                                                                 {{ ticket.status|upper }}
-                                                                
+
                                                             </span>
                                                         </a>
                                                     </td>
@@ -290,8 +290,8 @@
                                                             </span>
                                                         </a>
                                                     </td>
-                                                    
-                                                    
+
+
                                                     <td align="center">
                                                         {% if perms.ticket.close_ticket %}
                                                             <a href="#" onClick="changeCurrentUser();"><i class="fa fa-check text-navy"></i></a>
@@ -331,7 +331,7 @@
     <script src="{% static 'js/plugins/dataTables/datatables.min.js' %}"></script>
 
     <script>
-        
+
         function changeCurrentUser(){
             alert('Pending');
         }

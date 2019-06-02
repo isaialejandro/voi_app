@@ -34,6 +34,7 @@ ticket = apps.get_app_config('ticket').verbose_name
 application = apps.get_app_config('application').verbose_name
 applicant = apps.get_app_config('applicant').verbose_name
 sox = apps.get_app_config('sox').verbose_name
+import_export = apps.get_app_config('import_export').verbose_name
 
 
 class Dashboard(View):
@@ -68,6 +69,7 @@ urlpatterns = [
     path('application/', include(('apps.application.urls', application), namespace='application')),
     path('applicant/', include(('apps.applicant.urls', applicant), namespace='applicant')),
     path('sox/', include(('apps.sox.urls', sox), namespace='sox')),
+    path('import_export/', include(('apps.import_export.urls', sox), namespace='import_export')),
 
     path('api-auth/', include('rest_framework.urls')),
 ]
