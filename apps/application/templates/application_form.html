@@ -75,7 +75,9 @@
 {% block extrajs %}
     <script>
         $(document).ready(function(){
-           
+           var s_app_type = $('#id_app_type');
+
+           s_app_type.select2();
         });
     </script>
 {% endblock %}
