@@ -258,7 +258,19 @@
                                                 <tr>
                                                     <td>{{ ticket.title }}</td>
                                                     <td>{{ ticket.folio_number }}</td>
-                                                    <td>{{ ticket.priority|upper }}</td>
+                                                    <td>
+                                                      <span
+                                                        {% if ticket.priority == 'low' %}
+                                                          class="label label-info"
+                                                        {% elif ticket.priority == 'mid' %}
+                                                          class="label label-warning"
+                                                        {% elif ticket.priority == 'high' %}
+                                                          class="label label-danger"
+                                                        {% endif %}
+                                                      >
+                                                        {{ ticket.priority|upper }}
+                                                      </span>
+                                                    </td>
                                                     <td>
                                                         <!--<a href="#" onClick="changeCurrentUser({{ticket.id}});">-->
                                                             <span
