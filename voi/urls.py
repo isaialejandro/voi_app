@@ -34,6 +34,8 @@ ticket = apps.get_app_config('ticket').verbose_name
 application = apps.get_app_config('application').verbose_name
 applicant = apps.get_app_config('applicant').verbose_name
 sox = apps.get_app_config('sox').verbose_name
+user = apps.get_app_config('user').verbose_name
+import_export = apps.get_app_config('import_export').verbose_name
 
 
 class Dashboard(View):

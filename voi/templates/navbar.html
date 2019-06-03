@@ -6,11 +6,11 @@
                 <button aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
                     <i class="fa fa-reorder"></i>
                 </button>
-                    <a 
+                    <a
                     {% if not dashboard %}
-                        href="{% url 'dashboard' %}" 
+                        href="{% url 'dashboard' %}"
                     {% else %}
-                        href="#" 
+                        href="#"
                     {% endif %}
                     class="navbar-brand">VOIRegistry</a>
             </div>
@@ -19,18 +19,18 @@
                     {% if perms.ticket.create_ticket %}
                         {% if not new_ticket %}
                             <li class="active">
-                                <a aria-expanded="false" role="button" 
+                                <a aria-expanded="false" role="button"
                                     href="{% url 'ticket:new' %}"
                                 > Add new ticket</a>
                             </li>
                         {% endif %}
                     {% endif %}
-                    
+
                     {% if perms.sox.view_sox_list or perms.sox.create_sox %}
                         <li class="dropdown">
                             <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> SOX <span class="caret"></span></a>
                             <ul role="menu" class="dropdown-menu">
-                                {% if perms.sox.view_sox_list%}    
+                                {% if perms.sox.view_sox_list%}
                                     {% if not sox_list %}
                                         <li>
                                             <a aria-expanded="false" role="button" href="{% url 'sox:list' %}">Sox List</a>
@@ -47,7 +47,7 @@
                             </ul>
                         </li>
                     {% endif %}
-                    
+
                     {% if perms.application.view_application_list or perms.application.create_application or perms.application.view_applicant_list or perms.applicant.create_applicant %}
                         <li class="dropdown">
                             <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> Applications <span class="caret"></span></a>
@@ -79,14 +79,26 @@
                         <li class="dropdown">
                             <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> Users <span class="caret"></span></a>
                             <ul role="menu" class="dropdown-menu">
-                                <li><a href="#">User List</a></li>
-                                {% if user_list %}
-                                    <li>
-                                        {% if not new_ticket or update_ticket %}
-                                            <a href="{% url 'application:new' %}">Add new User</a>
-                                        {% endif %}
-                                    </li>
-                                {% endif %}
+                                <li><a href="#" onclick="InProgress();";>User List</a></li>
+                                  <li>
+                                      <a href="#" onclick="InProgress();">Add new User</a>
+                                  </li>
+                            </ul>
+                        </li>
+
+                        <li class="dropdown">
+                            <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> Import/Export <span class="caret"></span></a>
+                            <ul role="menu" class="dropdown-menu">
+                                <li><a href="#" onclick="InProgress();">Users</a></li>
+                                <li>
+                                    <a href="#" onclick="InProgress();">Applications</a>
+                                </li>
+                                <li>
+                                    <a href="#" onclick="InProgress();">Tickets</a>
+                                </li>
+                                <li>
+                                    <a href="# onclick="InProgress();"">SOX Apps</a>
+                                </li>
                             </ul>
                         </li>
                     {% endif %}
@@ -94,7 +106,7 @@
                 <ul class="nav navbar-top-links navbar-right">
                     <li>
                         <span class="m-r-sm text-muted welcome-message">
-                            Welcome, 
+                            Welcome,
                             <strong>
                             {% if user.username %}
                                 {{ user.username}}.
@@ -104,7 +116,7 @@
                             </strong>
                         </span>
                     </li>
-                    Last login - 
+                    Last login -
                     {{user.last_login}}
                     <li>
                         <a href="{% url 'logout' %}">
@@ -117,3 +129,9 @@
     </div>
 
 {% endif %}
+
+  <script type="text/javascript">
+    function InProgress(){
+      alert("In progress");
+    }
+  </script>
