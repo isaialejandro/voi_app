@@ -60,10 +60,11 @@ class CreateApplicant(NeverCacheMixin, CSRFExemptMixin, View):
     def post(self, request):
 
         first = request.POST.get('first_name')
-        last = request.POST.get('last_name')
+        last1 = request.POST.get('frst_lastname')
+        last2 = request.POST.get('scnd_lastname')
         email = request.POST.get('email')
 
-        if Applicant.objects.filter(is_active=True, first_name=first, last_name=last):
+        if Applicant.objects.filter(is_active=True, frst_lastname=last1, scnd_lastname=last2):
 
             msg = 'Applicant ' + first + ' already exist!'
             messages.error(request, msg)

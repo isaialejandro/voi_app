@@ -30,7 +30,7 @@
             </div>
         {% endfor %}
     {% endif %}
-    
+
     <div class="wrapper wrapper-content">
         <div class="container">
             <div class="row">
@@ -54,10 +54,17 @@
                                     </div>
                                 </div>
                                 <div class="hr-line-dashed"></div>
-                                <div class="form-group"><label class="col-lg-2 control-label">Last name </label>
+                                <div class="form-group"><label class="col-lg-2 control-label">1st Lastname </label>
 
                                     <div class="col-lg-10">
-                                        {{form.last_name}}
+                                        {{form.frst_lastname}}
+                                    </div>
+                                </div>
+                                <div class="hr-line-dashed"></div>
+                                <div class="form-group"><label class="col-lg-2 control-label">2nd Lastname </label>
+
+                                    <div class="col-lg-10">
+                                        {{form.scnd_lastname}}
                                     </div>
                                 </div>
                                 <div class="hr-line-dashed"></div>
@@ -74,7 +81,7 @@
                                         <button class="btn btn-primary" type="submit">Save changes</button>
                                     </div>
                                 </div>
-                                
+
                             </form>
                         </div>
                     </div>
