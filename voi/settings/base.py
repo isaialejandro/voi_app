@@ -48,6 +48,7 @@ LOCAL_APPS = [
     'apps.tools',
     'apps.sox',
     'apps.import_export',
+    'apps.bi_modules',
 ]
 
 THIRD_PARTY_APPS = [

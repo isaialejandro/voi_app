@@ -36,6 +36,7 @@ applicant = apps.get_app_config('applicant').verbose_name
 sox = apps.get_app_config('sox').verbose_name
 user = apps.get_app_config('user').verbose_name
 import_export = apps.get_app_config('import_export').verbose_name
+bi_modules = apps.get_app_config('bi_modules').verbose_name
 
 
 class Dashboard(View):
@@ -70,6 +71,7 @@ urlpatterns = [
     path('application/', include(('apps.application.urls', application), namespace='application')),
     path('applicant/', include(('apps.applicant.urls', applicant), namespace='applicant')),
     path('sox/', include(('apps.sox.urls', sox), namespace='sox')),
+    path('bi_modules/', include(('apps.bi_modules.urls', bi_modules), namespace='bi_modules')),
 
     path('api-auth/', include('rest_framework.urls')),
     path('tickets-api-v1/', include(('apps.ticket.api.v1.urls', ticket), namespace='ticket-api-v1')),

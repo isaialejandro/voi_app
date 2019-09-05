@@ -59,20 +59,23 @@ class CreateApplicant(NeverCacheMixin, CSRFExemptMixin, View):
     @transaction.atomic
     def post(self, request):
 
-        first = request.POST.get('first_name')
-        last1 = request.POST.get('frst_lastname')
-        last2 = request.POST.get('scnd_lastname')
+        first_name = request.POST.get('first_name')
+        second_name = request.POST.get('second_name')
+        last1 = request.POST.get('first_lastname')
+        last2 = request.POST.get('second_lastname')
         email = request.POST.get('email')
 
-        if Applicant.objects.filter(is_active=True, frst_lastname=last1, scnd_lastname=last2):
+        if Applicant.objects.filter(is_active=True, first_lastname=last1, second_lastname=last2):
 
             msg = 'Applicant ' + first + ' already exist!'
             messages.error(request, msg)
 
             form = ApplicantForm(
                 initial = {
-                    'first_name': first,
-                    'last_name': last,
+                    'first_name': first_name,
+                    'second_name': second_name,
+                    'first_lastname': last1,
+                    'second_lastname': las2,
                     'email': email
                 }
             )
@@ -87,8 +90,10 @@ class CreateApplicant(NeverCacheMixin, CSRFExemptMixin, View):
 
             form = ApplicantForm(
                 initial = {
-                    'first_name': first,
-                    'last_name': last,
+                    'first_name': first_name,
+                    'second_name': second_name,
+                    'first_lastname': last1,
+                    'second_lastname': las2,
                     'email': email
                 }
             )
@@ -98,8 +103,10 @@ class CreateApplicant(NeverCacheMixin, CSRFExemptMixin, View):
         else:
 
             new = Applicant(
-                first_name=first.capitalize(),
-                last_name=last.capitalize(),
+                first_name=first_name.capitalize(),
+                second_name=second_name.capitalize(),
+                first_lastname=last1.capitalize(),
+                second_lastname=last2.capitalize(),
                 registry_date=now,
                 email=email,
                 is_active=True,
