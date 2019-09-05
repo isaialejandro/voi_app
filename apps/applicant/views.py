@@ -113,6 +113,6 @@ class CreateApplicant(NeverCacheMixin, CSRFExemptMixin, View):
                 user=User.objects.get(id=request.user.id)
             )
             new.save()
-            msg = 'Applicant ' + new.first_name + ' ' + new.last_name + ' saved successfully.'
+            msg = 'Applicant ' + new.first_name + ' ' + new.first_lastname + ' saved successfully.'
             messages.success(request, msg)
         return HttpResponseRedirect('/application/list/')
