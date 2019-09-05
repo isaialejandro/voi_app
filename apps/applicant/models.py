@@ -10,16 +10,17 @@ class Applicant(models.Model):
 
 
     first_name = models.CharField(max_length=50, blank=False)
-    #last_name = models.CharField(max_length=50, blank=False, default='')
+    second_name = models.CharField(max_length=50, null=True, blank=True)
 
-    frst_lastname = models.CharField(max_length=50, blank=False, default='')
-    scnd_lastname = models.CharField(max_length=50, blank=False, default='')
+    first_lastname = models.CharField(max_length=50, null=True, blank=True)
+    second_lastname = models.CharField(max_length=50, null=True, blank=True)
 
     id_puesto = models.CharField(max_length=4, null=True)
     id_area_chief = models.CharField(max_length=4, null=True)
     id_area_dir = models.CharField(max_length=4, null=True)
     id_area_ger = models.CharField(max_length=4, null=True)
     id_area_jef = models.CharField(max_length=4, null=True)
+    email = models.EmailField(default='', null=True)
     no_ambassador_boss = models.CharField(max_length=20, null=True)
     id_ambassador_status = models.CharField(max_length=2, null=True)
     id_station = models.CharField(max_length=4, null=True)
@@ -36,13 +37,13 @@ class Applicant(models.Model):
     id_enterprise = models.CharField(max_length=4, null=True)
 
     registry_date = models.DateTimeField(auto_now_add=True)
-    email = models.EmailField(default='')
+    #applicant_reg_date = models.CharField(max_length=8, null=True, blank=True) #default with applicant manual list load.
 
     is_active = models.BooleanField(default=True)
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, default='')
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, default=1)
 
     def __str__(self):
-        return self.first_name.capitalize() + ' ' + self.last_name.title()
+        return self.first_name.capitalize() + ' ' + '{}'.format(self.first_lastname)
 
     class Meta:
 

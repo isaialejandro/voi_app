@@ -32,7 +32,7 @@
                         <div class="ibox-content">
                             <div class="row">
                             <div class="col-sm-9 m-b-xs">
-                                   
+
                                 </div>
                                 <!--
                                 <div class="col-sm-3">
@@ -85,7 +85,7 @@
                         <div class="ibox-content">
                             <div class="row">
                                 <div class="col-sm-9 m-b-xs">
-                                   
+
                                 </div>
                             </div>
                             <div class="table-responsive">
@@ -93,7 +93,8 @@
                                     <thead>
                                         <tr>
                                             <th>First Name</th>
-                                            <th>Last Name</th>
+                                            <th>First Lastname</th>
+                                            <th>Second Lastname</th>
                                             <th>Email </th>
                                             {% if user.is_superuser %}
                                                 <th>Reg Date </th>
@@ -105,7 +106,8 @@
                                         {% for ap in applicants %}
                                             <tr>
                                                 <td>{{ ap.first_name }}</td>
-                                                <td>{{ ap.last_name}}</td>
+                                                <td>{{ ap.first_lastname}}</td>
+                                                <td>{{ ap.second_lastname}}</td>
                                                 <td>{{ ap.email }}</td>
                                                 {% if user.is_superuser %}
                                                     <th>{{ap.registry_date}} </th>

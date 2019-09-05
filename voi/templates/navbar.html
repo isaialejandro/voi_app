@@ -75,6 +75,17 @@
                         </li>
                     {% endif %}
 
+                    {% if perms.bi_modules.view_cuentas_por_cobrar or perms.process_cuentas_por_cobrar %}
+                        <li class="dropdown">
+                            <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> BI <span class="caret"></span></a>
+                            <ul role="menu" class="dropdown-menu">
+                                {% if perms.bi_modules.view_cuentas_por_cobrar %}
+                                <li><a href="{% url 'bi_modules:cuentas_por_cobrar_dashboard' %}">Cuentas por Cobrar</a></li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                    {% endif %}
+
                     {% if user.is_superuser %}
                         <li class="dropdown">
                             <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> Users <span class="caret"></span></a>

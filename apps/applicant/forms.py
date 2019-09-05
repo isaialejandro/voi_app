@@ -7,15 +7,18 @@ class ApplicantForm(forms.ModelForm):
         model = Applicant
 
         fields = [
+
             'first_name',
-            'frst_lastname',
-            'scnd_lastname',
+            'second_name',
+            'first_lastname',
+            'second_lastname',
             'email'
         ]
 
         widgets =  {
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'frst_lastname': forms.TextInput(attrs={'class': 'form-control'}),
-            'scnd_lastname': forms.TextInput(attrs={'class': 'form-control'}),
+            'second_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'first_lastname': forms.TextInput(attrs={'class': 'form-control'}),
+            'second_lastname': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.TextInput(attrs={'class': 'form-control'}),
         }
