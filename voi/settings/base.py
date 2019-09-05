@@ -47,6 +47,9 @@ LOCAL_APPS = [
     'apps.user',
     'apps.tools',
     'apps.sox',
+    'apps.import_export',
+    'apps.bi_modules',
+    'apps.extra_incidents'
 ]
 
 THIRD_PARTY_APPS = [
@@ -126,7 +129,7 @@ USE_TZ = True
 #RestFramework Config
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.BasicAuthentication',
+        #'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (

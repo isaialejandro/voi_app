@@ -55,30 +55,34 @@ class CreateApplicant(NeverCacheMixin, CSRFExemptMixin, View):
             context['new_applicant'] = True
             context['form'] = ApplicantForm
             return render(request, 'applicant_form.html', context)
-            
+
     @transaction.atomic
     def post(self, request):
 
-        first = request.POST.get('first_name')
-        last = request.POST.get('last_name')
+        first_name = request.POST.get('first_name')
+        second_name = request.POST.get('second_name')
+        last1 = request.POST.get('first_lastname')
+        last2 = request.POST.get('second_lastname')
         email = request.POST.get('email')
 
-        if Applicant.objects.filter(is_active=True, first_name=first, last_name=last):
+        if Applicant.objects.filter(is_active=True, first_lastname=last1, second_lastname=last2):
 
             msg = 'Applicant ' + first + ' already exist!'
             messages.error(request, msg)
 
             form = ApplicantForm(
                 initial = {
-                    'first_name': first,
-                    'last_name': last,
+                    'first_name': first_name,
+                    'second_name': second_name,
+                    'first_lastname': last1,
+                    'second_lastname': las2,
                     'email': email
                 }
             )
             context = {}
             context['form'] = form
             return render(request, 'applicant_form.html', context)
-        
+
         elif Applicant.objects.filter(is_active=True, email=email):
 
             msg = 'Applicant email ' + email + ' already exist!'
@@ -86,8 +90,10 @@ class CreateApplicant(NeverCacheMixin, CSRFExemptMixin, View):
 
             form = ApplicantForm(
                 initial = {
-                    'first_name': first,
-                    'last_name': last,
+                    'first_name': first_name,
+                    'second_name': second_name,
+                    'first_lastname': last1,
+                    'second_lastname': las2,
                     'email': email
                 }
             )
@@ -97,15 +103,16 @@ class CreateApplicant(NeverCacheMixin, CSRFExemptMixin, View):
         else:
 
             new = Applicant(
-                first_name=first.capitalize(),
-                last_name=last.capitalize(),
+                first_name=first_name.capitalize(),
+                second_name=second_name.capitalize(),
+                first_lastname=last1.capitalize(),
+                second_lastname=last2.capitalize(),
                 registry_date=now,
                 email=email,
                 is_active=True,
                 user=User.objects.get(id=request.user.id)
             )
             new.save()
-            msg = 'Applicant ' + new.first_name + ' ' + new.last_name + ' saved successfully.'
+            msg = 'Applicant ' + new.first_name + ' ' + new.first_lastname + ' saved successfully.'
             messages.success(request, msg)
         return HttpResponseRedirect('/application/list/')
-    

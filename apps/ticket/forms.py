@@ -1,10 +1,17 @@
 from django import forms
 
 from apps.ticket.models import Ticket, TicketHistory
+from apps.application.models import Application
 
 
 class TicketForm(forms.ModelForm):
-    
+
+    #"application": forms.Select(attrs={'class': 'form-control select2'}),
+    application = forms.ModelChoiceField(empty_label=None, \
+                queryset=Application.objects.filter(is_active=True, app_type='NORMAL'),\
+                widget=forms.Select(attrs={
+                'class': 'form-control', 'required': 'required'}))
+
     class Meta:
         model = Ticket
         fields = [
@@ -33,7 +40,7 @@ class TicketForm(forms.ModelForm):
             "priority": forms.Select(attrs={'class': 'form-control select2'}),
             "status": forms.Select(attrs={'class': 'form-control select2'}),
             "applicant": forms.Select(attrs={'class': 'form-control select2'}),
-            "application": forms.Select(attrs={'class': 'form-control select2'}),
+            #"application": forms.Select(attrs={'class': 'form-control select2'}),
             "assigned_to": forms.Select(attrs={'class': 'form-control select2'}),
             "request_type": forms.Select(attrs={'class': 'form-control select2'}),
             "beneficiary_name": forms.TextInput(attrs={'class': 'form-control select2'}),
@@ -56,7 +63,7 @@ class TicketForm(forms.ModelForm):
 
     def save(self, commit=True):
         print(self)
-        
+
         form = super(TicketForm, self).save(commit=False)
         print(form)
 
@@ -71,7 +78,7 @@ class TicketForm(forms.ModelForm):
 
 
 class TicketUpdateForm(forms.ModelForm):
-    
+
     class Meta:
         model = Ticket
         fields = [

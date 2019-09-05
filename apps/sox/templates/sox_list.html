@@ -21,7 +21,7 @@
                     </div>
                 {% endfor %}
             {% endif %}
-            
+
             {% if perms.sox.view_sox_list %}
                 <div class="row">
                     <div class="col-lg-12">
@@ -71,9 +71,9 @@
                                                     <tr>
                                                         {% if perms.sox.update_sox %}
                                                             <td align="center">
-                                                                <a href="#" onclick="changeCurrentUser();"><i class="fa fa-pencil square"></i></a>
+                                                                <a href="#" onclick="InProgress();"><i class="fa fa-pencil square"></i></a>
                                                                 &nbsp;
-                                                                <a href="#" onclick="changeCurrentUser();"><i class="fa fa-check-square-o square"></i></a>
+                                                                <a href="#" onclick="InProgress();"><i class="fa fa-check-square-o square"></i></a>
                                                             </td>
                                                         {% endif %}
                                                         <td>{{ reg.folio_number }}</td>
@@ -95,9 +95,9 @@
                                                                     class="label label-danger"
                                                                     {% endif %}
                                                                 >
-                                                                    
+
                                                                     {{ ticket.status|upper }}
-                                                                    
+
                                                                 </span>
                                                             </a>
                                                         </td>
@@ -170,7 +170,7 @@
                                                                     {{ reg.second_source_executor }}
                                                                 </span>
                                                             {% else %}
-                                                                {{ reg.second_source_executor }} 
+                                                                {{ reg.second_source_executor }}
                                                             {% endif %}
                                                         </td>
 
@@ -198,7 +198,7 @@
     <script src="{% static 'js/plugins/dataTables/datatables.min.js' %}"></script>
 
     <script>
-        function changeCurrentUser(){
+        function InProgress(){
             alert('In progress..');
         }
 

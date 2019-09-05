@@ -80,7 +80,7 @@ class Ticket(models.Model):
     created_by = models.CharField(max_length=50, blank=True)
     item_type = models.CharField(max_length=10,choices=ITEM_TYPE, default=ITEM)
     path = models.CharField(max_length=150, blank=True)
-    description = models.CharField(max_length=450, blank=True)
+    description = models.CharField(max_length=450, blank=True, null=True)
     solution_date = models.DateTimeField(blank=True, null=True)
     is_active = models.BooleanField(default=True)
     close_comment = models.TextField(max_length=100, blank=True, null=True)
@@ -109,9 +109,10 @@ class TicketHistory(models.Model):
     """
 
     ticket = models.ForeignKey('Ticket', on_delete=models.DO_NOTHING, default='')
-    #sox = models.ForeignKey('SOXRegistry', on_delete=models.DO_NOTHING, default='')
     summary = models.TextField(max_length=450)
     registry_date = models.DateTimeField(auto_now=now)
     update = models.BooleanField(default=True)     #Bandera que indica si el registro se actualizó o no.
-    not_finished_type = models.BooleanField(default=False)  #Indica si no se ha finalizado en el registro actual guardado.
+    #not_finished_type = models.BooleanField(default=False)  #Indica si no se ha finalizado en el registro actual guardado. -
+    #reemplazado por el de abajo
+    finished = models.BooleanField(default=False)  #Indica si no se ha finalizado en el registro actual guardado.
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, default='')

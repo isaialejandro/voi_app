@@ -33,188 +33,192 @@
             </div>
         {% endfor %}
     {% endif %}
+    
+    <div class="wrapper wrapper-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            {% if new_sox %}
+                                <h5>New <small>SOX Reg</small></h5>
+                            {% elif update_sox %}
+                                <h5>Update current <small>SOXReg</small></h5>
+                            {% endif %}
 
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="ibox float-e-margins">
-                <div class="ibox-title">
-                    {% if new_sox %}
-                        <h5>New <small>SOX Reg</small></h5>
-                    {% elif update_sox %}
-                        <h5>Update current <small>SOXReg</small></h5>
-                    {% endif %}
-
-                </div>
-
-                <div class="ibox-content">
-                    <form id="sox_form" method="post" class="form-horizontal">{% csrf_token %}
-
-                        <div class="form-group"><label class="col-sm-2 control-label">Folio</label>
-
-                            <div class="col-sm-10">
-                                {{ form.folio_number }}
-                            </div>
-                        </div>
-                        <div class="form-group"><label class="col-sm-2 control-label">Application </label>
-
-                            <div class="col-sm-10">
-                                {#{{ form.application }}#}
-                                <select id="sox_apps" name="application" class="form-control">
-                                    {% for a in sox_applications %}
-                                        <option value="{{a.id}}">{{a.name}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group"><label class="col-sm-2 control-label"> Request Type</label>
-
-                            <div class="col-sm-10">
-                                {{ form.request_type }}
-                            </div>
-                        </div>
-                        <div class="form-group"><label class="col-sm-2 control-label">Affected User </label>
-
-                            <div class="col-sm-10">
-                                {{ form.affected_user }}
-                            </div>
                         </div>
 
-                        <div class="form-group"><label class="col-sm-2 control-label">Executor </label>
+                        <div class="ibox-content">
+                            <form id="sox_form" method="post" class="form-horizontal">{% csrf_token %}
 
-                            <div class="col-sm-10">
-                                {#{{ form.executor }}#}
-                                <select name="executor" class="form-control">
-                                    {% for e in executor %}
-                                        <option value="{{e.id}}">{{e.username}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
+                                <div class="form-group"><label class="col-sm-2 control-label">Folio</label>
 
-                        
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Execution Date </label>
-                            <div class="col-sm-10" >
-
-                                <div id="data_1" class="input-group date">
-                                    <span class="input-group-addon">
-                                       <i class="fa fa-calendar"></i>
-                                    </span>
-                                    {{ form.execution_date }}
-                                    <input type="hidden" name="date_1" value="">
+                                    <div class="col-sm-10">
+                                        {{ form.folio_number }}
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
+                                <div class="form-group"><label class="col-sm-2 control-label">Application </label>
 
-                        <div class="form-group"><label class="col-sm-2 control-label">Status </label>
-
-                            <div class="col-sm-10">
-                                {{ form.status }}
-                            </div>
-                        </div>
-
-                        <div class="form-group"><label class="col-sm-2 control-label">Sent email to Executor </label>
-
-                            <div class="col-sm-10">
-                                {{ form.sent_email_to_exec }}
-                            </div>
-                        </div>
-
-                        <div class="form-group"><label class="col-sm-2 control-label">Confirmed by Executor </label>
-
-                            <div class="col-sm-10">
-                                {{ form.confirmed_by_exec }}
-                            </div>
-                        </div>
-
-                        <div class="form-group" >
-                            <label class="col-sm-2 control-label">Executor Confirmed Date </label>
-                            <div class="col-sm-10" >
-
-                                <div id="data_2" class="input-group date">
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-calendar"></i>
-                                    </span>
-                                    {{ form.exec_confirmed_date }}
-                                    <input type="hidden" name="date_2" value="">
+                                    <div class="col-sm-10">
+                                        {#{{ form.application }}#}
+                                        <select id="sox_apps" name="application" class="form-control">
+                                            {% for a in sox_applications %}
+                                                <option value="{{a.id}}">{{a.name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
+                                <div class="form-group"><label class="col-sm-2 control-label"> Request Type</label>
 
-                        <div class="form-group"><label class="col-sm-2 control-label">1st Source </label>
-
-                            <div class="col-sm-10">
-                                {{ form.first_source }}
-                            </div>
-                        </div>
-
-                        <div class="form-group" >
-                            <label class="col-sm-2 control-label">1st Source Date </label>
-                            <div class="col-sm-10" >
-
-                                <div class="input-group date">
-                                    <span class="input-group-addon">
-                                            <i class="fa fa-calendar"></i>
-                                    </span>
-                                    {{ form.first_source_date }}
-                                    <input type="hidden" name="date_3" value="">
+                                    <div class="col-sm-10">
+                                        {{ form.request_type }}
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
+                                <div class="form-group"><label class="col-sm-2 control-label">Affected User </label>
 
-                        <div class="form-group"><label class="col-sm-2 control-label">1st Source Executor </label>
-
-                            <div class="col-sm-10">
-                                {#{{ form.first_source_executor }}#}
-                                <select name="first_source_executor" class="form-control">
-                                    {% for e in 1st_2nd_source_executor %}
-                                        <option value="{{e.id}}">{{e.username}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group"><label class="col-sm-2 control-label">2nd Source </label>
-
-                            <div class="col-sm-10">
-                                {{ form.second_source }}
-                            </div>
-                        </div>
-
-                        <div class="form-group"><label class="col-sm-2 control-label">2nd Source Executor </label>
-
-                            <div class="col-sm-10">
-                                {#{{ form.second_source_executor }}#}
-                                <select name="second_source_executor" class="form-control">
-                                    {% for e in 1st_2nd_source_executor %}
-                                        <option value="{{e.id}}">{{e.username}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group" >
-                            <label class="col-sm-2 control-label">2nd Source Date </label>
-                            <div class="col-sm-10" >
-
-                                <div class="input-group date">
-                                    <span class="input-group-addon">
-                                            <i class="fa fa-calendar"></i>
-                                    </span>
-                                    {{ form.second_source_date }}
-                                    <input type="hidden" name="date_4" value="">
+                                    <div class="col-sm-10">
+                                        {{ form.affected_user }}
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
 
-                        <div class="hr-line-dashed"></div>
-                        <div class="form-group">
-                            <div class="col-sm-4 col-sm-offset-2">
-                                <a class="btn btn-white" type="button" href="{% url 'sox:list' %}">Cancel</a>
-                                <button id="btn_submit" class="btn btn-primary" type="submit">Save changes</button>
-                            </div>
+                                <div class="form-group"><label class="col-sm-2 control-label">Executor </label>
+
+                                    <div class="col-sm-10">
+                                        {#{{ form.executor }}#}
+                                        <select name="executor" class="form-control">
+                                            {% for e in executor %}
+                                                <option value="{{e.id}}">{{e.username}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Execution Date </label>
+                                    <div class="col-sm-10" >
+
+                                        <div id="data_1" class="input-group date">
+                                            <span class="input-group-addon">
+                                               <i class="fa fa-calendar"></i>
+                                            </span>
+                                            {{ form.execution_date }}
+                                            <input type="hidden" name="date_1" value="">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group"><label class="col-sm-2 control-label">Status </label>
+
+                                    <div class="col-sm-10">
+                                        {{ form.status }}
+                                    </div>
+                                </div>
+
+                                <div class="form-group"><label class="col-sm-2 control-label">Sent email to Executor </label>
+
+                                    <div class="col-sm-10">
+                                        {{ form.sent_email_to_exec }}
+                                    </div>
+                                </div>
+
+                                <div class="form-group"><label class="col-sm-2 control-label">Confirmed by Executor </label>
+
+                                    <div class="col-sm-10">
+                                        {{ form.confirmed_by_exec }}
+                                    </div>
+                                </div>
+
+                                <div class="form-group" >
+                                    <label class="col-sm-2 control-label">Executor Confirmed Date </label>
+                                    <div class="col-sm-10" >
+
+                                        <div id="data_2" class="input-group date">
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                            {{ form.exec_confirmed_date }}
+                                            <input type="hidden" name="date_2" value="">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group"><label class="col-sm-2 control-label">1st Source </label>
+
+                                    <div class="col-sm-10">
+                                        {{ form.first_source }}
+                                    </div>
+                                </div>
+
+                                <div class="form-group" >
+                                    <label class="col-sm-2 control-label">1st Source Date </label>
+                                    <div class="col-sm-10" >
+
+                                        <div class="input-group date">
+                                            <span class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                            </span>
+                                            {{ form.first_source_date }}
+                                            <input type="hidden" name="date_3" value="">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group"><label class="col-sm-2 control-label">1st Source Executor </label>
+
+                                    <div class="col-sm-10">
+                                        {#{{ form.first_source_executor }}#}
+                                        <select name="first_source_executor" class="form-control">
+                                            {% for e in 1st_2nd_source_executor %}
+                                                <option value="{{e.id}}">{{e.username}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group"><label class="col-sm-2 control-label">2nd Source </label>
+
+                                    <div class="col-sm-10">
+                                        {{ form.second_source }}
+                                    </div>
+                                </div>
+
+                                <div class="form-group"><label class="col-sm-2 control-label">2nd Source Executor </label>
+
+                                    <div class="col-sm-10">
+                                        {#{{ form.second_source_executor }}#}
+                                        <select name="second_source_executor" class="form-control">
+                                            {% for e in 1st_2nd_source_executor %}
+                                                <option value="{{e.id}}">{{e.username}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" >
+                                    <label class="col-sm-2 control-label">2nd Source Date </label>
+                                    <div class="col-sm-10" >
+
+                                        <div class="input-group date">
+                                            <span class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                            </span>
+                                            {{ form.second_source_date }}
+                                            <input type="hidden" name="date_4" value="">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="hr-line-dashed"></div>
+                                <div class="form-group">
+                                    <div class="col-sm-4 col-sm-offset-2">
+                                        <a class="btn btn-white" type="button" href="{% url 'sox:list' %}">Cancel</a>
+                                        <button id="btn_submit" class="btn btn-primary" type="submit">Save changes</button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>

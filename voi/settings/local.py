@@ -15,9 +15,9 @@ ALLOWED_HOSTS = ['*']
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'voi_db',
-        'HOST': '192.168.0.7',
-        'USER': 'pi',
+        'NAME': 'voireg_db',
+        'HOST': '192.168.0.25',
+        'USER': 'voireg_admin',
         'PORT': '5432',
         'PASSWORD': 'mario bross 2',
     }

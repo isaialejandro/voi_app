@@ -15,13 +15,12 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.detail import DetailView
 
 from braces.views import LoginRequiredMixin
-from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin
 
+from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin
 from apps.ticket.models import Ticket, TicketHistory
 from apps.application.models import Application
 from apps.applicant.models import Applicant
 from apps.ticket.forms import TicketForm, TicketUpdateForm, HistoryTicketForm
-
 
 
 now = datetime.datetime.now()
@@ -60,7 +59,7 @@ class NewTicket(NeverCacheMixin, CSRFExemptMixin, CreateView):
 
     @transaction.atomic
     def post(self, request):
-        
+
         title = request.POST.get('title').upper()
         folio_no = request.POST.get('folio_number').upper()
         priority = request.POST.get('priority')
@@ -69,8 +68,8 @@ class NewTicket(NeverCacheMixin, CSRFExemptMixin, CreateView):
         application = request.POST.get('application')
         assigned_to = request.POST.get('assigned_to')
         request_type =request.POST.get('request_type')
-        beneficiary_name = request.POST.get('beneficiary_name')
-        beneficiary_last_name = request.POST.get('beneficiary_last_name')
+        beneficiary_name = request.POST.get('beneficiary_name').capitalize()
+        beneficiary_last_name = request.POST.get('beneficiary_last_name').capitalize()
         approval_owner = request.POST.get('approval_owner')
         approval_executor = request.POST.get('approval_executor')
         approve = request.POST.get('approve')
@@ -81,7 +80,7 @@ class NewTicket(NeverCacheMixin, CSRFExemptMixin, CreateView):
         is_active = True
 
         summary_data = request.POST.get('summary')
-        
+
         if Ticket.objects.filter(title = title):
 
             msg = 'Title ticket ' + title + ' already exist. Reassign the user again'
@@ -134,7 +133,7 @@ class NewTicket(NeverCacheMixin, CSRFExemptMixin, CreateView):
                         'request_type': request_type,
                         'beneficiary_name': beneficiary_name,
                         'beneficiary_last_name': beneficiary_last_name,
-                        'approval_owner': approval_owner,   
+                        'approval_owner': approval_owner,
                         'approval_executor': approval_executor,
                         'approve': approve,
                         'created_by': created_by,
@@ -179,10 +178,9 @@ class NewTicket(NeverCacheMixin, CSRFExemptMixin, CreateView):
                 summary = 'Ticket CREATION with status: ' + new_ticket.status.upper(),
                 registry_date = now,
                 update = False,
-                not_finished_type = True,
                 user = User.objects.get(id=request.user.id)
             )
-            
+
             hist.save()
 
             messages.success(request, 'Ticket ' + new_ticket.folio_number + ' created successfully')
@@ -194,7 +192,8 @@ class UpdateTicket(NeverCacheMixin, CSRFExemptMixin, View):
     def get(self, request, pk):
         context = {}
         context['update_ticket'] = True
-        context['application'] = Application.objects.filter(is_active=True,app_type='NORMAL')
+        context['application'] = Application.objects.filter(is_active=True, \
+                                app_type='NORMAL')
 
         current_ticket = Ticket.objects.get(id=pk)
 
@@ -211,13 +210,14 @@ class UpdateTicket(NeverCacheMixin, CSRFExemptMixin, View):
         created_by = current_ticket.created_by
         item_type = current_ticket.item_type
         path = current_ticket.path
-        desc = current_ticket.description
+        #desc = current_ticket.description
 
+        print(current_ticket.beneficiary_name)
         f = TicketUpdateForm(
             initial={
                 'priority': priority,
                 'applicant': applicant,
-                'aplication': application,
+                'application': application,
                 'assigned_to': assigned_to,
                 'request_type': request_type,
                 'beneficiary_name': ben_name,
@@ -228,7 +228,10 @@ class UpdateTicket(NeverCacheMixin, CSRFExemptMixin, View):
                 'created_by': created_by,
                 'item_type': item_type,
                 'path': path,
-                'description': desc
+                #en caso de agregar el cmapo descripción actualizable, es
+                #necesario agregar el tag al template de form.
+
+                #'description': desc,
                 }
         )
         context['current_ticket'] = current_ticket
@@ -247,8 +250,8 @@ class UpdateTicket(NeverCacheMixin, CSRFExemptMixin, View):
         application = request.POST.get('application')
         assigned_to = request.POST.get('assigned_to')
         request_type = request.POST.get('request_type')
-        ben_name = request.POST.get('beneficiary_name')
-        ben_last_name = request.POST.get('beneficiary_last_name')
+        ben_name = request.POST.get('beneficiary_name').capitalize()
+        ben_last_name = request.POST.get('beneficiary_last_name').capitalize()
         app_owner = request.POST.get('approval_owner')
         app_executor = request.POST.get('approval_executor')
         approve = request.POST.get('approve')
@@ -274,8 +277,6 @@ class UpdateTicket(NeverCacheMixin, CSRFExemptMixin, View):
         update.path=path
         update.description=desc
 
-        update.save()
-
         #history
         summary = request.POST.get('summary')
         history = TicketHistory(
@@ -285,8 +286,9 @@ class UpdateTicket(NeverCacheMixin, CSRFExemptMixin, View):
             user = current_user,
             summary = summary.capitalize()
         )
+        update.save()
         history.save()
 
         msg = 'Ticket ' + update.folio_number + ' updated successfully'
         messages.success(request, msg)
-        return HttpResponseRedirect('/dashboard/')
+        return HttpResponseRedirect('/')

@@ -29,43 +29,47 @@
             </div>
         {% endfor %}
     {% endif %}
+    
+    <div class="wrapper wrapper-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            {% if new_app %}
+                                <h5>New <small>Application</small></h5>
+                            {% elif update_app %}
+                                <h5>Update current <small>Application</small></h5>
+                            {% endif %}
 
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="ibox float-e-margins">
-                <div class="ibox-title">
-                    {% if new_app %}
-                        <h5>New <small>Application</small></h5>
-                    {% elif update_app %}
-                        <h5>Update current <small>Application</small></h5>
-                    {% endif %}
-
-                </div>
-
-                <div class="ibox-content">
-                    <form method="post" class="form-horizontal">{% csrf_token %}
-
-                        <div class="form-group"><label class="col-sm-2 control-label">Name</label>
-
-                            <div class="col-sm-10">
-                                {{ form.name }}
-                            </div>
-                        </div>
-                        <div class="form-group"><label class="col-sm-2 control-label">Application Type</label>
-
-                            <div class="col-sm-10">
-                                {{ form.app_type }}
-                            </div>
                         </div>
 
-                        <div class="hr-line-dashed"></div>
-                        <div class="form-group">
-                            <div class="col-sm-4 col-sm-offset-2">
-                                <a class="btn btn-white" type="button" href="{% url 'Application:list' %}">Cancel</a>
-                                <button class="btn btn-primary" type="submit">Save changes</button>
-                            </div>
+                        <div class="ibox-content">
+                            <form method="post" class="form-horizontal">{% csrf_token %}
+
+                                <div class="form-group"><label class="col-sm-2 control-label">Name</label>
+
+                                    <div class="col-sm-10">
+                                        {{ form.name }}
+                                    </div>
+                                </div>
+                                <div class="form-group"><label class="col-sm-2 control-label">Application Type</label>
+
+                                    <div class="col-sm-10">
+                                        {{ form.app_type }}
+                                    </div>
+                                </div>
+
+                                <div class="hr-line-dashed"></div>
+                                <div class="form-group">
+                                    <div class="col-sm-4 col-sm-offset-2">
+                                        <a class="btn btn-white" type="button" href="{% url 'Application:list' %}">Cancel</a>
+                                        <button class="btn btn-primary" type="submit">Save changes</button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -75,7 +79,9 @@
 {% block extrajs %}
     <script>
         $(document).ready(function(){
-           
+           var s_app_type = $('#id_app_type');
+
+           s_app_type.select2();
         });
     </script>
 {% endblock %}
