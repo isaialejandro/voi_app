@@ -27,6 +27,19 @@ class CSRFExemptMixin(object):
     def dispatch(self, *args, **kwargs):
         return super(CSRFExemptMixin, self).dispatch(*args, **kwargs)
 
+
+class TemplatePermissionMixin(object):
+
+    def has_permissions(self):
+        # Assumes that your model has a foreign key called `user`.
+        return self().user == self.request.user
+
+    def dispatch(self, request, *args, **kwargs):
+        if not self.has_permissions():
+            raise Http404('You do not have permission.')
+        return super(SameUserOnlyMixin, self).dispatch(
+            request, *args, **kwargs)
+
 """
 from braces.views import AccessMixin
 

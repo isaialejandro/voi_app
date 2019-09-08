@@ -1,0 +1,189 @@
+{% extends 'base/base.html' %}
+{% load static from staticfiles %}
+
+
+{% block title %}
+    {% if new_incident %}
+        New Incident
+    {% elif update_incident %}
+        Update current incident | {{ form.inc_number }}
+    {% endif %}
+{% endblock %}
+
+{% block extracss %}
+    <link href="{% static 'css/plugins/datapicker/datepicker3.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                {{error.field}}
+                <div class="alert alert-danger">
+                    {{error|escape}}.
+                </div>
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger">
+                {{message}}.
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="wrapper wrapper-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            {% if new_incident %}
+                                <h5>New Incident</h5>
+                            {% elif update_incident %}
+                                <h5>Update current ticket - <strong>{{current_ticket.folio_number}}</strong></h5>
+                            {% endif %}
+
+                        </div>
+
+                        <div class="ibox-content">
+                            <form method="post" class="form-horizontal">{% csrf_token %}
+
+                                <!--<div class="form-group">
+                                    <div class="col-lg-10">
+                                        {{form.as_p}}
+                                    </div>
+                                </div>
+                                <div class="hr-line-dashed"></div>-->
+
+                                <div class="form-group"><label class="col-sm-2 control-label">Incidence id </label>
+
+                                    <div class="col-sm-10">
+                                        {{ form.inc_number }}
+                                    </div>
+                                </div>
+
+                                <div class="form-group"><label class="col-sm-2 control-label">Application </label>
+
+                                    <div class="col-sm-10">
+                                        {{ form.application }}
+                                        <!--<select name="second_source_executor" class="form-control">
+                                            {% for a in application_list %}
+                                                <option value="{{a.id}}">{{a.name}}</option>
+                                            {% endfor %}
+                                        </select>-->
+                                    </div>
+                                </div>
+
+                                <div class="form-group"><label class="col-sm-2 control-label">Type </label>
+
+                                    <div class="col-sm-10">
+                                        {{ form.type }}
+                                        <!--<select name="second_source_executor" class="form-control">
+                                            {% for t in type %}
+                                                <option value="{{t.id}}">{{t.name}}</option>
+                                            {% endfor %}
+                                        </select>-->
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Exec - End Date </label>
+                                    <div class="col-sm-5" >
+                                        <div class="input-group date">
+                                            <span class="input-group-addon">
+                                               <i class="fa fa-calendar"></i>
+                                            </span>
+                                            {{ form.exec_date }}
+                                            <input id="date_1" type="hidden" name="date_1" value="">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-5" >
+                                        <div class="input-group date">
+                                            <span class="input-group-addon">
+                                               <i class="fa fa-calendar"></i>
+                                            </span>
+                                            {{ form.end_date }}
+                                            <input id="date_2" type="hidden" name="date_2" value="">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group"><label class="col-sm-2 control-label">Summary </label>
+                                    <div class="col-sm-10">
+                                        {{ form.summary }}
+                                    </div>
+                                </div>
+
+                                <div class="form-group"><label class="col-sm-2 control-label">Additional Comments </label>
+                                    <div class="col-sm-10">
+                                        {{ form.extra_comments }}
+                                    </div>
+                                </div>
+
+                                <div class="form-group"><label class="col-sm-2 control-label">Incident Source </label>
+                                    <div class="col-sm-10">
+                                        {{ form.inc_source }}
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-4 col-sm-offset-2">
+                                        <a class="btn btn-white" type="button" href="{% url 'extra_incidents:list' %}">Cancel</a>
+                                        <button class="btn btn-primary" type="submit">Save changes</button>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extrajs %}
+  <!-- Data picker -->
+  <script src="{% static 'js/plugins/datapicker/bootstrap-datepicker.js' %}"></script>
+
+  <script>
+
+    var exec_date = $('#id_exec_date');
+    var end_date = $('#id_end_date');
+
+    exec_date.prop('disabled', true);
+    end_date.prop('disabled', true);
+
+
+    $('.input-group.date').datepicker({
+        todayBtn: "linked",
+        keyboardNavigation: false,
+        forceParse: false,
+        calendarWeeks: true,
+        autoclose: true,
+        format: 'yyyy-mm-dd',
+        todayHighlight: true,
+        enableOnReadonly: true,
+        setDate: new Date(),
+    });
+
+    $('#date_1').val(exec_date.val())
+    $('#date_2').val(end_date.val());
+
+  /*
+    $('#id_exec_date').on('change', function(){
+        date_1 = $(this).val();
+        console.log(date_1);
+    });
+
+    $('#id_end_date').on('change', function(){
+        date_2 = $(this).val();
+        console.log(date_2);
+    });
+    */
+  </script>
+
+{% endblock %}

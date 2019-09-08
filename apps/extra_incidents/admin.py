@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+from apps.extra_incidents.models import ExtraIncident
+
+
+admin.site.register(ExtraIncident)
