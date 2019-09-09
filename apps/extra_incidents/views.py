@@ -14,7 +14,7 @@ from django.views.generic.edit import CreateView, View
 
 from braces.views import LoginRequiredMixin
 
-from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin#, TemplatePermissionMixin
+from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin, PermissionRequiredMixin
 
 from apps.extra_incidents.models import ExtraIncident
 from apps.extra_incidents.forms import ExtraIncidentForm
@@ -24,7 +24,7 @@ from apps.application.models import Application
 now = datetime.datetime.now()
 
 
-class ListView(LoginRequiredMixin, NeverCacheMixin, CSRFExemptMixin, ListView):
+class ListView(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, ListView):
 
     model = ExtraIncident
     context_object_name='extra_incidents'
@@ -32,11 +32,15 @@ class ListView(LoginRequiredMixin, NeverCacheMixin, CSRFExemptMixin, ListView):
     template_name='extra_incident_list.html'
 
 
-class CreateIncident(LoginRequiredMixin, NeverCacheMixin, CSRFExemptMixin, CreateView):
+class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, CreateView):
 
     model = ExtraIncident
     form_class = ExtraIncidentForm
     template_name = 'extra_incident_form.html'
+
+    #permission_required = (
+    #    'extra_incidents.view_extra_incident_list'
+    #)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

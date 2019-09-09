@@ -31,12 +31,12 @@
                         <li class="dropdown">
                             <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> Extra Incidents <span class="caret"></span></a>
                             <ul role="menu" class="dropdown-menu">
-                                {% if perms.view_extra_incident_list %}
+                                {% if perms.extra_incidents.view_extra_incident_list %}
                                   {% if not extra_incidents %}
                                     <li><a href="{% url 'extra_incidents:list' %}">List</a></li>
                                   {% endif %}
                                 {% endif %}
-                                {% if perms.create_extra_incident %}
+                                {% if perms.extra_incidents.create_extra_incident %}
                                   {% if not new_incident %}
                                     <li><a href="{% url 'extra_incidents:create' %}">New</a></li>
                                   {% endif %}

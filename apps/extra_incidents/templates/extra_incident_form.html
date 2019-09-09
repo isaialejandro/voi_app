@@ -153,6 +153,7 @@
 
     var exec_date = $('#id_exec_date');
     var end_date = $('#id_end_date');
+    var s_app = $('#id_application');
 
     exec_date.prop('disabled', true);
     end_date.prop('disabled', true);
@@ -172,6 +173,8 @@
 
     $('#date_1').val(exec_date.val())
     $('#date_2').val(end_date.val());
+
+    s_app.select2();
 
   /*
     $('#id_exec_date').on('change', function(){
