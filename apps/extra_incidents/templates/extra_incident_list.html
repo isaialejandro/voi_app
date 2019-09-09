@@ -1,0 +1,108 @@
+{% extends 'base/base.html' %}
+{% load static from staticfiles %}
+
+{% block title %}
+    Extra Incident List
+{% endblock %}
+
+{% block content %}
+    <div class="wrapper wrapper-content">
+        <div class="container">
+
+            {% if messages %}
+                {% for message in messages %}
+
+                    <div class="alert alert-success">
+                        {{message}}.
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5> Application List </h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="row">
+                              <div class="col-sm-9 m-b-xs"></div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-striped" id="yes">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>App</th>
+                                            <th>Type</th>
+                                            <th>Exec date</th>
+                                            <th>End date</th>
+                                            <th>Source</th>
+
+                                            {% if user.is_superuser %}
+                                                <th>Created</th>
+                                                <th>User </th>
+                                            {% endif %}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for inc in extra_incidents %}
+                                            <tr>
+                                                <td>{{ inc.inc_number }}</td>
+                                                <td>{{ inc.application }}</td>
+                                                <td>{{ inc.type }}</td>
+                                                <td>{{ inc.exec_date }}</td>
+                                                <td>{{ inc.end_date }}</td>
+                                                <td>{{ inc.inc_source }}</td>
+
+                                                {% if user.is_superuser %}
+                                                  <th>{{ inc.created }} </th>
+                                                  <th>{{ inc.user }} </th>
+                                                {% endif %}
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block extrajs %}
+    <script src="{% static 'js/plugins/dataTables/datatables.min.js' %}"></script>
+
+    <script>
+
+        $(document).ready(function(){
+            $('.table').DataTable({
+                pageLength: 10,
+                responsive: true,
+                /*dom: '<"html5buttons"B>lTfgitp',
+                buttons: [
+                    {
+                        extend: 'copy'
+                    },
+                    {
+                        extend: 'csv', title: 'History'
+                    },
+                ]*/
+
+            });
+
+
+        });
+
+    </script>
+{% endblock %}
