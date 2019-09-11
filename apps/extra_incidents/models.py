@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 
 from apps.application.models import Application
 
-from apps.extra_incidents.choices import TYPE, REGISTRY
+from apps.extra_incidents.choices import TYPE, REGISTRY, INC_SOURCE, PAPERLESS
 
 
 class ExtraIncident(models.Model):
@@ -18,7 +18,8 @@ class ExtraIncident(models.Model):
     end_date = models.DateField()
     summary = models.CharField(max_length=500, null=False)
     extra_comments = models.CharField(max_length=500, null=True, blank=True)
-    inc_source = models.CharField(max_length=25, blank=False)
+    #inc_source = models.CharField(max_length=25, blank=False)
+    inc_source = models.CharField(max_length=25, choices=INC_SOURCE, default=PAPERLESS, blank=False)
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     created = models.DateTimeField(default=timezone.now())
     is_active = models.BooleanField(default=True)
