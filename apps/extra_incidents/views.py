@@ -36,12 +36,17 @@ class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
 
     model = ExtraIncident
     form_class = ExtraIncidentForm
-    template_name = 'extra_incident_form.html'
+    #template_name = 'extra_incident_form.html'
 
-    #permission_required = (
-    #    'extra_incidents.view_extra_incident_list'
-    #)
+    def get(self, request):
+        context = {
+            'new_incident': True,
+            'form': ExtraIncidentForm(),
+            'application_list': Application.objects.filter(is_active=True)
+        }
+        return render(request, 'extra_incident_form.html', context)
 
+    """
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context = {
@@ -50,6 +55,7 @@ class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
             'application_list': Application.objects.filter(is_active=True)
         }
         return context
+    """
 
     def post(self, request, *args):
 
