@@ -12,7 +12,8 @@ from apps.extra_incidents.choices import *
 
 class ExtraIncidentForm(forms.ModelForm):
 
-    type =  forms.ChoiceField(choices=TYPE, widget=forms.Select(attrs={'class': 'form-control'}), initial=REGISTRY)
+    type =  forms.ChoiceField(choices=TYPE, widget=forms.Select(attrs={'class': 'form-control'}), initial=REGISTRY),
+    inc_source =  forms.ChoiceField(choices=INC_SOURCE, widget=forms.Select(attrs={'class': 'form-control'}), initial=PAPERLESS),
 
     class Meta:
 
@@ -36,7 +37,7 @@ class ExtraIncidentForm(forms.ModelForm):
             'end_date': forms.TextInput(attrs={'class': 'form-control input-group date'}),
             'summary': forms.Textarea(attrs={'class': 'form-control'}),
             'extra_comments': forms.Textarea(attrs={'class': 'form-control'}),
-            'inc_source': forms.TextInput(attrs={'class': 'form-control'})
+            #'inc_source': forms.TextInput(attrs={'class': 'form-control'})
         }
 
 
