@@ -20,6 +20,7 @@ from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin, PermissionRe
 
 from apps.extra_incidents.models import ExtraIncident
 from apps.extra_incidents.forms import ExtraIncidentForm
+from apps.extra_incidents.snippets import ExtraIncidentFilter
 
 from apps.application.models import Application
 
@@ -32,7 +33,7 @@ class ListView(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
 
         extra_incident_list = ExtraIncident.objects.filter(is_active=True)
         page = request.GET.get('page')
-        paginator = Paginator(extra_incident_list, 15)
+        paginator = Paginator(extra_incident_list, 10)
 
         try:
             extra_incidents = paginator.page(page)
@@ -43,6 +44,7 @@ class ListView(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
 
         context = {
             'extra_incident_list': extra_incidents,
+            'incident_filter': ExtraIncidentFilter(self.request.GET, queryset=extra_incident_list),
             'extra_incidents': True,
         }
         return render(request, 'extra_incident_list.html', context)
