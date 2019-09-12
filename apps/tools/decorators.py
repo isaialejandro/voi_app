@@ -1,6 +1,6 @@
 from django.utils.decorators import method_decorator
 
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
@@ -16,6 +16,12 @@ class LoginRequiredMixin(object):
         return super(LoginRequiredMixin, self).dispatch(*args, **kwargs)
 
 
+class PermissionRequiredMixin(object):
+    @method_decorator(permission_required)
+    def dispatch(self, *args, **kwargs):
+        return super(PermissionRequiredMixin, self).dispatch(*args, **kwargs)
+
+
 class NeverCacheMixin(object):
     @method_decorator(never_cache)
     def dispatch(self, *args, **kwargs):
@@ -27,7 +33,17 @@ class CSRFExemptMixin(object):
     def dispatch(self, *args, **kwargs):
         return super(CSRFExemptMixin, self).dispatch(*args, **kwargs)
 
+
 """
+class TemplatePermissionMixin(object):
+
+    def dispatch(self, request, *args, **kwargs):
+        if not self.has_permissions():
+            raise Http404('You do not have permission.')
+        return super(TemplatePermissionMixin, self).dispatch(
+            request, *args, **kwargs)
+
+
 from braces.views import AccessMixin
 
 class SuperOrManagerPermissionsMixin(AccessMixin):

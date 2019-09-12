@@ -37,6 +37,7 @@ sox = apps.get_app_config('sox').verbose_name
 user = apps.get_app_config('user').verbose_name
 import_export = apps.get_app_config('import_export').verbose_name
 bi_modules = apps.get_app_config('bi_modules').verbose_name
+extra_incidents = apps.get_app_config('extra_incidents').verbose_name
 
 
 class Dashboard(View):
@@ -67,6 +68,7 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
 
     path('', Dashboard.as_view(), name='dashboard'),
+    path('extra_incidents/', include(('apps.extra_incidents.urls', extra_incidents), namespace='extra_incidents')),
     path('tickets/', include(('apps.ticket.urls', ticket), namespace='ticket')),
     path('application/', include(('apps.application.urls', application), namespace='application')),
     path('applicant/', include(('apps.applicant.urls', applicant), namespace='applicant')),
