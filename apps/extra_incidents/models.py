@@ -12,7 +12,7 @@ from apps.extra_incidents.choices import TYPE, REGISTRY, INC_SOURCE, PAPERLESS
 class ExtraIncident(models.Model):
 
     application = models.ForeignKey(Application, on_delete=models.DO_NOTHING)
-    inc_number = models.CharField(max_length=12, null=True, blank=False) #for default apps.
+    inc_number = models.CharField(max_length=12, null=True, blank=True) #for default apps.
     type = models.CharField(max_length=20,choices=TYPE, default=REGISTRY)
     exec_date = models.DateField()
     end_date = models.DateField()
