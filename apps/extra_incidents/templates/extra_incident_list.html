@@ -36,9 +36,8 @@
                         <div class="ibox-content">
                             <div class="row">
                               <div class="col-sm-9 m-b-xs">
-                                <form action="#" method=GET>
-                                    {{incident_filter.form}}
-                                    <button class="btn btn-primary" type="submit">Save changes</button>
+                                <form action="#" method=POST>
+                                  <input id="search" type="text" class="form-control input-sm m-b-xs" id="filter" placeholder="Search in table">
                                 </form>
                               </div>
                             </div>
