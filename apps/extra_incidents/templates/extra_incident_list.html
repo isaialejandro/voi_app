@@ -61,8 +61,7 @@
                                     <tbody>
                                         {% for inc in extra_incident_list %}
                                             <tr>
-                                                <td>{{ inc.counter }}</td>
-                                                <td>{{ inc.inc_number }}</td>
+                                                <td>{{ inc.inc_number|default:"N/A" }}</td>
                                                 <td>{{ inc.application }}</td>
                                                 <td>{{ inc.type }}</td>
                                                 <td>{{ inc.exec_date }}</td>

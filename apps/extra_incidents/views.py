@@ -73,7 +73,10 @@ class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
         inc_source = request.POST.get('inc_source')
         user =  request.user.id
 
-        if not ExtraIncident.objects.filter(inc_number=inc_no):
+        #if inc_number is None:
+
+
+        if not ExtraIncident.objects.filter(inc_number=inc_no).exclude(inc_number=''):
             new = ExtraIncident(
                 application=Application.objects.get(id=app),
                 inc_number=inc_no,
