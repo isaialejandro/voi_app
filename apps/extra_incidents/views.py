@@ -1,5 +1,7 @@
 import datetime
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 from django.contrib import messages
 from django.contrib.auth.models import User
 
@@ -24,19 +26,32 @@ from apps.application.models import Application
 now = datetime.datetime.now()
 
 
-class ListView(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, ListView):
+class ListView(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
 
-    model = ExtraIncident
-    context_object_name='extra_incidents'
-    queryset=ExtraIncident.objects.filter(is_active=True)
-    template_name='extra_incident_list.html'
+    def get(self, request):
+
+        extra_incident_list = ExtraIncident.objects.filter(is_active=True)
+        page = request.GET.get('page')
+        paginator = Paginator(extra_incident_list, 15)
+
+        try:
+            extra_incidents = paginator.page(page)
+        except PageNotAnInteger:
+            extra_incidents = paginator.page(1)
+        except EmptyPage:
+            extra_incidents = paginator.page(paginator.num_pages)
+
+        context = {
+            'extra_incident_list': extra_incidents,
+            'extra_incidents': True,
+        }
+        return render(request, 'extra_incident_list.html', context)
 
 
 class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, CreateView):
 
     model = ExtraIncident
     form_class = ExtraIncidentForm
-    #template_name = 'extra_incident_form.html'
 
     def get(self, request):
         context = {
@@ -46,20 +61,7 @@ class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
         }
         return render(request, 'extra_incident_form.html', context)
 
-    """
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context = {
-            'new_incident': True,
-            'form': ExtraIncidentForm(),
-            'application_list': Application.objects.filter(is_active=True)
-        }
-        return context
-    """
-
     def post(self, request, *args):
-
-        #form = ExtraIncidentForm(request.POST)
 
         app = request.POST.get('application')
         inc_no = request.POST.get('inc_number').upper()
@@ -107,36 +109,3 @@ class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
             context = {}
             context['form'] = form
             return render(request, 'extra_incident_form.html', context)
-
-        """
-        if form.is_valid():
-
-            form.save(commit=False)
-
-            msg = 'Incident ', form.cleaned_data['inc_number'], ' saved successfully.'
-            messages.success(request, msg)
-            return HttpResponseRedirect(reverse_lazy('extra_incidents:list'))
-        else:
-            f = form.cleaned_data
-            print('ELSE: ', form.errors)
-
-
-            form = ExtraIncidentForm(
-                initial = {
-                    'application': f['application'],
-                    'inc_number': f['inc_number'],
-                    'type': f['type'],
-                    'exec_date': exec_date,
-                    'end_date': end_date,
-                    'summary': f['summary'],
-                    'extra_comments': f['extra_comments'],
-                    'inc_source': f['inc_source']
-                }
-            )
-            context = {}
-            context['form'] = form
-
-            msg = str(form.errors)
-            messages.error(request, msg)
-            return render(request, 'extra_incident_form.html', context)
-            """
