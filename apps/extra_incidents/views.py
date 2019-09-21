@@ -1,4 +1,6 @@
 import datetime
+from datetime import timedelta
+from datetime import time
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -13,6 +15,7 @@ from django.http import HttpResponseRedirect
 
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView, View
+from django.views.generic.detail import DetailView
 
 from braces.views import LoginRequiredMixin
 
@@ -112,3 +115,25 @@ class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
             context = {}
             context['form'] = form
             return render(request, 'extra_incident_form.html', context)
+
+
+class IncidentDetail(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, DetailView):
+
+    model = ExtraIncident
+    template_name = 'incident_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(IncidentDetail, self).get_context_data(**kwargs)
+        inc = ExtraIncident.objects.get(id=self.kwargs.get('pk'))
+
+
+        #start_date = datetime.datetime.strptime(str(inc.created), "%H:%M:%S").time()
+
+        #end_date = datetime.datetime.strptime(str(inc.end_date), "%Y-%m-%d %H:%M:%S.%f").time()
+        #end_date = datetime.datetime.strptime(str(inc.end_date), "%Y-%m-%d %H:%M:%S.%Z")
+        #resol_time = end_date - start_date
+        #print(start_date, '\n', end_date, '\n', resol_time)
+
+        #context['resol_time'] = resol_time
+        context['detail'] = inc
+        return context
