@@ -67,6 +67,9 @@
                                                 <td>{{ inc.exec_date }}</td>
                                                 <td>{{ inc.end_date }}</td>
                                                 <td>{{ inc.inc_source }}</td>
+                                                <td>
+                                                  <button type="button" class="btn btn-xs btn-info">Info</button>
+                                                </td>
 
                                                 {% if user.is_superuser %}
                                                   <th>{{ inc.created }} </th>
@@ -135,32 +138,15 @@
 
         $(document).ready(function(){
 
-          //$('.table').footable();
+          
 
-          /*
-            $('.table').DataTable({
-                pageLength: 10,
-                responsive: true,
-                dom: '<"html5buttons"B>lTfgitp',
-                buttons: [
-                    {
-                        extend: 'copy'
-                    },
-                    {
-                        extend: 'csv', title: 'History'
-                    },
-                ]
+          var search = $('#search');
 
-            });
-        */
+          search.addEventListener('keypress', function(e){
+            if(e.keyCode==13){
 
-        var search = $('#search');
-
-        search.addEventListener('keypress', function(e){
-          if(e.keyCode==13){
-
-          }
-        });
+            }
+          });
 
         });
 
