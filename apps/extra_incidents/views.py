@@ -77,7 +77,27 @@ class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
         user =  request.user.id
 
         #if inc_number is None:
+        if exec_date is None or exec_date == '':
+            msg = 'Execution date is empty, please select a start date'
+            messages.error(request, msg)
+            form = ExtraIncidentForm(
+                initial = {
+                    'application': app,
+                    'inc_number': inc_no,
+                    'type': type,
+                    'exec_date': exec_date,
+                    'end_date': end_date,
+                    'summary': summary,
+                    'extra_comments': extra_commnt,
+                    'inc_source': inc_source
+                }
+            )
+            context = {}
+            context['form'] = form
+            return render(request, 'extra_incident_form.html', context)
 
+        if end_date is None or end_date == '':
+            end_date = None
 
         if not ExtraIncident.objects.filter(inc_number=inc_no).exclude(inc_number=''):
             new = ExtraIncident(
@@ -98,7 +118,7 @@ class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
             return HttpResponseRedirect(reverse_lazy('extra_incidents:list'))
         else:
             msg = 'Incident ' + inc_no + ' already has been registered, try with another one'
-            messages.success(request, msg)
+            messages.error(request, msg)
 
             form = ExtraIncidentForm(
                 initial = {

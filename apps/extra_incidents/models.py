@@ -15,7 +15,7 @@ class ExtraIncident(models.Model):
     inc_number = models.CharField(max_length=12, null=True, blank=True) #for default apps.
     type = models.CharField(max_length=20,choices=TYPE, default=REGISTRY)
     exec_date = models.DateField()
-    end_date = models.DateField()
+    end_date = models.DateField(null=True)
     summary = models.TextField(max_length=1000, null=False)
     extra_comments = models.TextField(max_length=1000, null=True, blank=True)
     inc_source = models.CharField(max_length=25, choices=INC_SOURCE, default=PAPERLESS, blank=False)
