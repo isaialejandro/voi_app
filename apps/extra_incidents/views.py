@@ -2,6 +2,9 @@ import datetime
 from datetime import timedelta
 from datetime import time
 
+from dateutil.relativedelta import relativedelta
+
+from django.db import transaction
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from django.contrib import messages
@@ -33,9 +36,10 @@ class ListView(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
 
     def get(self, request):
 
-        extra_incident_list = ExtraIncident.objects.filter(is_active=True)
+        extra_incident_list = ExtraIncident.objects.filter(is_active=True).order_by('finalized')
+        extra_incident_list
         page = request.GET.get('page')
-        paginator = Paginator(extra_incident_list, 15)
+        paginator = Paginator(extra_incident_list, 25)
 
         try:
             extra_incidents = paginator.page(page)
@@ -64,19 +68,19 @@ class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
         }
         return render(request, 'extra_incident_form.html', context)
 
+    @transaction.atomic
     def post(self, request, *args):
 
         app = request.POST.get('application')
         inc_no = request.POST.get('inc_number').upper()
         type = request.POST.get('type')
         exec_date = request.POST.get('date_1')
-        end_date = request.POST.get('date_2')
+        #end_date = request.POST.get('date_2')
         summary = request.POST.get('summary')
         extra_commnt = request.POST.get('extra_comments')
         inc_source = request.POST.get('inc_source')
         user =  request.user.id
 
-        #if inc_number is None:
         if exec_date is None or exec_date == '':
             msg = 'Execution date is empty, please select a start date'
             messages.error(request, msg)
@@ -86,7 +90,7 @@ class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
                     'inc_number': inc_no,
                     'type': type,
                     'exec_date': exec_date,
-                    'end_date': end_date,
+                    #'end_date': end_date,
                     'summary': summary,
                     'extra_comments': extra_commnt,
                     'inc_source': inc_source
@@ -96,8 +100,8 @@ class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
             context['form'] = form
             return render(request, 'extra_incident_form.html', context)
 
-        if end_date is None or end_date == '':
-            end_date = None
+        #if end_date is None or end_date == '':
+        #    end_date = None
 
         if not ExtraIncident.objects.filter(inc_number=inc_no).exclude(inc_number=''):
             new = ExtraIncident(
@@ -105,7 +109,7 @@ class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
                 inc_number=inc_no,
                 type=type,
                 exec_date=exec_date,
-                end_date=end_date,
+                #end_date=end_date,
                 summary=summary,
                 inc_source=inc_source,
                 extra_comments=extra_commnt,
@@ -126,7 +130,7 @@ class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
                     'inc_number': inc_no,
                     'type': type,
                     'exec_date': exec_date,
-                    'end_date': end_date,
+                    #'end_date': end_date,
                     'summary': summary,
                     'extra_comments': extra_commnt,
                     'inc_source': inc_source
@@ -146,14 +150,38 @@ class IncidentDetail(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Detai
         context = super(IncidentDetail, self).get_context_data(**kwargs)
         inc = ExtraIncident.objects.get(id=self.kwargs.get('pk'))
 
+        #Cálculo para fecha de resolución
+        if inc.end_date:
+            """
+            start_date = datetime.datetime.strptime(str(inc.created)[:19], "%Y-%m-%d %H:%M:%S").time()
+            end_date = datetime.datetime.strptime(str(inc.end_date)[:19], "%Y-%m-%d %H:%M:%S").time()
 
-        #start_date = datetime.datetime.strptime(str(inc.created), "%H:%M:%S").time()
+            print(start_date , '\n', end_date)
 
-        #end_date = datetime.datetime.strptime(str(inc.end_date), "%Y-%m-%d %H:%M:%S.%f").time()
-        #end_date = datetime.datetime.strptime(str(inc.end_date), "%Y-%m-%d %H:%M:%S.%Z")
-        #resol_time = end_date - start_date
-        #print(start_date, '\n', end_date, '\n', resol_time)
+            h = end_date.hour - start_date.hour
+            m = end_date.minute - start_date.minute
+            s = end_date.second - start_date.second
+            resol_time = str(h) + ':' + str(m) + ':' + str(s)
+            """
 
+            created = datetime.datetime.strptime(str(inc.created)[:19], "%Y-%m-%d %H:%M:%S")
+            finalized = inc.end_date
+
+            sub_days = finalized + relativedelta(days=-created.day) #ready
+            sub_months = finalized + relativedelta(months=-created.month) #ready
+            #sub_years = finalized + relativedelta(years=-created.year) #not yet
+
+            #sub_hours = finalized + relativedelta(hours=-created.hour) #not yet
+            #sub_minutes = finalized + relativedelta(minutes=-created.minute) #not yet
+            #sub_seconds = finalized + relativedelta(seconds=-created.second) #not yet
+
+            #print('CURRENT HOUR: ', created)
+            #print('SUB HOUR:', sub_hours.hour)
+            #print('SUB DAYS:', sub_days.day)
+            #print('SUB MONTH', sub_month.month)
+
+        else:
+            resol_time = 'Inc has not end time.'
         #context['resol_time'] = resol_time
         context['detail'] = inc
         return context

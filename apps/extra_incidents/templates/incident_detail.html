@@ -22,7 +22,12 @@
                                 </h2>
                             </div>
                             <dl class="dl-horizontal">
-                                <dt>Status:</dt> <dd><span class="label label-primary">Active</span></dd>
+                                <dt>Status:</dt>
+                                {% if detail.finalized %}
+                                  <dd><span class="label label-danger">Finalized</span></dd>
+                                {% else %}
+                                  <dd><span class="label label-primary">Active</span></dd>
+                                {% endif %}
                             </dl>
                         </div>
                     </div>
@@ -39,9 +44,11 @@
                             <dl class="dl-horizontal" >
 
                                 <dt>Created:</dt> <dd> 	{{detail.created}} </dd>
-                                <dt>Finalized:</dt> <dd> XXX</dd>
-                                <dt>Resolution Time:</dt> <dd>  </dd>
-                                <dt>Last user:</dt> <dd> XXX </dd>
+                                {% if detail.finalized %}
+                                    <dt>Finalized:</dt> <dd> {{detail.end_date}}</dd>
+                                    <dt>Resolution Time:</dt> <dd> {{ resol_time }} </dd>
+                                    <dt>Last user:</dt> <dd> {{ detail.final_user }} </dd>
+                                {% endif %}
                             </dl>
                         </div>
                     </div>

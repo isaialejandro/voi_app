@@ -24,7 +24,7 @@
 
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="ibox float-e-margins">
+                    <div class="wrapper wrapper-content animated fadeInUp">
                         <div class="ibox-title">
                             <h5> Incidents List </h5>
                             <div class="ibox-tools">
@@ -51,6 +51,7 @@
                                             <th>Exec date</th>
                                             <th>End date</th>
                                             <th>Source</th>
+                                            <th>Action</th>
 
                                             {% if user.is_superuser %}
                                                 <th>Created</th>
@@ -65,10 +66,19 @@
                                                 <td>{{ inc.application }}</td>
                                                 <td>{{ inc.type }}</td>
                                                 <td>{{ inc.exec_date }}</td>
-                                                <td>{{ inc.end_date }}</td>
                                                 <td>{{ inc.inc_source }}</td>
                                                 <td>
                                                   <a type="button" class="btn btn-xs btn-info" href="{% url 'extra_incidents:detail' inc.id %}">Info</a>
+                                                </td>
+                                                <td align="center">
+                                                  {% if inc.finalized %}
+                                                    <span class="label label-success">
+                                                      finalized
+                                                    </span>
+                                                  {% else %}
+                                                    <button data-id="{{inc.id}}" class="btn btn-default btn-circle finalize" type="button"><i class="fa fa-check"></i>
+                                                    </button>
+                                                  {% endif %}
                                                 </td>
 
                                                 {% if user.is_superuser %}
@@ -138,17 +148,105 @@
 
         $(document).ready(function(){
 
-
-
+          /*
           var search = $('#search');
 
           search.addEventListener('keypress', function(e){
             if(e.keyCode==13){
 
             }
+          });*/
+
+          $('.finalize').click(function(){
+            var id = $(this).data('id');
+            swal({
+                    title: "Finalize it?",
+                    text: "This incident will close definitly",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Yes, delete it!",
+                    cancelButtonText: "Cancel",
+                    closeOnConfirm: false,
+                    closeOnCancel: false },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        swal({
+                            title: "{{ inc_number }}",
+                            text: "{{ success_msg }}",
+                            type: "success",
+                            showConfirmButton: false,
+                        });
+
+                        if(id){
+
+                          $.ajax({
+                            url: "{% url 'extra_incidents-api-v1:finalize' %}",
+                            type: 'json',
+                            method: 'post',
+                            data: {
+                              "id": id,
+                              "flag": 1,
+                            },
+                            beforeSend: function(xhr, settings) {
+                                if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                                    // Only send the token to relative URLs i.e. locally.
+                                    xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                                }
+                            },
+                            success: function(data){
+                              if(data.success){
+                                console.log('success, redirect now')
+                                window.location.href="/extra_incidents/list/";
+
+                              }
+                            },
+                            error: function(data){
+                              console.log('Error: ', data.message);
+                            }
+                          });
+                        }else{
+                          conso.e.log('No id identified..');
+                        }
+
+                    } else {
+                        swal("Cancelled", "Incident won´t be erased", "error");
+                    }
+                });
           });
 
-        });
 
+          $('.bbb').click(function(){
+
+              var id = $(this).data('id');
+              console.log(id);
+
+
+              $.ajax({
+                url: "{% url 'extra_incidents-api-v1:finalize' %}",
+                type: 'json',
+                method: 'post',
+                data: {
+                  "id": id,
+                },
+                beforeSend: function(xhr, settings) {
+                    if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                        // Only send the token to relative URLs i.e. locally.
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    }
+                },
+                success: function(data){
+                  if(data.success){
+                    ShowModal(data.title, data.message, '', data.button);
+                  }
+                },
+                error: function(data){
+                  console.log('Error: ', data.message);
+                }
+              });
+          });
+
+
+        });
     </script>
 {% endblock %}
