@@ -49,8 +49,11 @@
                                             <th>App</th>
                                             <th>Type</th>
                                             <th>Exec date</th>
-                                            <th>End date</th>
+                                            <th>
+                                              End date
+                                            </th>
                                             <th>Source</th>
+                                            <th>Detail</th>
                                             <th>Action</th>
 
                                             {% if user.is_superuser %}
@@ -66,10 +69,17 @@
                                                 <td>{{ inc.application }}</td>
                                                 <td>{{ inc.type }}</td>
                                                 <td>{{ inc.exec_date }}</td>
+                                                <td>
+                                                  {% if inc.finalized or inc.closed %}
+                                                    {{ inc.end_date }}
+                                                  {% endif %}
+                                                </td>
                                                 <td>{{ inc.inc_source }}</td>
+
                                                 <td>
                                                   <a type="button" class="btn btn-xs btn-info" href="{% url 'extra_incidents:detail' inc.id %}">Info</a>
                                                 </td>
+
                                                 <td align="center">
                                                   {% if inc.finalized %}
                                                     <span class="label label-success">
