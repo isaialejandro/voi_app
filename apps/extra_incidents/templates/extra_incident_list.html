@@ -8,6 +8,8 @@
 {% block extracss %}
   <!-- FooTable -->
   <link href="{% static 'css/plugins/footable/footable.core.css' %}" rel="stylesheet">
+  <link href="{% static 'css/plugins/select2/select2.min.css' %}" rel="stylesheet">
+  <link href="{% static 'css/plugins/daterangepicker/daterangepicker-bs3.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -35,9 +37,40 @@
                         </div>
                         <div class="ibox-content">
                             <div class="row">
-                              <div class="col-sm-9 m-b-xs">
+                              <div class="col-sm-12 m-b-xs">
                                 <form action="#" method=POST>
-                                  <input id="search" type="text" class="form-control input-sm m-b-xs" id="filter" placeholder="Search in table">
+                                  <div class="col-md-4">
+                                    <select class="search form-control" id="search_app" form-control">
+                                        {% for a in app %}
+                                          <option value="{{a.id}}">{{a.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                  </div>
+
+                                  <div class="col-md-4">
+                                    <select class="search form-control" id="search_type" form-control">
+                                        {% for v, s in type.choices %}
+                                          <option value="{{v}}">{{s}}</option>
+                                        {% endfor %}
+                                    </select>
+                                  </div>
+
+                                  <div class="col-md-4 input-group">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input class="form-control" type="date" name="daterange" value="01/01/2015 - 01/31/2015" />
+                                  </div>
+
+                                  <div class="col-md-4">
+                                    <select class="search form-control" id="search_source">
+                                        {% for v, s in source.choices %}
+                                          <option value="{{v}}">{{s}}</option>
+                                        {% endfor %}
+                                    </select>
+                                  </div>
+                                  <br><br>
+                                  <div class="col-md-12">
+                                    <button type="button" class="btn btn-block btn-outline btn-primary">Search</button>
+                                  </div>
                                 </form>
                               </div>
                             </div>
@@ -128,42 +161,42 @@
 {% endblock %}
 
 {% block extrajs %}
-    <script src="{% static 'js/plugins/dataTables/datatables.min.js' %}"></script>
     <!-- FooTable -->
     <script src="{% static 'js/plugins/footable/footable.all.min.js' %}"></script>
+    <!-- Select2 -->
+    <script src="{% static 'js/plugins/select2/select2.full.min.js' %}"></script>
+    <!-- Date range use moment.js same as full calendar plugin -->
+    <script src="{% static 'js/plugins/fullcalendar/moment.min.js' %}"></script>
+    <!-- Date range picker -->
+    <script src="{% static 'js/plugins/daterangepicker/daterangepicker.js' %}"></script>
 
     <script>
 
         $(document).ready(function(){
 
-          //$('.table').footable();
+          var app = $('#search_app');
+          var type = $('#search_type');
+          var source = $('#search_source');
+          var daterange = $('input[name="daterange"]');
 
-          /*
-            $('.table').DataTable({
-                pageLength: 10,
-                responsive: true,
-                dom: '<"html5buttons"B>lTfgitp',
-                buttons: [
-                    {
-                        extend: 'copy'
-                    },
-                    {
-                        extend: 'csv', title: 'History'
-                    },
-                ]
 
-            });
-        */
+          app.select2({
+            placeholder: "Select an app",
+            allowClear: true
+          });
+          type.select2({
+            placeholder: "Select reg type",
+            allowClear: true
+          });
+          source.select2({
+            placeholder: "Select the source",
+            allowClear: true
+          });
 
-        var search = $('#search');
-
-        search.addEventListener('keypress', function(e){
-          if(e.keyCode==13){
-
-          }
+          //daterange.daterangepicker();
+          //daterange.prop('disabled', true);
         });
 
-        });
 
     </script>
 {% endblock %}

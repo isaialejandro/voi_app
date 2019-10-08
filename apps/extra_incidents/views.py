@@ -23,6 +23,7 @@ from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin, PermissionRe
 from apps.extra_incidents.models import ExtraIncident
 from apps.extra_incidents.forms import ExtraIncidentForm
 from apps.extra_incidents.snippets import ExtraIncidentFilter
+from apps.extra_incidents.choices import TYPE, REGISTRY, INC_SOURCE, PAPERLESS
 
 from apps.application.models import Application
 
@@ -51,7 +52,9 @@ class ListView(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
             context['extra_incident_list'] = extra_incidents
             context['incident_filter'] = ExtraIncidentFilter(self.request.GET, queryset=extra_incident_list)
             context['extra_incidents'] = True
-            print(context['extra_incident_list'])
+            context['source'] = INC_SOURCE
+            context['type'] = TYPE
+            context['app'] = Application.objects.filter(is_active=True)
             return render(request, 'extra_incident_list.html', context)
         else:
             return render(request, '404.html', context)

@@ -46,14 +46,8 @@ class Dashboard(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
 
     def get(self, request):
 
-        usr = request.POST.get('username')
-        pwd = request.POST.get('password')
+        user = request.user
 
-        user = authenticate(request, user=usr, password=pwd)
-
-        #if not request.user.is_authenticated:
-        ##    return render(request, '404.html')
-        #else:
         context = {}
         context['dashboard'] = True
         context['pending_tickets'] = Ticket.objects.filter(is_active=True)
