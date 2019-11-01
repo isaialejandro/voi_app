@@ -38,6 +38,7 @@ class ListView(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
         context = {}
         if user.has_perm('extra_incidents.view_extra_incident_list'):
 
+            #Pagination begins
             extra_incident_list = ExtraIncident.objects.filter(is_active=True)
             page = request.GET.get('page')
             paginator = Paginator(extra_incident_list, 10)
@@ -48,6 +49,22 @@ class ListView(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
                 extra_incidents = paginator.page(1)
             except EmptyPage:
                 extra_incidents = paginator.page(paginator.num_pages)
+            #Pagination ends
+
+            #Filtering code begin
+            app = request.GET.get('search_app')
+            type = request.GET.get('search_type')
+            source = request.GET.get('search_source')
+            daterange = request.GET.get('daterange')
+
+            print(
+                'app: ', app,
+                 '\n', type, '\n', source, '\n', daterange
+            )
+
+
+            #Filtering code end
+
 
             context['extra_incident_list'] = extra_incidents
             context['incident_filter'] = ExtraIncidentFilter(self.request.GET, queryset=extra_incident_list)
