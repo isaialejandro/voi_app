@@ -10,6 +10,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
 from django.contrib.auth.models import User
 
+from django.contrib.auth.mixins import PermissionRequiredMixin
+
 from django.urls import reverse_lazy
 
 from django.shortcuts import render
@@ -26,6 +28,8 @@ from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin, PermissionRe
 
 from apps.extra_incidents.models import ExtraIncident
 from apps.extra_incidents.forms import ExtraIncidentForm
+from apps.extra_incidents.snippets import ExtraIncidentFilter
+from apps.extra_incidents.choices import TYPE, REGISTRY, INC_SOURCE, PAPERLESS
 
 from apps.application.models import Application
 
@@ -36,23 +40,54 @@ class ListView(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
 
     def get(self, request):
 
+<<<<<<< HEAD
         extra_incident_list = ExtraIncident.objects.filter(is_active=True).order_by('finalized')
         extra_incident_list
         page = request.GET.get('page')
         paginator = Paginator(extra_incident_list, 100)
+=======
+        user = request.user
+        context = {}
+        if user.has_perm('extra_incidents.view_extra_incident_list'):
 
-        try:
-            extra_incidents = paginator.page(page)
-        except PageNotAnInteger:
-            extra_incidents = paginator.page(1)
-        except EmptyPage:
-            extra_incidents = paginator.page(paginator.num_pages)
+            #Pagination begins
+            extra_incident_list = ExtraIncident.objects.filter(is_active=True)
+            page = request.GET.get('page')
+            paginator = Paginator(extra_incident_list, 10)
 
-        context = {
-            'extra_incident_list': extra_incidents,
-            'extra_incidents': True,
-        }
-        return render(request, 'extra_incident_list.html', context)
+            try:
+                extra_incidents = paginator.page(page)
+            except PageNotAnInteger:
+                extra_incidents = paginator.page(1)
+            except EmptyPage:
+                extra_incidents = paginator.page(paginator.num_pages)
+            #Pagination ends
+
+            #Filtering code begin
+            app = request.GET.get('search_app')
+            type = request.GET.get('search_type')
+            source = request.GET.get('search_source')
+            daterange = request.GET.get('daterange')
+
+            print(
+                'app: ', app,
+                 '\n', type, '\n', source, '\n', daterange
+            )
+
+>>>>>>> incidents_search_filter
+
+            #Filtering code end
+
+
+            context['extra_incident_list'] = extra_incidents
+            context['incident_filter'] = ExtraIncidentFilter(self.request.GET, queryset=extra_incident_list)
+            context['extra_incidents'] = True
+            context['source'] = INC_SOURCE
+            context['type'] = TYPE
+            context['app'] = Application.objects.filter(is_active=True)
+            return render(request, 'extra_incident_list.html', context)
+        else:
+            return render(request, '404.html', context)
 
 
 class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, CreateView):
@@ -61,12 +96,17 @@ class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
     form_class = ExtraIncidentForm
 
     def get(self, request):
-        context = {
-            'new_incident': True,
-            'form': ExtraIncidentForm(),
-            'application_list': Application.objects.filter(is_active=True)
-        }
-        return render(request, 'extra_incident_form.html', context)
+
+        context = {}
+        user = request.user
+        if not user.has_perm('extra_incidents.create_extra_incident'):
+            return render(request, '404.html', context)
+        else:
+            context['new_incident'] = True
+            context['form'] = ExtraIncidentForm()
+            context['application_list'] = Application.objects.filter(is_active=True)
+
+            return render(request, 'extra_incident_form.html', context)
 
     @transaction.atomic
     def post(self, request, *args):

@@ -48,7 +48,7 @@ class ApplicationList(NeverCacheMixin, CSRFExemptMixin, ListView):
             context = super().get_context_data(**kwargs)
             context['applications'] = Application.objects.filter(is_active=True)
             context['applicants'] = Applicant.objects.filter(is_active=True)
-            return context    
+            return context
 """
 
 class ApplicationList(NeverCacheMixin, CSRFExemptMixin, View):
@@ -59,12 +59,11 @@ class ApplicationList(NeverCacheMixin, CSRFExemptMixin, View):
 
     def get(self, request):
 
-        usr = self.request.POST.get('username')
-        pwd = self.request.POST.get('password')
+        user = request.user
 
-        user = authenticate(request, user= usr, password=pwd)
+        if not user.has_perm('application.view_application_list') or \
+            not user.has_perm('applicant.view_applicant_list'):
 
-        if not request.user.is_authenticated:
             return render(request, '404.html')
         else:
             context = {}
@@ -79,12 +78,9 @@ class CreateApplication(NeverCacheMixin, CSRFExemptMixin, View):
 
     def get(self, request):
 
-        usr = request.POST.get('username')
-        pwd = request.POST.get('password')
+        user = request.user
 
-        user = authenticate(request, user=usr, password=pwd)
-
-        if not request.user.is_authenticated:
+        if not user.has_perm('application.create_application'):
             return render(request, '404.html')
         else:
             context = {}
@@ -92,7 +88,7 @@ class CreateApplication(NeverCacheMixin, CSRFExemptMixin, View):
             context['form'] = ApplicationForm
             return render(request, 'application_form.html', context)
 
-    @transaction.atomic  
+    @transaction.atomic
     def post(self, request):
 
         name = request.POST.get('name').upper()
@@ -118,4 +114,8 @@ class CreateApplication(NeverCacheMixin, CSRFExemptMixin, View):
             msg = 'Application ' + name + ' saved successfully'
             messages.success(request, msg)
 
-            return HttpResponseRedirect(reverse_lazy('application:list'))
+            user = request.user
+            if not user.has_perm('application.view_application_list'):
+                return HttpResponseRedirect(reverse_lazy('dashboard'))
+            else:
+                return HttpResponseRedirect(reverse_lazy('application:list'))

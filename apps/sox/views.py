@@ -8,11 +8,13 @@ from django.shortcuts import render
 
 from django.contrib import messages
 from django.contrib.auth import authenticate
+
 from django.contrib.auth.models import User
+
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
 from django.views.generic.edit import View
 
-#from apps.applicant.models import Applicant
 from apps.application.models import Application
 
 from apps.sox.models import SOXRegistry, SoxHistory
@@ -26,7 +28,9 @@ from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin
 now = datetime.datetime.now()
 
 
-class SoxList(NeverCacheMixin, CSRFExemptMixin, View):
+class SoxList(NeverCacheMixin, CSRFExemptMixin, PermissionRequiredMixin, View):
+
+    permission_required = ('sox.view_sox_list', 'sox.disable_sox' )
 
     def get(self, request):
 
@@ -40,9 +44,11 @@ class SoxList(NeverCacheMixin, CSRFExemptMixin, View):
             context['sox_list'] = True
             context['sox_registries'] = SOXRegistry.objects.filter(is_active=True)
             return render(request, 'sox_list.html', context)
-    
 
-class CreateSOX(NeverCacheMixin, CSRFExemptMixin, View):
+
+class CreateSOX(NeverCacheMixin, CSRFExemptMixin, PermissionRequiredMixin, View):
+
+    permission_required = 'sox.create_sox'
 
     def get(self, request):
 
@@ -84,11 +90,11 @@ class CreateSOX(NeverCacheMixin, CSRFExemptMixin, View):
             context = {}
             context['executor'] = User.objects.filter(is_active=True,is_superuser=False).exclude(username='Pending')
             context['1st_2nd_source_executor'] = User.objects.filter(is_active=True,is_superuser=False)
-            
+
             """
-            se necesita traer el usuario seleccionado inicialmente si el form se 
+            se necesita traer el usuario seleccionado inicialmente si el form se
             reconstruye por alguna validación.
-            
+
             executr = User.objects.get(id=first_source_exec)
             context['1st_2nd_source_executor'] = SOXForm(
                 initial = {
@@ -100,7 +106,7 @@ class CreateSOX(NeverCacheMixin, CSRFExemptMixin, View):
             """
             context['form'] = SOXForm(
                 initial = {
-                        
+
                     'folio_number': folio,
                     'application': app,
                     'request_type': req_type,
@@ -169,7 +175,9 @@ class CreateSOX(NeverCacheMixin, CSRFExemptMixin, View):
 
 
 
-class UpdateSox(View):
+class UpdateSox(NeverCacheMixin, CSRFExemptMixin, PermissionRequiredMixin, View):
+
+    permission_required = 'sox.update_sox'
 
     def get(self, request):
         context = {}
@@ -199,7 +207,7 @@ class UpdateSox(View):
         second_source = request.POST.get()
         second_source_date = request.POST.get()
         second_source_executor = request.POST.get()
-        
+
         registry_date = request.POST.get()
         is_active = request.POST.get()
         user = request.POST.get()
