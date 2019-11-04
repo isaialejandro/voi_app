@@ -200,8 +200,6 @@
     <script>
 
         $(document).ready(function(){
-
-<<<<<<< HEAD
           /*
           var search = $('#search');
 
@@ -252,48 +250,6 @@
                               if(data.success){
                                 console.log('success, redirect now')
                                 window.location.href="/extra_incidents/list/";
-=======
-          var search_btn = $('#search_btn');
-          var search_form = $('search_form');
-          var app = $('#search_app');
-          var type = $('#search_type');
-          var source = $('#search_source');
-          var datepicker = $('input[name="daterange"]');
-
-
-          search_btn.click(function(){
-
-            $('#div_form').toggle(200);
-            app.val(null).trigger('change');
-            type.val(null).trigger('change');
-            source.val(null).trigger('change');
-            datepicker.val('01/01/2020 - 01/02/2020');
-          });
-
-
-          app.select2({
-            placeholder: "Select an app",
-            allowClear: true
-          });
-          type.select2({
-            placeholder: "Select reg type",
-            allowClear: true
-          });
-          source.select2({
-            placeholder: "Select the source",
-            allowClear: true
-          });
-
-          datepicker.daterangepicker({
-            locale: {
-              format: 'YYYY-MM-DD'
-            }
-          });
-          //daterange.prop('disabled', true);
-        });
-
->>>>>>> incidents_search_filter
-
                               }
                             },
                             error: function(data){
@@ -341,6 +297,45 @@
               });
           });
 
+          //------------------SEARCH FILTER-------------------------
+          var search_btn = $('#search_btn');
+          var search_form = $('search_form');
+          var app = $('#search_app');
+          var type = $('#search_type');
+          var source = $('#search_source');
+          var datepicker = $('input[name="daterange"]');
+
+
+          search_btn.click(function(){
+
+            $('#div_form').toggle(200);
+            app.val(null).trigger('change');
+            type.val(null).trigger('change');
+            source.val(null).trigger('change');
+            datepicker.val('01/01/2020 - 01/02/2020');
+          });
+
+
+          app.select2({
+            placeholder: "Select an app",
+            allowClear: true
+          });
+          type.select2({
+            placeholder: "Select reg type",
+            allowClear: true
+          });
+          source.select2({
+            placeholder: "Select the source",
+            allowClear: true
+          });
+
+          datepicker.daterangepicker({
+            locale: {
+              format: 'YYYY-MM-DD'
+            }
+          });
+          //daterange.prop('disabled', true);
+          //------------------SEARCH FILTER-------------------------
 
         });
     </script>
