@@ -144,6 +144,12 @@ REST_FRAMEWORK = {
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
 
+#The URL or named URL pattern where requests are
+#redirected for login when using the login_required() decorator,
+#default = /accounts/login/
+#LOGIN_URL = 'login'
+
+
 
 
 

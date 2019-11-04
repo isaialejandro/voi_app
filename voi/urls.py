@@ -29,6 +29,8 @@ from braces.views import LoginRequiredMixin
 
 from apps.ticket.models import Ticket
 
+from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin, PermissionRequiredMixin
+
 
 ticket = apps.get_app_config('ticket').verbose_name
 application = apps.get_app_config('application').verbose_name
@@ -40,34 +42,27 @@ bi_modules = apps.get_app_config('bi_modules').verbose_name
 extra_incidents = apps.get_app_config('extra_incidents').verbose_name
 
 
-class Dashboard(View):
+class Dashboard(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
 
     def get(self, request):
 
-        usr = request.POST.get('username')
-        pwd = request.POST.get('password')
+        user = request.user
 
-        user = authenticate(request, user=usr, password=pwd)
+        context = {}
+        context['dashboard'] = True
+        context['pending_tickets'] = Ticket.objects.filter(is_active=True)
 
-        if not request.user.is_authenticated:
-            return render(request, '404.html')
+        #permissions = Permission.objects.filter(user=request.user.id)
+        #print('Current user permssions from Dashboard View: ', permissions,', ', request.user.id)
 
-        else:
-            context = {}
-            context['dashboard'] = True
-            context['pending_tickets'] = Ticket.objects.filter(is_active=True)
-
-            permissions = Permission.objects.filter(user=request.user.id)
-            print('Current user permssions from Dashboard View: ', permissions,', ', request.user.id)
-
-            return render(request, 'index.html', context)
+        return render(request, 'index.html', context)
 
 
 urlpatterns = [
     path('c4r0nt3/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
 
-    path('', Dashboard.as_view(), name='dashboard'),
+    path('dashboard/', Dashboard.as_view(), name='dashboard'),
     path('extra_incidents/', include(('apps.extra_incidents.urls', extra_incidents), namespace='extra_incidents')),
     path('tickets/', include(('apps.ticket.urls', ticket), namespace='ticket')),
     path('application/', include(('apps.application.urls', application), namespace='application')),

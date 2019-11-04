@@ -2,6 +2,8 @@ import datetime
 
 from django.db import transaction
 
+from django.urls import reverse_lazy
+
 from django.http import HttpResponseRedirect
 
 from django.shortcuts import render
@@ -43,12 +45,9 @@ class CreateApplicant(NeverCacheMixin, CSRFExemptMixin, View):
 
     def get(self, request):
 
-        usr = request.POST.get('username')
-        pwd = request.POST.get('password')
+        user = request.user
 
-        user = authenticate(request, user= usr, password=pwd)
-
-        if not request.user.is_authenticated:
+        if not user.has_perm('applicant.create_applicant'):
             return render(request, '404.html')
         else:
             context = {}
@@ -113,6 +112,11 @@ class CreateApplicant(NeverCacheMixin, CSRFExemptMixin, View):
                 user=User.objects.get(id=request.user.id)
             )
             new.save()
-            msg = 'Applicant ' + new.first_name + ' ' + new.first_lastname + ' saved successfully.'
+            msg = 'Applicant ' + new.first_name + ' ' + new.first_lastname + ' saved successfully'
             messages.success(request, msg)
-        return HttpResponseRedirect('/application/list/')
+
+            user = request.user
+            if not user.has_perm('applicant.view_applicant_list'):
+                return HttpResponseRedirect(reverse_lazy('dashboard'))
+            else:
+                return HttpResponseRedirect(reverse_lazy('application:list'))

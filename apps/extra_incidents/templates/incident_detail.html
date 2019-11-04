@@ -46,8 +46,8 @@
                                 <dt>Created:</dt> <dd> 	{{detail.created}} </dd>
                                 {% if detail.finalized %}
                                     <dt>Finalized:</dt> <dd> {{detail.end_date}}</dd>
-                                    <dt>Resolution Time:</dt> <dd> {{ resol_time }} </dd>
-                                    <dt>Last user:</dt> <dd> {{ detail.final_user }} </dd>
+                                    <!--<dt>Resolution Time:</dt> <dd> {{ resol_time }} </dd>-->
+                                    <dt>User update:</dt> <dd> {{ detail.final_user }} </dd>
                                 {% endif %}
                             </dl>
                         </div>
@@ -79,10 +79,12 @@
                                                     {{detail.summary}}
                                                 </div>
                                                 <br><br>
-                                                <strong>Extra Comments</strong><br>
-                                                <div class="well">
-                                                    {{detail.extra_comments}}
-                                                </div>
+                                                {% if detail.extra_comments %}
+                                                  <strong>Extra Comments</strong><br>
+                                                  <div class="well">
+                                                      {{detail.extra_comments}}
+                                                  </div>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>
