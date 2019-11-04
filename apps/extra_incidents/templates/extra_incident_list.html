@@ -41,6 +41,7 @@
                                 <button id="search_btn" type="button" class="btn btn-outline btn-success">
                                   <i class="fa fa-search"></i>
                                 </button>
+                                <br><br><br>
                               </div>
                               <div id="div_form" class="col-sm-12 m-b-xs" style="display:none">
                                 <form id="search_form" action="/extra_incidents/list/" method=GET>
@@ -147,7 +148,7 @@
                                               </li>
                                           {% else %}
                                               <li class="page-item disabled">
-                                    search_form            <a class="page-link" tabindex="-1" href="#">&raquo;</a>
+                                                <a class="page-link" tabindex="-1" href="#">&raquo;</a>
                                               </li>
                                           {% endif %}
 
@@ -200,8 +201,6 @@
     <script>
 
         $(document).ready(function(){
-
-<<<<<<< HEAD
           /*
           var search = $('#search');
 
@@ -252,7 +251,54 @@
                               if(data.success){
                                 console.log('success, redirect now')
                                 window.location.href="/extra_incidents/list/";
-=======
+                              }
+                            },
+                            error: function(data){
+                              console.log('Error: ', data.message);
+                            }
+                          });
+                        }else{
+                          conso.e.log('No id identified..');
+                        }
+
+                    } else {
+                        swal("Cancelled", "Incident won´t be erased", "error");
+                    }
+                });
+          });
+
+          //bbb not exist. In progress
+          $('.bbb').click(function(){
+
+              var id = $(this).data('id');
+              console.log(id);
+
+
+              $.ajax({
+                url: "{% url 'extra_incidents-api-v1:finalize' %}",
+                type: 'json',
+                method: 'post',
+                data: {
+                  "id": id,
+                },
+                beforeSend: function(xhr, settings) {
+                    if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                        // Only send the token to relative URLs i.e. locally.
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    }
+                },
+                success: function(data){
+                  if(data.success){
+                    ShowModal(data.title, data.message, '', data.button);
+                  }
+                },
+                error: function(data){
+                  console.log('Error: ', data.message);
+                }
+              });
+          });
+
+          //------------------SEARCH FILTER-------------------------
           var search_btn = $('#search_btn');
           var search_form = $('search_form');
           var app = $('#search_app');
@@ -290,57 +336,7 @@
             }
           });
           //daterange.prop('disabled', true);
-        });
-
->>>>>>> incidents_search_filter
-
-                              }
-                            },
-                            error: function(data){
-                              console.log('Error: ', data.message);
-                            }
-                          });
-                        }else{
-                          conso.e.log('No id identified..');
-                        }
-
-                    } else {
-                        swal("Cancelled", "Incident won´t be erased", "error");
-                    }
-                });
-          });
-
-
-          $('.bbb').click(function(){
-
-              var id = $(this).data('id');
-              console.log(id);
-
-
-              $.ajax({
-                url: "{% url 'extra_incidents-api-v1:finalize' %}",
-                type: 'json',
-                method: 'post',
-                data: {
-                  "id": id,
-                },
-                beforeSend: function(xhr, settings) {
-                    if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
-                        // Only send the token to relative URLs i.e. locally.
-                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-                    }
-                },
-                success: function(data){
-                  if(data.success){
-                    ShowModal(data.title, data.message, '', data.button);
-                  }
-                },
-                error: function(data){
-                  console.log('Error: ', data.message);
-                }
-              });
-          });
-
+          //------------------SEARCH FILTER-------------------------
 
         });
     </script>
