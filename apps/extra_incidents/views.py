@@ -40,19 +40,15 @@ class ListView(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
 
     def get(self, request):
 
-        extra_incident_list = ExtraIncident.objects.filter(is_active=True).order_by('finalized')
-        extra_incident_list
-        page = request.GET.get('page')
-        paginator = Paginator(extra_incident_list, 100)
-
         user = request.user
         context = {}
+
         if user.has_perm('extra_incidents.view_extra_incident_list'):
 
             #Pagination begins
-            extra_incident_list = ExtraIncident.objects.filter(is_active=True)
+            extra_incident_list = ExtraIncident.objects.filter(is_active=True).order_by('finalized')
             page = request.GET.get('page')
-            paginator = Paginator(extra_incident_list, 10)
+            paginator = Paginator(extra_incident_list, 100)
 
             try:
                 extra_incidents = paginator.page(page)
