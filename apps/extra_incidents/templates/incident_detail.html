@@ -73,16 +73,17 @@
                                           <a href="#" class="pull-left">
                                               <!--<img alt="image" class="img-circle" src="img/a2.jpg">-->
                                           </a>
-                                            <div class="media-body ">
+                                            <div class="media-body">
                                               <strong>Summary</strong><br>
-                                                <div class="well">
-                                                    {{detail.summary}}
+                                                <div class="well well-lg">
+                                                  <h5>{{detail.summary}}</h5>
                                                 </div>
                                                 <br><br>
                                                 {% if detail.extra_comments %}
-                                                  <strong>Extra Comments</strong><br>
-                                                  <div class="well">
-                                                      {{detail.extra_comments}}
+                                                  <strong>Extra Comments</strong>
+                                                  <br>
+                                                  <div class="well well-lg">
+                                                      <h5>{{detail.extra_comments}}</h5>
                                                   </div>
                                                 {% endif %}
                                             </div>
