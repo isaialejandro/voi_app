@@ -46,7 +46,9 @@ class ListView(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
         if user.has_perm('extra_incidents.view_extra_incident_list'):
 
             #Pagination begins
+            #extra_incident_list = ExtraIncident.objects.filter(is_active=True).order_by('finalized')
             extra_incident_list = ExtraIncident.objects.filter(is_active=True).order_by('finalized')
+
             page = request.GET.get('page')
             paginator = Paginator(extra_incident_list, 100)
 
@@ -68,9 +70,7 @@ class ListView(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
                 'app: ', app,
                  '\n', type, '\n', source, '\n', daterange
             )
-
             #Filtering code end
-
 
             context['extra_incident_list'] = extra_incidents
             context['incident_filter'] = ExtraIncidentFilter(self.request.GET, queryset=extra_incident_list)
@@ -105,10 +105,9 @@ class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
     def post(self, request, *args):
 
         app = request.POST.get('application')
-        inc_no = request.POST.get('inc_number').upper()
+        title = request.POST.get('title').upper()
         type = request.POST.get('type')
         exec_date = request.POST.get('date_1')
-        #end_date = request.POST.get('date_2')
         summary = request.POST.get('summary')
         extra_commnt = request.POST.get('extra_comments')
         inc_source = request.POST.get('inc_source')
@@ -120,10 +119,9 @@ class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
             form = ExtraIncidentForm(
                 initial = {
                     'application': app,
-                    'inc_number': inc_no,
+                    'title': title,
                     'type': type,
                     'exec_date': exec_date,
-                    #'end_date': end_date,
                     'summary': summary,
                     'extra_comments': extra_commnt,
                     'inc_source': inc_source
@@ -133,16 +131,12 @@ class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
             context['form'] = form
             return render(request, 'extra_incident_form.html', context)
 
-        #if end_date is None or end_date == '':
-        #    end_date = None
-
-        if not ExtraIncident.objects.filter(inc_number=inc_no).exclude(inc_number=''):
+        if not ExtraIncident.objects.filter(title=title).exclude(title=''):
             new = ExtraIncident(
                 application=Application.objects.get(id=app),
-                inc_number=inc_no,
+                title=title,
                 type=type,
                 exec_date=exec_date,
-                #end_date=end_date,
                 summary=summary,
                 inc_source=inc_source,
                 extra_comments=extra_commnt,
@@ -150,20 +144,19 @@ class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
             )
             new.save()
 
-            msg = 'Incident ' + inc_no + ' saved successfully'
+            msg = 'Incident ' + title + ' saved successfully'
             messages.success(request, msg)
             return HttpResponseRedirect(reverse_lazy('extra_incidents:list'))
         else:
-            msg = 'Incident ' + inc_no + ' already has been registered, try with another one'
+            msg = 'Incident ' + title + ' already has been registered, try with another one'
             messages.error(request, msg)
 
             form = ExtraIncidentForm(
                 initial = {
                     'application': app,
-                    'inc_number': inc_no,
+                    'title': title,
                     'type': type,
                     'exec_date': exec_date,
-                    #'end_date': end_date,
                     'summary': summary,
                     'extra_comments': extra_commnt,
                     'inc_source': inc_source

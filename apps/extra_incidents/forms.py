@@ -10,6 +10,8 @@ from apps.extra_incidents.models import ExtraIncident
 
 from apps.extra_incidents.choices import *
 
+
+#Default form
 class ExtraIncidentForm(forms.ModelForm):
 
     type =  forms.ChoiceField(choices=TYPE, widget=forms.Select(attrs={'class': 'form-control'}), initial=REGISTRY),
@@ -20,26 +22,21 @@ class ExtraIncidentForm(forms.ModelForm):
         model = ExtraIncident
 
         fields = [
-            'inc_number',
+            'title',
             'application',
             'type',
-            'exec_date',
             'end_date',
             'summary',
-            'extra_comments',
             'inc_source',
         ]
 
         widgets = {
-            'inc_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
             'application': forms.Select(attrs={'class': 'form-control'}),
-            'exec_date': forms.TextInput(attrs={'class': 'form-control input-group date'}),
             'end_date': forms.TextInput(attrs={'class': 'form-control input-group date'}),
             'summary': forms.Textarea(attrs={'class': 'form-control'}),
-            'extra_comments': forms.Textarea(attrs={'class': 'form-control'}),
             #'inc_source': forms.TextInput(attrs={'class': 'form-control'})
         }
-
 
     #Solo funciona cuando en la vista se usa la función "is_valid()"
     """
@@ -58,3 +55,9 @@ class ExtraIncidentForm(forms.ModelForm):
         print('CLEAN')
         return inc_number
     """
+
+#class OpsControlForm(forms.ModelForm):
+
+#    class Meta:
+#
+#        model =
