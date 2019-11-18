@@ -11,10 +11,9 @@ class ExtraIncidentFilter(django_filters.FilterSet):
         model = ExtraIncident
 
         fields = {
-            'inc_number',
+            'title',
             'application',
             'type',
-            'exec_date',
             'end_date',
             'inc_source'
         }
