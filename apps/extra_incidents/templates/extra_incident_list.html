@@ -80,14 +80,21 @@
                                 </form>
                               </div>
                             </div>
+
+                            <div>
+                              <br>
+                              <br>
+                              Total items:
+                              <strong>{{ count.count }}</strong>
+                            </div>
                             <div class="table-responsive">
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
                                             <th>#</th>
+                                            <th>Title</th>
                                             <th>App</th>
                                             <th>Type</th>
-                                            <th>Exec date</th>
                                             <th>
                                               End date
                                             </th>
@@ -105,9 +112,9 @@
                                         {% for inc in extra_incident_list %}
                                             <tr>
                                                 <td>{{ inc.inc_number|default:"N/A" }}</td>
+                                                <td>{{ inc.title }}</td>
                                                 <td>{{ inc.application }}</td>
                                                 <td>{{ inc.type }}</td>
-                                                <td>{{ inc.exec_date }}</td>
                                                 <td>
                                                   {% if inc.finalized or inc.closed %}
                                                     {{ inc.end_date }}
@@ -175,6 +182,10 @@
                                           {% endif %}
                                         </ul>
                                     {% endif %}
+                                    <div>
+                                      Total items:
+                                      <strong>{{ count.count }}</strong>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -1,0 +1,16 @@
+﻿select 
+	e.title,
+	e.type,
+	e.end_date,
+	e.summary,
+	e.inc_source,
+	application.name as app,
+	usr.username as user,
+	final_user.username as final_user,
+	e.created
+from extra_incidents_extraincident as e
+left join auth_user as usr on e.user_id = usr.id
+left join auth_user as final_user on e.user_id = final_user.id
+left join application_application as application on e.application_id =  application.id
+
+where e.finalized is True;

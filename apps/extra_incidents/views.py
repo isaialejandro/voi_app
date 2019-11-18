@@ -46,7 +46,6 @@ class ListView(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
         if user.has_perm('extra_incidents.view_extra_incident_list'):
 
             #Pagination begins
-            #extra_incident_list = ExtraIncident.objects.filter(is_active=True).order_by('finalized')
             extra_incident_list = ExtraIncident.objects.filter(is_active=True).order_by('finalized')
 
             page = request.GET.get('page')
@@ -73,6 +72,7 @@ class ListView(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
             #Filtering code end
 
             context['extra_incident_list'] = extra_incidents
+            context['count'] = ExtraIncident.objects.filter(is_active=True).order_by('finalized')
             context['incident_filter'] = ExtraIncidentFilter(self.request.GET, queryset=extra_incident_list)
             context['extra_incidents'] = True
             context['source'] = INC_SOURCE
@@ -107,12 +107,11 @@ class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
         app = request.POST.get('application')
         title = request.POST.get('title').upper()
         type = request.POST.get('type')
-        exec_date = request.POST.get('date_1')
         summary = request.POST.get('summary')
-        extra_commnt = request.POST.get('extra_comments')
         inc_source = request.POST.get('inc_source')
         user =  request.user.id
 
+        """
         if exec_date is None or exec_date == '':
             msg = 'Execution date is empty, please select a start date'
             messages.error(request, msg)
@@ -123,23 +122,21 @@ class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
                     'type': type,
                     'exec_date': exec_date,
                     'summary': summary,
-                    'extra_comments': extra_commnt,
                     'inc_source': inc_source
                 }
             )
             context = {}
             context['form'] = form
             return render(request, 'extra_incident_form.html', context)
-
-        if not ExtraIncident.objects.filter(title=title).exclude(title=''):
+        """
+        if not ExtraIncident.objects.filter(title=title):
             new = ExtraIncident(
                 application=Application.objects.get(id=app),
                 title=title,
                 type=type,
-                exec_date=exec_date,
+                ##exec_date=exec_date,
                 summary=summary,
                 inc_source=inc_source,
-                extra_comments=extra_commnt,
                 user=User.objects.get(id=user)
             )
             new.save()

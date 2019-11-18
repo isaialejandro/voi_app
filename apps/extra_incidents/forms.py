@@ -25,7 +25,7 @@ class ExtraIncidentForm(forms.ModelForm):
             'title',
             'application',
             'type',
-            'end_date',
+            #'end_date',
             'summary',
             'inc_source',
         ]
@@ -33,7 +33,7 @@ class ExtraIncidentForm(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'application': forms.Select(attrs={'class': 'form-control'}),
-            'end_date': forms.TextInput(attrs={'class': 'form-control input-group date'}),
+            #'end_date': forms.TextInput(attrs={'class': 'form-control input-group date'}),
             'summary': forms.Textarea(attrs={'class': 'form-control'}),
             #'inc_source': forms.TextInput(attrs={'class': 'form-control'})
         }

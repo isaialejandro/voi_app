@@ -41,7 +41,6 @@ class Application(models.Model):
 
 class TresSesentaEnUnClick(models.Model):
 
-
     ambassador_type = models.CharField(max_length=20, choices=AMBASSADOR_TYPE, default=AEROPUERTOS, null=False, blank=False)
     ambassador_id = models.CharField(max_length=6, null=False, blank=False)
     ambassador_email = models.CharField(max_length=50, null=False, blank=False)
@@ -61,7 +60,7 @@ class ZendeskRol(models.Model):
 
 class ZendeskGroup(models.Model):
 
-    group = models.CharField(max_length=25, null=True, blank=True)
+    group = models.CharField(max_length=40, null=True, blank=True)
     registry_date = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, blank=True, null=True)
