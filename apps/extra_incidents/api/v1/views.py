@@ -46,9 +46,9 @@ class FinalizeIncident(NeverCacheMixin, CSRFExemptMixin, APIView):
                     #e.closed=True
                     e.save()
 
-                    msg = 'Incident ' + e.inc_number + ' finalized successfully'
+                    msg = 'Incident ' + e.title + ' finalized successfully'
                     messages.success(request, msg)
-                    data['inc_number'] = e.inc_number
+                    data['inc_number'] = e.title
                     data['success_msg'] = msg
                     return Response(data)
                     """
@@ -73,4 +73,4 @@ class FinalizeIncident(NeverCacheMixin, CSRFExemptMixin, APIView):
             except Exception as f:
                 data['success'] = False
                 data['message'] = f
-            return response(data)
+            return Response(data)
