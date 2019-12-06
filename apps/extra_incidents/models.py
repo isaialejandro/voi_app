@@ -48,4 +48,6 @@ class ExtraIncident(models.Model):
             ('view_extra_incident_list', 'Visualize Extra Incident List'),
             ('create_extra_incident', 'Create extra incident'),
             ('disable_extra_incident', 'Disable extra incident'),
+            ('view_extra_incident_detail', 'Visualize Extra Incident Detail'),
+            ('finalize_extra_incident', 'Finalize Extra Incident'),
         )

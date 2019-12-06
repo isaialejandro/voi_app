@@ -40,7 +40,7 @@ class Applicant(models.Model):
     #applicant_reg_date = models.CharField(max_length=8, null=True, blank=True) #default with applicant manual list load.
 
     is_active = models.BooleanField(default=True)
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, default=1)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return self.first_name.capitalize() + ' ' + '{}'.format(self.first_lastname)
