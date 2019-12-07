@@ -21,9 +21,9 @@ from apps.application.forms import ApplicationForm
 
 from apps.applicant.models import Applicant
 
-from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin
+from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin
 
-from braces.views import LoginRequiredMixin
+#from braces.views import LoginRequiredMixin
 
 now = datetime.datetime.now()
 
@@ -61,19 +61,19 @@ class ApplicationList(NeverCacheMixin, CSRFExemptMixin, View):
 
         user = request.user
 
-        if not user.has_perm('application.view_application_list') or \
-            not user.has_perm('applicant.view_applicant_list'):
+        if user.has_perm('application.view_application_list') or \
+            user.has_perm('applicant.view_applicant_list'):
 
-            return render(request, '404.html')
-        else:
             context = {}
             context['app_list'] = True
             context['applications'] = Application.objects.filter(is_active=True)
             context['applicants'] = Applicant.objects.filter(is_active=True)
             return render(request, 'list.html', context)
+        else:
+            return render(request, '404.html')
 
 
-class CreateApplication(NeverCacheMixin, CSRFExemptMixin, View):
+class CreateApplication(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
 
 
     def get(self, request):
@@ -98,7 +98,6 @@ class CreateApplication(NeverCacheMixin, CSRFExemptMixin, View):
 
             msg = 'Application name ' + name + ' already exist!'
             messages.error(request, msg)
-
             return HttpResponseRedirect(reverse_lazy('application:new'))
         else:
 
@@ -115,7 +114,9 @@ class CreateApplication(NeverCacheMixin, CSRFExemptMixin, View):
             messages.success(request, msg)
 
             user = request.user
-            if not user.has_perm('application.view_application_list'):
-                return HttpResponseRedirect(reverse_lazy('dashboard'))
+
+            if not user.has_perm('application.view_application_list'): #and \
+                #user.has_perm('applicant.view_applicant_list'):
+                    return HttpResponseRedirect(reverse_lazy('dashboard'))
             else:
                 return HttpResponseRedirect(reverse_lazy('application:list'))

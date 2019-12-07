@@ -91,13 +91,11 @@
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
-                                            <th>#</th>
                                             <th>Title</th>
                                             <th>App</th>
                                             <th>Type</th>
-                                            <th>
-                                              End date
-                                            </th>
+                                            <th>Creation date</th>
+                                            <th>End date</th>
                                             <th>Source</th>
                                             {% if perms.extra_incidents.view_extra_incident_detail %}
                                               <th>Detail</th>
@@ -118,10 +116,10 @@
                                     <tbody>
                                         {% for inc in extra_incident_list %}
                                             <tr>
-                                                <td>{{ inc.inc_number|default:"N/A" }}</td>
                                                 <td>{{ inc.title }}</td>
                                                 <td>{{ inc.application }}</td>
                                                 <td>{{ inc.type }}</td>
+                                                <td>{{ inc.created }}</td>
                                                 <td>
                                                   {% if inc.finalized or inc.closed %}
                                                     {{ inc.end_date }}
