@@ -10,7 +10,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
 from django.contrib.auth.models import User
 
-from django.contrib.auth.mixins import PermissionRequiredMixin
+#from django.contrib.auth.mixins import PermissionRequiredMixin
+from apps.tools.decorators import PermissionRequiredMixin
 
 from django.urls import reverse_lazy
 
@@ -32,7 +33,6 @@ from apps.extra_incidents.snippets import ExtraIncidentFilter
 from apps.extra_incidents.choices import TYPE, REGISTRY, INC_SOURCE, PAPERLESS
 
 from apps.application.models import Application
-
 now = datetime.datetime.now()
 
 
@@ -164,47 +164,56 @@ class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
             return render(request, 'extra_incident_form.html', context)
 
 
-class IncidentDetail(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, DetailView):
+class IncidentDetail(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
 
-    model = ExtraIncident
-    template_name = 'incident_detail.html'
+    def get(self, request, **kwargs):
 
-    def get_context_data(self, **kwargs):
-        context = super(IncidentDetail, self).get_context_data(**kwargs)
-        inc = ExtraIncident.objects.get(id=self.kwargs.get('pk'))
+        usr = User.objects.get(id=request.user.id)
+        detail_id = kwargs.get('pk')
 
-        #Cálculo para fecha de resolución
-        if inc.end_date:
-            """
-            start_date = datetime.datetime.strptime(str(inc.created)[:19], "%Y-%m-%d %H:%M:%S").time()
-            end_date = datetime.datetime.strptime(str(inc.end_date)[:19], "%Y-%m-%d %H:%M:%S").time()
+        print('User ID: ', usr)
+        print('Detail ID: ', detail_id)
+        context = {}
+        context['pk'] = {'pk': detail_id}
 
-            print(start_date , '\n', end_date)
+        if usr.has_perm('extra_incidents.view_extra_incident_detail'):
 
-            h = end_date.hour - start_date.hour
-            m = end_date.minute - start_date.minute
-            s = end_date.second - start_date.second
-            resol_time = str(h) + ':' + str(m) + ':' + str(s)
-            """
+            inc = ExtraIncident.objects.get(id=self.kwargs.get('pk'))
 
-            created = datetime.datetime.strptime(str(inc.created)[:19], "%Y-%m-%d %H:%M:%S")
-            finalized = inc.end_date
+            #Cálculo para fecha de resolución
+            if inc.end_date:
+                """
+                start_date = datetime.datetime.strptime(str(inc.created)[:19], "%Y-%m-%d %H:%M:%S").time()
+                end_date = datetime.datetime.strptime(str(inc.end_date)[:19], "%Y-%m-%d %H:%M:%S").time()
 
-            sub_days = finalized + relativedelta(days=-created.day) #ready
-            sub_months = finalized + relativedelta(months=-created.month) #ready
-            #sub_years = finalized + relativedelta(years=-created.year) #not yet
+                print(start_date , '\n', end_date)
 
-            #sub_hours = finalized + relativedelta(hours=-created.hour) #not yet
-            #sub_minutes = finalized + relativedelta(minutes=-created.minute) #not yet
-            #sub_seconds = finalized + relativedelta(seconds=-created.second) #not yet
+                h = end_date.hour - start_date.hour
+                m = end_date.minute - start_date.minute
+                s = end_date.second - start_date.second
+                resol_time = str(h) + ':' + str(m) + ':' + str(s)
+                """
 
-            #print('CURRENT HOUR: ', created)
-            #print('SUB HOUR:', sub_hours.hour)
-            #print('SUB DAYS:', sub_days.day)
-            #print('SUB MONTH', sub_month.month)
+                created = datetime.datetime.strptime(str(inc.created)[:19], "%Y-%m-%d %H:%M:%S")
+                finalized = inc.end_date
 
+                sub_days = finalized + relativedelta(days=-created.day) #ready
+                sub_months = finalized + relativedelta(months=-created.month) #ready
+                #sub_years = finalized + relativedelta(years=-created.year) #not yet
+
+                #sub_hours = finalized + relativedelta(hours=-created.hour) #not yet
+                #sub_minutes = finalized + relativedelta(minutes=-created.minute) #not yet
+                #sub_seconds = finalized + relativedelta(seconds=-created.second) #not yet
+
+                #print('CURRENT HOUR: ', created)
+                #print('SUB HOUR:', sub_hours.hour)
+                #print('SUB DAYS:', sub_days.day)
+                #print('SUB MONTH', sub_month.month)
+
+            else:
+                resol_time = 'Inc has not end time.'
+            #context['resol_time'] = resol_time
+            context['detail'] = inc
+            return render(request, 'incident_detail.html', context )
         else:
-            resol_time = 'Inc has not end time.'
-        #context['resol_time'] = resol_time
-        context['detail'] = inc
-        return context
+            return ListView.as_view()(request)

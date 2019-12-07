@@ -18,9 +18,9 @@ from django.contrib.auth.models import User
 from apps.applicant.models import Applicant
 from apps.applicant.forms import ApplicantForm
 
-from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin
+from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin
 
-from braces.views import LoginRequiredMixin
+#from braces.views import LoginRequiredMixin
 
 now = datetime.datetime.now()
 
@@ -41,7 +41,7 @@ class ApplicantList(View):
 """
 
 
-class CreateApplicant(NeverCacheMixin, CSRFExemptMixin, View):
+class CreateApplicant(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
 
     def get(self, request):
 
