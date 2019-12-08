@@ -20,7 +20,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 
 from django.views.generic import ListView
-from django.views.generic.edit import CreateView, View
+from django.views.generic.edit import CreateView, UpdateView, View
 from django.views.generic.detail import DetailView
 
 from braces.views import LoginRequiredMixin
@@ -164,6 +164,21 @@ class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
             return render(request, 'extra_incident_form.html', context)
 
 
+class UpdateExtraIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, UpdateView):
+
+    model = ExtraIncident
+    template_name = 'extra_incident_form.html'
+    form_class = ExtraIncidentForm
+    success_url = reverse_lazy('extra_incidents:list')
+
+    #Falta validación para que title no se duplique.
+    @transaction.atomic
+    def form_valid(self, form):
+        msg = 'Incident updated successfully'
+        messages.success(self.request, msg)
+        return super(UpdateExtraIncident, self).form_valid(form)
+
+
 class IncidentDetail(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
 
     def get(self, request, **kwargs):
@@ -171,8 +186,6 @@ class IncidentDetail(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View)
         usr = User.objects.get(id=request.user.id)
         detail_id = kwargs.get('pk')
 
-        print('User ID: ', usr)
-        print('Detail ID: ', detail_id)
         context = {}
         context['pk'] = {'pk': detail_id}
 

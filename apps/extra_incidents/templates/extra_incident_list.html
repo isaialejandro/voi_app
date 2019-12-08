@@ -133,14 +133,23 @@
                                                   </td>
                                                 {% endif %}
 
-                                                {% if perms.extra_incidents.finalize_extra_incident %}
-                                                  <td align="center">
+                                                <td align="center">
+
+                                                  {% if perms.extra_incidents.update_extra_incident %}
+                                                    {% if not inc.finalized %}
+                                                      <a href="{% url 'extra_incidents:update' inc.id %}"><i class="fa fa-pencil-square-o"></i></a>
+                                                    {% endif %}
+                                                  {% endif %}
+
+                                                  <br><br>
+
+                                                  {% if perms.extra_incidents.finalize_extra_incident %}
                                                       {% if not inc.finalized %}
                                                         <button data-id="{{inc.id}}" class="btn btn-default btn-circle finalize" type="button"><i class="fa fa-check"></i>
                                                         </button>
                                                       {% endif %}
-                                                  </td>
-                                                {% endif %}
+                                                    {% endif %}
+                                                </td>
 
                                                 <td>
                                                   {% if inc.finalized %}
