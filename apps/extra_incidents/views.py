@@ -5,6 +5,7 @@ from datetime import time
 from dateutil.relativedelta import relativedelta
 
 from django.db import transaction
+from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from django.contrib import messages
@@ -20,7 +21,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 
 from django.views.generic import ListView
-from django.views.generic.edit import CreateView, View
+from django.views.generic.edit import CreateView, UpdateView, View
 from django.views.generic.detail import DetailView
 
 from braces.views import LoginRequiredMixin
@@ -134,7 +135,6 @@ class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
                 application=Application.objects.get(id=app),
                 title=title,
                 type=type,
-                ##exec_date=exec_date,
                 summary=summary,
                 inc_source=inc_source,
                 user=User.objects.get(id=user)
@@ -153,15 +153,67 @@ class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
                     'application': app,
                     'title': title,
                     'type': type,
-                    'exec_date': exec_date,
                     'summary': summary,
-                    'extra_comments': extra_commnt,
                     'inc_source': inc_source
                 }
             )
             context = {}
             context['form'] = form
             return render(request, 'extra_incident_form.html', context)
+
+
+class UpdateExtraIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, UpdateView):
+
+    model = ExtraIncident
+    template_name = 'extra_incident_form.html'
+    form_class = ExtraIncidentForm
+    success_url = reverse_lazy('extra_incidents:list')
+
+    @transaction.atomic
+    def form_valid(self, form):
+
+        title = form.cleaned_data['title'].upper()
+        app = form.cleaned_data['application']
+        type = form.cleaned_data['type']
+        summary = form.cleaned_data['summary']
+        inc_source = form.cleaned_data['inc_source']
+
+        inc_id = self.kwargs['pk']
+        extra_incident = ExtraIncident.objects.filter(is_active=True, title=title).exclude(id=inc_id)
+
+        #Falta validación para que title no se duplique.
+        if not extra_incident:
+
+            msg = 'Incident ' + title + ' updated successfully'
+            messages.success(self.request, msg)
+
+            e_i = ExtraIncident(
+                title=title,
+                application=app,
+                type=type,
+                summary=summary,
+                inc_source=inc_source,
+                user=User.objects.get(id=self.request.user.id)
+            )
+
+            e_i.save()
+            return super(UpdateExtraIncident, self).form_valid(form)
+        else:
+            msg = 'Incident title ' + title + ' already exist, try with another one'
+            messages.error(self.request, msg)
+
+            form = ExtraIncidentForm(
+                initial = {
+                    'application': app,
+                    'title': title,
+                    'type': type,
+                    'summary': summary,
+                    'inc_source': inc_source
+                }
+            )
+            context = {}
+            context['form'] = form
+            return HttpResponseRedirect(reverse('extra_incidents:update', kwargs={'pk': inc_id}))
 
 
 class IncidentDetail(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
@@ -171,8 +223,6 @@ class IncidentDetail(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View)
         usr = User.objects.get(id=request.user.id)
         detail_id = kwargs.get('pk')
 
-        print('User ID: ', usr)
-        print('Detail ID: ', detail_id)
         context = {}
         context['pk'] = {'pk': detail_id}
 
