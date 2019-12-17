@@ -91,16 +91,21 @@
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
-                                            <th>#</th>
                                             <th>Title</th>
                                             <th>App</th>
                                             <th>Type</th>
-                                            <th>
-                                              End date
-                                            </th>
+                                            <th>Creation date</th>
+                                            <th>End date</th>
                                             <th>Source</th>
-                                            <th>Detail</th>
-                                            <th>Action</th>
+                                            {% if perms.extra_incidents.view_extra_incident_detail %}
+                                              <th>Detail</th>
+                                            {% endif %}
+
+                                            {% if perms.extra_incidents.finalize_extra_incident %}
+                                              <th>Action</th>
+                                            {% endif %}
+
+                                            <th>Status</th>
 
                                             {% if user.is_superuser %}
                                                 <th>Created</th>
@@ -111,10 +116,10 @@
                                     <tbody>
                                         {% for inc in extra_incident_list %}
                                             <tr>
-                                                <td>{{ inc.inc_number|default:"N/A" }}</td>
                                                 <td>{{ inc.title }}</td>
                                                 <td>{{ inc.application }}</td>
                                                 <td>{{ inc.type }}</td>
+                                                <td>{{ inc.created }}</td>
                                                 <td>
                                                   {% if inc.finalized or inc.closed %}
                                                     {{ inc.end_date }}
@@ -122,18 +127,36 @@
                                                 </td>
                                                 <td>{{ inc.inc_source }}</td>
 
-                                                <td>
-                                                  <a type="button" class="btn btn-xs btn-info" href="{% url 'extra_incidents:detail' inc.id %}">Info</a>
-                                                </td>
+                                                {% if perms.extra_incidents.view_extra_incident_detail %}
+                                                  <td>
+                                                    <a type="button" class="btn btn-xs btn-info" href="{% url 'extra_incidents:detail' inc.id %}">Info</a>
+                                                  </td>
+                                                {% endif %}
 
                                                 <td align="center">
+
+                                                  {% if perms.extra_incidents.update_extra_incident %}
+                                                    {% if not inc.finalized %}
+                                                      <a href="{% url 'extra_incidents:update' inc.id %}"><i class="fa fa-pencil-square-o"></i></a>
+                                                    {% endif %}
+                                                  {% endif %}
+
+                                                  <br><br>
+
+                                                  {% if perms.extra_incidents.finalize_extra_incident %}
+                                                      {% if not inc.finalized %}
+                                                        <button data-id="{{inc.id}}" class="btn btn-default btn-circle finalize" type="button"><i class="fa fa-check"></i>
+                                                        </button>
+                                                      {% endif %}
+                                                    {% endif %}
+                                                </td>
+
+                                                <td>
                                                   {% if inc.finalized %}
                                                     <span class="label label-success">
-                                                      finalized
+                                                        finalized
                                                     </span>
                                                   {% else %}
-                                                    <button data-id="{{inc.id}}" class="btn btn-default btn-circle finalize" type="button"><i class="fa fa-check"></i>
-                                                    </button>
                                                   {% endif %}
                                                 </td>
 

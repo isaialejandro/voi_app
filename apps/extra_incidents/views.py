@@ -5,12 +5,14 @@ from datetime import time
 from dateutil.relativedelta import relativedelta
 
 from django.db import transaction
+from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from django.contrib import messages
 from django.contrib.auth.models import User
 
-from django.contrib.auth.mixins import PermissionRequiredMixin
+#from django.contrib.auth.mixins import PermissionRequiredMixin
+from apps.tools.decorators import PermissionRequiredMixin
 
 from django.urls import reverse_lazy
 
@@ -19,7 +21,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 
 from django.views.generic import ListView
-from django.views.generic.edit import CreateView, View
+from django.views.generic.edit import CreateView, UpdateView, View
 from django.views.generic.detail import DetailView
 
 from braces.views import LoginRequiredMixin
@@ -32,7 +34,6 @@ from apps.extra_incidents.snippets import ExtraIncidentFilter
 from apps.extra_incidents.choices import TYPE, REGISTRY, INC_SOURCE, PAPERLESS
 
 from apps.application.models import Application
-
 now = datetime.datetime.now()
 
 
@@ -134,7 +135,6 @@ class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
                 application=Application.objects.get(id=app),
                 title=title,
                 type=type,
-                ##exec_date=exec_date,
                 summary=summary,
                 inc_source=inc_source,
                 user=User.objects.get(id=user)
@@ -153,9 +153,7 @@ class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
                     'application': app,
                     'title': title,
                     'type': type,
-                    'exec_date': exec_date,
                     'summary': summary,
-                    'extra_comments': extra_commnt,
                     'inc_source': inc_source
                 }
             )
@@ -164,47 +162,108 @@ class CreateIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
             return render(request, 'extra_incident_form.html', context)
 
 
-class IncidentDetail(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, DetailView):
+class UpdateExtraIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, UpdateView):
 
     model = ExtraIncident
-    template_name = 'incident_detail.html'
+    template_name = 'extra_incident_form.html'
+    form_class = ExtraIncidentForm
+    success_url = reverse_lazy('extra_incidents:list')
 
-    def get_context_data(self, **kwargs):
-        context = super(IncidentDetail, self).get_context_data(**kwargs)
-        inc = ExtraIncident.objects.get(id=self.kwargs.get('pk'))
+    @transaction.atomic
+    def form_valid(self, form):
 
-        #Cálculo para fecha de resolución
-        if inc.end_date:
-            """
-            start_date = datetime.datetime.strptime(str(inc.created)[:19], "%Y-%m-%d %H:%M:%S").time()
-            end_date = datetime.datetime.strptime(str(inc.end_date)[:19], "%Y-%m-%d %H:%M:%S").time()
+        title = form.cleaned_data['title'].upper()
+        app = form.cleaned_data['application']
+        type = form.cleaned_data['type']
+        summary = form.cleaned_data['summary']
+        inc_source = form.cleaned_data['inc_source']
 
-            print(start_date , '\n', end_date)
+        inc_id = self.kwargs['pk']
+        extra_incident = ExtraIncident.objects.filter(is_active=True, title=title).exclude(id=inc_id)
 
-            h = end_date.hour - start_date.hour
-            m = end_date.minute - start_date.minute
-            s = end_date.second - start_date.second
-            resol_time = str(h) + ':' + str(m) + ':' + str(s)
-            """
+        #Falta validación para que title no se duplique.
+        if not extra_incident:
 
-            created = datetime.datetime.strptime(str(inc.created)[:19], "%Y-%m-%d %H:%M:%S")
-            finalized = inc.end_date
+            msg = 'Incident ' + title + ' updated successfully'
+            messages.success(self.request, msg)
 
-            sub_days = finalized + relativedelta(days=-created.day) #ready
-            sub_months = finalized + relativedelta(months=-created.month) #ready
-            #sub_years = finalized + relativedelta(years=-created.year) #not yet
+            e_i = ExtraIncident(
+                title=title,
+                application=app,
+                type=type,
+                summary=summary,
+                inc_source=inc_source,
+                user=User.objects.get(id=self.request.user.id)
+            )
 
-            #sub_hours = finalized + relativedelta(hours=-created.hour) #not yet
-            #sub_minutes = finalized + relativedelta(minutes=-created.minute) #not yet
-            #sub_seconds = finalized + relativedelta(seconds=-created.second) #not yet
-
-            #print('CURRENT HOUR: ', created)
-            #print('SUB HOUR:', sub_hours.hour)
-            #print('SUB DAYS:', sub_days.day)
-            #print('SUB MONTH', sub_month.month)
-
+            e_i.save()
+            return super(UpdateExtraIncident, self).form_valid(form)
         else:
-            resol_time = 'Inc has not end time.'
-        #context['resol_time'] = resol_time
-        context['detail'] = inc
-        return context
+            msg = 'Incident title ' + title + ' already exist, try with another one'
+            messages.error(self.request, msg)
+
+            form = ExtraIncidentForm(
+                initial = {
+                    'application': app,
+                    'title': title,
+                    'type': type,
+                    'summary': summary,
+                    'inc_source': inc_source
+                }
+            )
+            context = {}
+            context['form'] = form
+            return HttpResponseRedirect(reverse('extra_incidents:update', kwargs={'pk': inc_id}))
+
+
+class IncidentDetail(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
+
+    def get(self, request, **kwargs):
+
+        usr = User.objects.get(id=request.user.id)
+        detail_id = kwargs.get('pk')
+
+        context = {}
+        context['pk'] = {'pk': detail_id}
+
+        if usr.has_perm('extra_incidents.view_extra_incident_detail'):
+
+            inc = ExtraIncident.objects.get(id=self.kwargs.get('pk'))
+
+            #Cálculo para fecha de resolución
+            if inc.end_date:
+                """
+                start_date = datetime.datetime.strptime(str(inc.created)[:19], "%Y-%m-%d %H:%M:%S").time()
+                end_date = datetime.datetime.strptime(str(inc.end_date)[:19], "%Y-%m-%d %H:%M:%S").time()
+
+                print(start_date , '\n', end_date)
+
+                h = end_date.hour - start_date.hour
+                m = end_date.minute - start_date.minute
+                s = end_date.second - start_date.second
+                resol_time = str(h) + ':' + str(m) + ':' + str(s)
+                """
+
+                created = datetime.datetime.strptime(str(inc.created)[:19], "%Y-%m-%d %H:%M:%S")
+                finalized = inc.end_date
+
+                sub_days = finalized + relativedelta(days=-created.day) #ready
+                sub_months = finalized + relativedelta(months=-created.month) #ready
+                #sub_years = finalized + relativedelta(years=-created.year) #not yet
+
+                #sub_hours = finalized + relativedelta(hours=-created.hour) #not yet
+                #sub_minutes = finalized + relativedelta(minutes=-created.minute) #not yet
+                #sub_seconds = finalized + relativedelta(seconds=-created.second) #not yet
+
+                #print('CURRENT HOUR: ', created)
+                #print('SUB HOUR:', sub_hours.hour)
+                #print('SUB DAYS:', sub_days.day)
+                #print('SUB MONTH', sub_month.month)
+
+            else:
+                resol_time = 'Inc has not end time.'
+            #context['resol_time'] = resol_time
+            context['detail'] = inc
+            return render(request, 'incident_detail.html', context )
+        else:
+            return ListView.as_view()(request)

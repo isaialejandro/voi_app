@@ -31,6 +31,8 @@ class FinalizeIncident(NeverCacheMixin, CSRFExemptMixin, APIView):
 
         if request.method == 'POST':
 
+            usr = User.objects.get(id=request.user.id)
+
             flag = request.POST.get('flag')
             e = ExtraIncident.objects.get(id=request.POST.get('id'))
             current_usr = User.objects.get(id=request.user.id)
@@ -73,4 +75,5 @@ class FinalizeIncident(NeverCacheMixin, CSRFExemptMixin, APIView):
             except Exception as f:
                 data['success'] = False
                 data['message'] = f
+
             return Response(data)
