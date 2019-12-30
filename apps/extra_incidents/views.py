@@ -184,23 +184,19 @@ class UpdateExtraIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, 
         #Falta validación para que title no se duplique.
         if not extra_incident:
 
+            e_i = ExtraIncident.objects.filter(id=inc_id)
+            e_i.title=title
+            e_i.application=app
+            e_i.type=type
+            e_i.summary=summary
+            e_i.inc_source=inc_source
+            e_i.user=User.objects.get(id=self.request.user.id)
+
+            e_i.update()
             msg = 'Incident ' + title + ' updated successfully'
             messages.success(self.request, msg)
-
-            e_i = ExtraIncident(
-                title=title,
-                application=app,
-                type=type,
-                summary=summary,
-                inc_source=inc_source,
-                user=User.objects.get(id=self.request.user.id)
-            )
-
-            e_i.save()
             return super(UpdateExtraIncident, self).form_valid(form)
         else:
-            msg = 'Incident title ' + title + ' already exist, try with another one'
-            messages.error(self.request, msg)
 
             form = ExtraIncidentForm(
                 initial = {
@@ -213,6 +209,8 @@ class UpdateExtraIncident(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, 
             )
             context = {}
             context['form'] = form
+            msg = 'Incident title ' + title + ' already exist, try with another one'
+            messages.error(self.request, msg)
             return HttpResponseRedirect(reverse('extra_incidents:update', kwargs={'pk': inc_id}))
 
 
