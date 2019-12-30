@@ -7,7 +7,8 @@
 	application.name as app,
 	usr.username as user,
 	final_user.username as final_user,
-	e.created
+	e.created,
+	e.end_date
 from extra_incidents_extraincident as e
 left join auth_user as usr on e.user_id = usr.id
 left join auth_user as final_user on e.user_id = final_user.id
