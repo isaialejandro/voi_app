@@ -43,10 +43,10 @@
                         <div class="col-lg-7" id="cluster_info">
                             <dl class="dl-horizontal" >
 
-                                <dt>Created:</dt> <dd> 	{{detail.created}} </dd>
+                                <dt>Created:</dt> <dd> 	{{detail.created_date}} </dd>
                                 {% if detail.finalized %}
                                     <dt>Finalized:</dt> <dd> {{detail.end_date}}</dd>
-                                    <!--<dt>Resolution Time:</dt> <dd> {{ resol_time }} </dd>-->
+                                    <dt>Resolution Time:</dt> <dd> {{ resol_time }} </dd>
                                     <dt>User update:</dt> <dd> {{ detail.final_user }} </dd>
                                 {% endif %}
                             </dl>

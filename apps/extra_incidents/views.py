@@ -46,7 +46,7 @@ class ListView(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
 
         if user.has_perm('extra_incidents.view_extra_incident_list'):
 
-            #Pagination begins
+            #---Pagination begins---
             extra_incident_list = ExtraIncident.objects.filter(is_active=True).order_by('finalized')
 
             page = request.GET.get('page')
@@ -58,21 +58,10 @@ class ListView(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
                 extra_incidents = paginator.page(1)
             except EmptyPage:
                 extra_incidents = paginator.page(paginator.num_pages)
-            #Pagination ends
-
-            #Filtering code begin
-            app = request.GET.get('search_app')
-            type = request.GET.get('search_type')
-            source = request.GET.get('search_source')
-            daterange = request.GET.get('daterange')
-
-            print(
-                'app: ', app,
-                 '\n', type, '\n', source, '\n', daterange
-            )
-            #Filtering code end
+            #---Pagination ends---
 
             context['extra_incident_list'] = extra_incidents
+            context['filter'] = ExtraIncidentFilter(request.GET)
             context['count'] = ExtraIncident.objects.filter(is_active=True).order_by('finalized')
             context['incident_filter'] = ExtraIncidentFilter(self.request.GET, queryset=extra_incident_list)
             context['extra_incidents'] = True
@@ -243,20 +232,21 @@ class IncidentDetail(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View)
                 """
 
                 created = datetime.datetime.strptime(str(inc.created)[:19], "%Y-%m-%d %H:%M:%S")
+                print(datetime.datetime.now())
                 finalized = inc.end_date
 
                 sub_days = finalized + relativedelta(days=-created.day) #ready
                 sub_months = finalized + relativedelta(months=-created.month) #ready
                 #sub_years = finalized + relativedelta(years=-created.year) #not yet
 
-                #sub_hours = finalized + relativedelta(hours=-created.hour) #not yet
-                #sub_minutes = finalized + relativedelta(minutes=-created.minute) #not yet
-                #sub_seconds = finalized + relativedelta(seconds=-created.second) #not yet
+                sub_hours = finalized + relativedelta(hours=-created.hour) #not yet
+                sub_minutes = finalized + relativedelta(minutes=-created.minute) #not yet
+                sub_seconds = finalized + relativedelta(seconds=-created.second) #not yet
 
-                #print('CURRENT HOUR: ', created)
-                #print('SUB HOUR:', sub_hours.hour)
-                #print('SUB DAYS:', sub_days.day)
-                #print('SUB MONTH', sub_month.month)
+                print('CURRENT HOUR: ', created)
+                print('SUB HOUR:', sub_hours.hour)
+                print('SUB DAYS:', sub_days.day)
+                print('SUB MONTH', sub_months.month)
 
             else:
                 resol_time = 'Inc has not end time.'
