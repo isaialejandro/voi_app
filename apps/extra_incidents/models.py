@@ -18,16 +18,18 @@ now = timezone.now
 class ExtraIncident(models.Model):
 
     application = models.ForeignKey(Application, on_delete=models.DO_NOTHING)
-    title = models.CharField(max_length=100, null=True, blank=True) #for default apps.
+    title = models.CharField(max_length=100, null=True, blank=True) #for default apps incidents.
     type = models.CharField(max_length=20,choices=TYPE, default=REGISTRY)
-    end_date = models.DateTimeField(blank=True, null=True)
     inc_source = models.CharField(max_length=25, choices=INC_SOURCE, default=PAPERLESS, blank=False)
     is_active = models.BooleanField(default=True)
     finalized = models.BooleanField(default=False)
-    created = models.DateTimeField(default=now)
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING) #user created incident.
-    final_user = models.ForeignKey(User, related_name='final_user', on_delete=models.DO_NOTHING, default=1) #user closed/finalized incident.
-    #Custom Extra incidents
+    created_date = models.DateTimeField(default=now)
+    end_date = models.DateTimeField(blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING) #user that created incident.
+    final_user = models.ForeignKey(User, related_name='final_user', on_delete=models.DO_NOTHING, default=1) #user that closed/finalized incident.
+
+    
+    #For Custom Extra incidents
     summary = models.TextField(max_length=1000, null=False)
 
     zendesk = models.ForeignKey(Zendesk, blank=True, null=True, on_delete=models.DO_NOTHING)

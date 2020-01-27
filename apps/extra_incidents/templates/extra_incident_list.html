@@ -43,6 +43,8 @@
                                 </button>
                                 <br><br><br>
                               </div>
+
+                              <!--
                               <div id="div_form" class="col-sm-12 m-b-xs" style="display:none">
                                 <form id="search_form" action="/extra_incidents/list/" method=GET>
                                   <div class="col-md-4">
@@ -79,6 +81,44 @@
                                   </div>
                                 </form>
                               </div>
+                              -->
+                              <div id="div_form" class="col-sm-12 m-b-xs" style="display:none">
+                                <form method="GET">
+                                  <div class="col-md-4">
+                                        {{ filter.form.title }}
+                                  </div>
+
+                                  <div class="col-md-4">
+                                        {{ filter.form.application }}
+                                  </div>
+
+                                  <!--<div class="col-md-4 input-group">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    {#{{ filter.form.end_date }}#}
+                                  </div>-->
+                                  <br>
+                                  <br>
+
+                                  <div class="col-md-4">
+                                    {{ filter.form.inc_source }}
+                                  </div>
+
+                                  <div class="col-md-4">
+                                    {{ filter.form.finalized }}
+                                  </div>
+
+                                  <div class="col-md-4">
+                                    {{ filter.form.ordering }}
+                                  </div>
+
+                                  <br><br>
+                                  {#{{ filter.form.as_p }}#}
+                                  <div class="col-md-12">
+                                    <button type="submit" class="btn btn-block btn-outline btn-primary">Search</button>
+                                  </div>
+                                </form>
+                              </div>
+
                             </div>
 
                             <div>
@@ -108,18 +148,17 @@
                                             <th>Status</th>
 
                                             {% if user.is_superuser %}
-                                                <th>Created</th>
                                                 <th>User </th>
                                             {% endif %}
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for inc in extra_incident_list %}
+                                        {% for inc in filter.qs %}
                                             <tr>
                                                 <td>{{ inc.title }}</td>
                                                 <td>{{ inc.application }}</td>
                                                 <td>{{ inc.type }}</td>
-                                                <td>{{ inc.created }}</td>
+                                                <td>{{ inc.created_date }}</td>
                                                 <td>
                                                   {% if inc.finalized or inc.closed %}
                                                     {{ inc.end_date }}
@@ -157,11 +196,13 @@
                                                         finalized
                                                     </span>
                                                   {% else %}
+                                                    <span class="label label-primary">
+                                                        Open
+                                                    </span>
                                                   {% endif %}
                                                 </td>
 
                                                 {% if user.is_superuser %}
-                                                  <th>{{ inc.created }} </th>
                                                   <th>{{ inc.user }} </th>
                                                 {% endif %}
                                             </tr>
@@ -206,6 +247,7 @@
                                         </ul>
                                     {% endif %}
                                     <div>
+
                                       Total items:
                                       <strong>{{ count.count }}</strong>
                                     </div>
@@ -334,10 +376,13 @@
           //------------------SEARCH FILTER-------------------------
           var search_btn = $('#search_btn');
           var search_form = $('search_form');
-          var app = $('#search_app');
-          var type = $('#search_type');
-          var source = $('#search_source');
-          var datepicker = $('input[name="daterange"]');
+          var title = $('#id_title');
+          var app = $('#id_application');
+          var type = $('#id_type');
+          var source = $('#id_inc_source');
+          var finalized = $('#id_finalized');
+          var datepicker = $('input[name="end_date"]');
+          var ordering = $('#id_ordering');
 
 
           search_btn.click(function(){
@@ -348,6 +393,8 @@
             source.val(null).trigger('change');
             datepicker.val('01/01/2020 - 01/02/2020');
           });
+
+          title.prop("placeholder", "Title");
 
 
           app.select2({
@@ -363,11 +410,22 @@
             allowClear: true
           });
 
+          finalized.select2({
+            placeholder: "Finalized",
+            allowClear: true
+          });
+
           datepicker.daterangepicker({
             locale: {
               format: 'YYYY-MM-DD'
             }
           });
+
+          ordering.select2({
+            placeholder: "Ordering",
+            allowClear: true
+          });
+
           //daterange.prop('disabled', true);
           //------------------SEARCH FILTER-------------------------
 
