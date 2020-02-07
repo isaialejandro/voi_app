@@ -14,252 +14,300 @@
 
 {% block content %}
     <div class="wrapper wrapper-content">
-        <div class="container">
+          {% if messages %}
+              {% for message in messages %}
+                  <div class="alert alert-success">
+                      {{message}}.
+                  </div>
+              {% endfor %}
+          {% endif %}
 
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-success">
-                        {{message}}.
-                    </div>
-                {% endfor %}
-            {% endif %}
-
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="wrapper wrapper-content animated fadeInUp">
-                        <div class="ibox-title">
-                            <h5> Incidents List </h5>
-                            <div class="ibox-tools">
-                                <a class="collapse-link">
-                                    <i class="fa fa-chevron-up"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="ibox-content">
-                            <div class="row">
-                              <div class="col-md-12">
-                                <button id="search_btn" type="button" class="btn btn-outline btn-success">
-                                  <i class="fa fa-search"></i>
-                                </button>
-                                <br><br><br>
-                              </div>
-
-                              <!--
-                              <div id="div_form" class="col-sm-12 m-b-xs" style="display:none">
-                                <form id="search_form" action="/extra_incidents/list/" method=GET>
-                                  <div class="col-md-4">
-                                    <select class="search form-control" name="search_app" id="search_app" form-control">
-                                        {% for a in app %}
-                                          <option value="{{a.id}}">{{a.name}}</option>
-                                        {% endfor %}
-                                    </select>
-                                  </div>
-
-                                  <div class="col-md-4">
-                                    <select class="search form-control" name="search_type" id="search_type" form-control">
-                                        {% for v, s in type %}
-                                          <option value="{{v}}">{{s}}</option>
-                                        {% endfor %}
-                                    </select>
-                                  </div>
-
-                                  <div class="col-md-4 input-group">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input class="form-control" type="text" name="daterange" value="01/01/2020 - 01/02/2020" />
-                                  </div>
-
-                                  <div class="col-md-4">
-                                    <select class="search form-control" name="search_source" id="search_source">
-                                        {% for v,s in source %}
-                                          <option value="{{v}}">{{s}}</option>
-                                        {% endfor %}
-                                    </select>
-                                  </div>
-                                  <br><br>
-                                  <div class="col-md-12">
-                                    <button type="submit" class="btn btn-block btn-outline btn-primary">Search</button>
-                                  </div>
-                                </form>
-                              </div>
-                              -->
-                              <div id="div_form" class="col-sm-12 m-b-xs" style="display:none">
-                                <form method="GET">
-                                  <div class="col-md-4">
-                                        {{ filter.form.title }}
-                                  </div>
-
-                                  <div class="col-md-4">
-                                        {{ filter.form.application }}
-                                  </div>
-
-                                  <!--<div class="col-md-4 input-group">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    {#{{ filter.form.end_date }}#}
-                                  </div>-->
-                                  <br>
-                                  <br>
-
-                                  <div class="col-md-4">
-                                    {{ filter.form.inc_source }}
-                                  </div>
-
-                                  <div class="col-md-4">
-                                    {{ filter.form.finalized }}
-                                  </div>
-
-                                  <div class="col-md-4">
-                                    {{ filter.form.ordering }}
-                                  </div>
-
-                                  <br><br>
-                                  {#{{ filter.form.as_p }}#}
-                                  <div class="col-md-12">
-                                    <button type="submit" class="btn btn-block btn-outline btn-primary">Search</button>
-                                  </div>
-                                </form>
-                              </div>
-
+          <div class="row">
+              <div class="col-lg-9">
+                  <div class="wrapper wrapper-content animated fadeInUp">
+                      <div class="ibox-title">
+                          <h5> Incident List </h5>
+                          <div class="ibox-tools">
+                              <a class="collapse-link">
+                                  <i class="fa fa-chevron-up"></i>
+                              </a>
+                          </div>
+                      </div>
+                      <div class="ibox-content">
+                          <div class="row">
+                            <!--
+                            <div class="col-md-12">
+                              <button id="search_btn" type="button" class="btn btn-outline btn-success">
+                                <i class="fa fa-search"></i>
+                              </button>
+                              <br><br><br>
                             </div>
 
-                            <div>
-                              <br>
-                              <br>
-                              Total items:
-                              <strong>{{ count.count }}</strong>
-                            </div>
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Title</th>
-                                            <th>App</th>
-                                            <th>Type</th>
-                                            <th>Creation date</th>
-                                            <th>End date</th>
-                                            <th>Source</th>
-                                            {% if perms.extra_incidents.view_extra_incident_detail %}
-                                              <th>Detail</th>
-                                            {% endif %}
 
-                                            {% if perms.extra_incidents.finalize_extra_incident %}
-                                              <th>Action</th>
-                                            {% endif %}
+                            <!--Formulario con Select2 Actual-->
 
-                                            <th>Status</th>
-
-                                            {% if user.is_superuser %}
-                                                <th>User </th>
-                                            {% endif %}
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for inc in filter.qs %}
-                                            <tr>
-                                                <td>{{ inc.title }}</td>
-                                                <td>{{ inc.application }}</td>
-                                                <td>{{ inc.type }}</td>
-                                                <td>{{ inc.created_date }}</td>
-                                                <td>
-                                                  {% if inc.finalized or inc.closed %}
-                                                    {{ inc.end_date }}
-                                                  {% endif %}
-                                                </td>
-                                                <td>{{ inc.inc_source }}</td>
-
-                                                {% if perms.extra_incidents.view_extra_incident_detail %}
-                                                  <td>
-                                                    <a type="button" class="btn btn-xs btn-info" href="{% url 'extra_incidents:detail' inc.id %}">Info</a>
-                                                  </td>
-                                                {% endif %}
-
-                                                <td align="center">
-
-                                                  {% if perms.extra_incidents.update_extra_incident %}
-                                                    {% if not inc.finalized %}
-                                                      <a href="{% url 'extra_incidents:update' inc.id %}"><i class="fa fa-pencil-square-o"></i></a>
-                                                    {% endif %}
-                                                  {% endif %}
-
-                                                  <br><br>
-
-                                                  {% if perms.extra_incidents.finalize_extra_incident %}
-                                                      {% if not inc.finalized %}
-                                                        <button data-id="{{inc.id}}" class="btn btn-default btn-circle finalize" type="button"><i class="fa fa-check"></i>
-                                                        </button>
-                                                      {% endif %}
-                                                    {% endif %}
-                                                </td>
-
-                                                <td>
-                                                  {% if inc.finalized %}
-                                                    <span class="label label-success">
-                                                        finalized
-                                                    </span>
-                                                  {% else %}
-                                                    <span class="label label-primary">
-                                                        Open
-                                                    </span>
-                                                  {% endif %}
-                                                </td>
-
-                                                {% if user.is_superuser %}
-                                                  <th>{{ inc.user }} </th>
-                                                {% endif %}
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-
-                                <div class="paginator">
-                                    {% if extra_incident_list.has_other_pages %}
-                                        <ul class="pagination">
-                                          {% if extra_incident_list.has_previous %}
-                                              <li class="page-item active">
-                                                <a class="page-link" href="?page={{ extra_incidents.previous_page_number }}" tabindex="-1">Previous</a>
-                                              </li>
-                                          {% else %}
-                                              <li class="page-item disabled">
-                                                <a class="page-link" tabindex="-1" href="#">&raquo;</a>
-                                              </li>
-                                          {% endif %}
-
-                                          {% for x in extra_incident_list.paginator.page_range %}
-                                              {% if extra_incident_list.number == x %}
-                                                  <li class="page-item active">
-                                                    <a class="page-link" href="#">{{x}}
-                                                      <span class="sr-only">(current)</span>
-                                                    </a>
-                                                  </li>
-                                              {% else %}
-                                                  <li class="page-item"><a class="page-link" href="?page={{x}}">{{x}}</a></li>
-                                              {% endif %}
-                                          {% endfor %}
-
-                                          {% if extra_incident_list.has_next %}
-                                              <li class="page-item">
-                                                <a class="page-link" href="?page={{extra_incident_list.next_page_number}}">Next</a>
-                                              </li>
-                                          {% else %}
-                                              <li class="page-item disabled">
-                                                <a class="page-link" href="#">&raquo;</a>
-                                              </li>
-                                          {% endif %}
-                                        </ul>
-                                    {% endif %}
-                                    <div>
-
-                                      Total items:
-                                      <strong>{{ count.count }}</strong>
-                                    </div>
+                            <!--<div id="div_form" class="col-sm-12 m-b-xs" style="display:none">
+                              <form method="GET">
+                                <div class="col-md-4">
+                                      {{ filter.form.title }}
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                                <div class="col-md-4">
+                                      {{ filter.form.application }}
+                                </div>
+                                <br><br>
+                                <div class="col-md-4">
+                                  {{ filter.form.inc_source }}
+                                </div>
+                                <div class="col-md-4">
+                                  {{ filter.form.finalized }}
+                                </div>
+                                <div class="col-md-4">
+                                  {{ filter.form.ordering }}
+                                </div>
+                                <br><br>
+                                {#{{ filter.form.as_p }}#}
+                                <div class="col-md-12">
+                                  <button type="submit" class="btn btn-block btn-outline btn-primary">Search</button>
+                                </div>
+                              </form>
+                            </div>-->
 
-            </div>
+                          </div>
 
-        </div>
+                          <div>
+                            <br>
+                            <br>
+                            Total items:
+                            <strong>{{ count.count }}</strong>
+                          </div>
+                          <div class="table-responsive">
+                              <table class="table table-striped">
+                                  <thead>
+                                      <tr>
+                                          <th>Title</th>
+                                          <th>App</th>
+                                          <th>Type</th>
+                                          <th>Creation date</th>
+                                          <th>End date</th>
+                                          <th>Source</th>
+                                          {% if perms.extra_incidents.view_extra_incident_detail %}
+                                            <th>Detail</th>
+                                          {% endif %}
+
+                                          {% if perms.extra_incidents.finalize_extra_incident %}
+                                            <th>Action</th>
+                                          {% endif %}
+
+                                          <th>Status</th>
+
+                                          {% if user.is_superuser %}
+                                              <th>User </th>
+                                          {% endif %}
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                      {% for inc in filter.qs %}
+                                          <tr>
+                                              <td>{{ inc.title }}</td>
+                                              <td>{{ inc.application }}</td>
+                                              <td>{{ inc.type }}</td>
+                                              <td>{{ inc.created_date }}</td>
+                                              <td>
+                                                {% if inc.finalized or inc.closed %}
+                                                  {{ inc.end_date }}
+                                                {% endif %}
+                                              </td>
+                                              <td>{{ inc.inc_source }}</td>
+
+                                              {% if perms.extra_incidents.view_extra_incident_detail %}
+                                                <td>
+                                                  <a type="button" class="btn btn-xs btn-info" href="{% url 'extra_incidents:detail' inc.id %}">Info</a>
+                                                </td>
+                                              {% endif %}
+
+                                              <td align="center">
+
+                                                {% if perms.extra_incidents.update_extra_incident %}
+                                                  {% if not inc.finalized %}
+                                                    <a href="{% url 'extra_incidents:update' inc.id %}"><i class="fa fa-pencil-square-o"></i></a>
+                                                  {% endif %}
+                                                {% endif %}
+
+                                                <br><br>
+
+                                                {% if perms.extra_incidents.finalize_extra_incident %}
+                                                    {% if not inc.finalized %}
+                                                      <button data-id="{{inc.id}}" class="btn btn-default btn-circle finalize" type="button"><i class="fa fa-check"></i>
+                                                      </button>
+                                                    {% endif %}
+                                                  {% endif %}
+                                              </td>
+
+                                              <td>
+                                                {% if inc.finalized %}
+                                                  <span class="label label-success">
+                                                      finalized
+                                                  </span>
+                                                {% else %}
+                                                  <span class="label label-primary">
+                                                      Open
+                                                  </span>
+                                                {% endif %}
+                                              </td>
+
+                                              {% if user.is_superuser %}
+                                                <th>{{ inc.user }} </th>
+                                              {% endif %}
+                                          </tr>
+                                      {% endfor %}
+                                  </tbody>
+                              </table>
+
+                              <div class="paginator">
+                                  {% if extra_incident_list.has_other_pages %}
+                                      <ul class="pagination">
+                                        {% if extra_incident_list.has_previous %}
+                                            <li class="page-item active">
+                                              <a class="page-link" href="?page={{ extra_incidents.previous_page_number }}" tabindex="-1">Previous</a>
+                                            </li>
+                                        {% else %}
+                                            <li class="page-item disabled">
+                                              <a class="page-link" tabindex="-1" href="#">&raquo;</a>
+                                            </li>
+                                        {% endif %}
+
+                                        {% for x in extra_incident_list.paginator.page_range %}
+                                            {% if extra_incident_list.number == x %}
+                                                <li class="page-item active">
+                                                  <a class="page-link" href="#">{{x}}
+                                                    <span class="sr-only">(current)</span>
+                                                  </a>
+                                                </li>
+                                            {% else %}
+                                                <li class="page-item"><a class="page-link" href="?page={{x}}">{{x}}</a></li>
+                                            {% endif %}
+                                        {% endfor %}
+
+                                        {% if extra_incident_list.has_next %}
+                                            <li class="page-item">
+                                              <a class="page-link" href="?page={{extra_incident_list.next_page_number}}">Next</a>
+                                            </li>
+                                        {% else %}
+                                            <li class="page-item disabled">
+                                              <a class="page-link" href="#">&raquo;</a>
+                                            </li>
+                                        {% endif %}
+                                      </ul>
+                                  {% endif %}
+                                  <div>
+
+                                    Total items:
+                                    <strong>{{ count.count }}</strong>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="col-lg-3">
+                  <div class="wrapper wrapper-content animated fadeInUp">
+                      <div class="ibox-title">
+                          <h5>Filter</h5>
+                      </div>
+                      <div class="ibox-content">
+                          <form method="get">
+                              <button type="submit" class="btn btn-block btn-outline btn-success">Filter!</button>
+                              <button type="button" class="btn btn-block btn-outline btn-info">Clean filter</button>
+                              <br><br>
+                              <h4>Type</h4>
+                              {% for v, t in type %}
+                                <ul class="todo-list m-t small-list">
+                                  <li>
+                                      <a href="#" data-id="{{ v }}" class="check-link"><i class="fa fa-square-o"></i> </a>
+                                      <span class="m-l-xs">{{ t.capitalize }}</span>
+                                  </li>
+                                </ul>
+                              {% endfor %}
+
+                                <h4>Application</h4>
+                                {% for a in app %}
+                                  <ul class="todo-list m-t small-list">
+                                    <li>
+                                        <a href="#" class="check-link"><i class="fa fa-square-o"></i> </a>
+                                        <span class="m-l-xs">{{ a.name.capitalize }}</span>
+                                    </li>
+                                  </ul>
+                                {% endfor %}
+
+                              <h4>Finalized</h4>
+                              <ul class="todo-list m-t small-list">
+                                <li>
+                                    <a href="#" class="check-link"><i class="fa fa-square-o"></i> </a>
+                                    <span class="m-l-xs">Yes</span>
+                                </li>
+                                &nbsp;
+                                <li>
+                                    <a href="#" class="check-link"><i class="fa fa-square-o"></i> </a>
+                                    <span class="m-l-xs">No</span>
+                                </li>
+                              </ul>
+
+                              <h4>Source</h4>
+                              <ul class="todo-list m-t small-list">
+                                {% for v, s in source %}
+                                  <li>
+                                      <a href="#" data-id="{{ v }}" class="check-link"><i class="fa fa-square-o"></i> </a>
+                                      <span class="m-l-xs">{{ s.capitalize }}</span>
+                                  </li>
+                                {% endfor %}
+                              </ul>
+
+                              <h4>User</h4>
+                              <ul class="todo-list m-t small-list">
+                                {% for u in user_creation %}
+                                  <li>
+                                      <a href="#" class="check-link"><i class="fa fa-square-o"></i> </a>
+                                      <span class="m-l-xs">{{ u.username.capitalize }}</span>
+                                  </li>
+                                {% endfor %}
+                              </ul>
+                              <br><br>
+                              <button type="button" class="btn btn-block btn-outline btn-success">Filter!</button>
+                              <button type="button" class="btn btn-block btn-outline btn-info">Clean filter</button>
+
+                          </form>
+                      </div>
+                  </div>
+
+                  <!--Exporting files by DateRange-->
+                  <!--Manda a llamar un modal/popUp para definir el rango de fechas únicametne en el que se exportará la data-->
+                  <div class="wrapper wrapper-content animated fadeInUp">
+                      <div class="ibox-title">
+                          <h5>Export</h5>
+                          <div class="ibox-tools">
+
+                          </div>
+                      </div>
+                      <div class="ibox-content" style="overflow-y: scroll;">
+                        <ul class="todo-list m-t small-list">
+                            <li>
+                              &nbsp;
+                                <button data-toggle="button" class="btn btn-primary btn-outline" type="button">*Csv</button>
+                            </li>
+                        </ul>
+                        <ul class="todo-list m-t small-list">
+                            <li>
+                                &nbsp;
+                                <button data-toggle="button" class="btn btn-primary btn-outline" type="button">*Json</button>
+                            </li>
+                        </ul>
+                      </div>
+                  </div>
+              </div>
+
+          </div>
+
     </div>
 {% endblock %}
 
