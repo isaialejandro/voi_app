@@ -46,28 +46,29 @@ class ListView(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
 
         if user.has_perm('extra_incidents.view_extra_incident_list'):
 
-            #---Pagination begins---
+            #---Pagination begins---#
             extra_incident_list = ExtraIncident.objects.filter(is_active=True).order_by('finalized')
 
             page = request.GET.get('page')
             paginator = Paginator(extra_incident_list, 100)
-
             try:
                 extra_incidents = paginator.page(page)
             except PageNotAnInteger:
                 extra_incidents = paginator.page(1)
             except EmptyPage:
                 extra_incidents = paginator.page(paginator.num_pages)
-            #---Pagination ends---
+            #---Pagination ends---#
+
 
             context['extra_incident_list'] = extra_incidents
             context['filter'] = ExtraIncidentFilter(request.GET)
-            context['count'] = ExtraIncident.objects.filter(is_active=True).order_by('finalized')
+            context['count'] = ExtraIncident.objects.all()
             context['incident_filter'] = ExtraIncidentFilter(self.request.GET, queryset=extra_incident_list)
             context['extra_incidents'] = True
-            context['source'] = INC_SOURCE
-            context['type'] = TYPE
             context['app'] = Application.objects.filter(is_active=True)
+            context['type'] = TYPE
+            context['source'] = INC_SOURCE
+            context['user_creation'] = User.objects.filter(is_active=True)
             return render(request, 'extra_incident_list.html', context)
         else:
             return render(request, '404.html', context)
