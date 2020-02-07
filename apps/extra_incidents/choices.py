@@ -1,5 +1,5 @@
 
-#Type
+#Inc Type
 REGISTRY = 'Registry'
 UNSUBSCRIBE = 'Unsubscribe'
 UPDATE = 'Update'

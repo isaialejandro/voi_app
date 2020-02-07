@@ -11,6 +11,7 @@ class Application(models.Model):
     This model manage the normal and sox apps, each one with different parameters & rules
     """
 
+    #Application Type
     NORMAL = 'Normal'
     SOX = 'Sox'
 
