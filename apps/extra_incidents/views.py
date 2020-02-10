@@ -26,7 +26,8 @@ from django.views.generic.detail import DetailView
 
 from braces.views import LoginRequiredMixin
 
-from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin, PermissionRequiredMixin
+from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin,\
+ PermissionRequiredMixin
 
 from apps.extra_incidents.models import ExtraIncident
 from apps.extra_incidents.forms import ExtraIncidentForm
