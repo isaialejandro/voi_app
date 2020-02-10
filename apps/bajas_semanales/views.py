@@ -36,7 +36,7 @@ class BajasSemanalesList(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, L
 
 class CreateBajaSemanal(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, CreateView):
 
-    def get(self, request, *args):
+    def get(self, request):
 
         context = {}
         user = request.user
@@ -44,7 +44,7 @@ class CreateBajaSemanal(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Cr
             return render(request, '404.html', context)
         else:
             context['new_baja_semanal'] = True
-            context['form'] = BajaSemanalForm()
+            context['form'] = BajaSemanalForm(request.GET)
             context['application_list'] = Application.objects.filter(
                                             is_active=True,
                                             is_for_bajas_semanales=True

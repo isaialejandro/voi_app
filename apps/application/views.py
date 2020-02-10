@@ -93,6 +93,7 @@ class CreateApplication(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Vi
 
         name = request.POST.get('name').upper()
         app_type = request.POST.get('app_type')
+        is_for_bajas_semanales = request.POST.get('is_for_bajas_semanales')
 
         if Application.objects.filter(is_active=True, name=name):
 
@@ -101,10 +102,16 @@ class CreateApplication(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Vi
             return HttpResponseRedirect(reverse_lazy('application:new'))
         else:
 
+            if is_for_bajas_semanales == 'on':
+                is_for_bajas_semanales = True
+            elif not is_for_bajas_semanales:
+                is_for_bajas_semanales = False
+
             new_app = Application(
                 name=name,
                 registry_date=now,
                 app_type=app_type,
+                is_for_bajas_semanales=is_for_bajas_semanales,
                 is_active=True,
                 user=User.objects.get(id=request.user.id)
             )

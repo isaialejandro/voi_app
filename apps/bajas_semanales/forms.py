@@ -10,10 +10,11 @@ from apps.bajas_semanales.models import BajaSemanal
 
 class BajaSemanalForm(forms.ModelForm):
 
-    #application = forms.MultipleChoiceField(
-    #        required=True,
-    #        widget=forms.CheckboxSelectMultiple,
-    #    )
+    def __init__(self, request, *args, **kwargs):
+        super(BajaSemanalForm, self).__init__(*args, **kwargs)
+        self.fields['application'].queryset=Application.objects.filter(is_active=True, is_for_bajas_semanales=True)
+
+        #application: forms.ChoiceField(widget=forms.Select
 
     class Meta:
 
@@ -34,7 +35,6 @@ class BajaSemanalForm(forms.ModelForm):
             'user_code': forms.TextInput(attrs={'class': 'form-control'}),
             'user_name': forms.TextInput(attrs={'class': 'form-control'}),
             'request_date': forms.TextInput(attrs={'class': 'form-control'}),
-            'application': forms.CheckboxSelectMultiple(),
         }
 
     #Solo funciona cuando en la vista se usa la función "is_valid()"
