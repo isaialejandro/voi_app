@@ -21,7 +21,7 @@ class BajaSemanalForm(forms.ModelForm):
         model = BajaSemanal
 
         fields = [
-            'tipo',
+            'type',
             'subject',
             'user_code',
             'user_name',
@@ -30,7 +30,7 @@ class BajaSemanalForm(forms.ModelForm):
         ]
 
         widgets = {
-            'tipo': forms.TextInput(attrs={'class': 'form-control'}),
+            'type': forms.TextInput(attrs={'class': 'form-control'}),
             'subject': forms.TextInput(attrs={'class': 'form-control'}),
             'user_code': forms.TextInput(attrs={'class': 'form-control'}),
             'user_name': forms.TextInput(attrs={'class': 'form-control'}),

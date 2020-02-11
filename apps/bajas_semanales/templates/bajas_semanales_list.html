@@ -2,7 +2,7 @@
 {% load static from staticfiles %}
 
 {% block title %}
-    Extra Incident List
+    Bajas Semanales
 {% endblock %}
 
 {% block extracss %}
@@ -26,7 +26,7 @@
               <div class="col-lg-9">
                   <div class="wrapper wrapper-content animated fadeInUp">
                       <div class="ibox-title">
-                          <h5> Incident List </h5>
+                          <h5> Bajas Semanales </h5>
                           <div class="ibox-tools">
                               <a class="collapse-link">
                                   <i class="fa fa-chevron-up"></i>
@@ -34,46 +34,6 @@
                           </div>
                       </div>
                       <div class="ibox-content">
-                          <div class="row">
-                            <!--
-                            <div class="col-md-12">
-                              <button id="search_btn" type="button" class="btn btn-outline btn-success">
-                                <i class="fa fa-search"></i>
-                              </button>
-                              <br><br><br>
-                            </div>
-
-
-                            <!--Formulario con Select2 Actual-->
-
-                            <!--<div id="div_form" class="col-sm-12 m-b-xs" style="display:none">
-                              <form method="GET">
-                                <div class="col-md-4">
-                                      {{ filter.form.title }}
-                                </div>
-                                <div class="col-md-4">
-                                      {{ filter.form.application }}
-                                </div>
-                                <br><br>
-                                <div class="col-md-4">
-                                  {{ filter.form.inc_source }}
-                                </div>
-                                <div class="col-md-4">
-                                  {{ filter.form.finalized }}
-                                </div>
-                                <div class="col-md-4">
-                                  {{ filter.form.ordering }}
-                                </div>
-                                <br><br>
-                                {#{{ filter.form.as_p }}#}
-                                <div class="col-md-12">
-                                  <button type="submit" class="btn btn-block btn-outline btn-primary">Search</button>
-                                </div>
-                              </form>
-                            </div>-->
-
-                          </div>
-
                           <div>
                             <br>
                             <br>
@@ -84,79 +44,47 @@
                               <table class="table table-striped">
                                   <thead>
                                       <tr>
-                                          <th>Title</th>
-                                          <th>App</th>
                                           <th>Type</th>
-                                          <th>Creation date</th>
-                                          <th>End date</th>
-                                          <th>Source</th>
-                                          {% if perms.extra_incidents.view_extra_incident_detail %}
-                                            <th>Detail</th>
-                                          {% endif %}
-
-                                          {% if perms.extra_incidents.finalize_extra_incident %}
-                                            <th>Action</th>
-                                          {% endif %}
-
-                                          <th>Status</th>
-
+                                          <th>Subject</th>
+                                          <th>User ID</th>
+                                          <th>User name </th>
+                                          <th>Request Date</th>
+                                          <th>Created</th>
+                                          <th>Applications</th>
+                                          <th>Checked</th>
                                           {% if user.is_superuser %}
-                                              <th>User </th>
+                                            <th>User</th>
                                           {% endif %}
                                       </tr>
                                   </thead>
                                   <tbody>
-                                      {% for inc in filter.qs %}
+                                      {#{% for b in filter.qs %}#}
+                                      {% for b in bajas %}
                                           <tr>
-                                              <td>{{ inc.title }}</td>
-                                              <td>{{ inc.application }}</td>
-                                              <td>{{ inc.type }}</td>
-                                              <td>{{ inc.created_date }}</td>
+                                              <td>{{ b.type }}</td>
+                                              <td>{{ b.subject }}</td>
+                                              <td>{{ b.user_code }}</td>
+                                              <td>{{ b.user_name }}</td>
+                                              <td>{{ b.request_date }}</td>
+                                              <td>{{ b.created_date }}</td>
                                               <td>
-                                                {% if inc.finalized or inc.closed %}
-                                                  {{ inc.end_date }}
-                                                {% endif %}
+                                                {% for a in b.application.all %}
+                                                  {{ a }}&nbsp;
+                                                {% endfor %}
                                               </td>
-                                              <td>{{ inc.inc_source }}</td>
-
-                                              {% if perms.extra_incidents.view_extra_incident_detail %}
-                                                <td>
-                                                  <a type="button" class="btn btn-xs btn-info" href="{% url 'extra_incidents:detail' inc.id %}">Info</a>
-                                                </td>
-                                              {% endif %}
-
                                               <td align="center">
-
-                                                {% if perms.extra_incidents.update_extra_incident %}
-                                                  {% if not inc.finalized %}
-                                                    <a href="{% url 'extra_incidents:update' inc.id %}"><i class="fa fa-pencil-square-o"></i></a>
+                                                <a href="#">
+                                                  {% if b.already_checked == True  %}
+                                                    <i class="fa fa-check"></i>
                                                   {% endif %}
-                                                {% endif %}
 
-                                                <br><br>
-
-                                                {% if perms.extra_incidents.finalize_extra_incident %}
-                                                    {% if not inc.finalized %}
-                                                      <button data-id="{{inc.id}}" class="btn btn-default btn-circle finalize" type="button"><i class="fa fa-check"></i>
-                                                      </button>
-                                                    {% endif %}
+                                                  {% if not b.already_checked %}
+                                                    <i class="fa fa-times"></i>
                                                   {% endif %}
+                                                </a>
                                               </td>
-
-                                              <td>
-                                                {% if inc.finalized %}
-                                                  <span class="label label-success">
-                                                      finalized
-                                                  </span>
-                                                {% else %}
-                                                  <span class="label label-primary">
-                                                      Open
-                                                  </span>
-                                                {% endif %}
-                                              </td>
-
                                               {% if user.is_superuser %}
-                                                <th>{{ inc.user }} </th>
+                                                <td>{{ b.user }}</td>
                                               {% endif %}
                                           </tr>
                                       {% endfor %}

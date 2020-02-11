@@ -33,6 +33,11 @@ class BajasSemanalesList(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, L
     model = BajaSemanal
     template_name = 'bajas_semanales_list.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(BajasSemanalesList, self).get_context_data(**kwargs)
+        context['bajas_semanales_list'] = True
+        context['bajas'] = BajaSemanal.objects.order_by('-created_date')
+        return context
 
 class CreateBajaSemanal(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, CreateView):
 
@@ -55,7 +60,7 @@ class CreateBajaSemanal(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Cr
     @transaction.atomic
     def post(self, request, *args):
 
-        tipo = request.POST.get('tipo')
+        type = request.POST.get('type')
         subject = request.POST.get('subject')
         user_code = request.POST.get('user_code')
         user_name = request.POST.get('user_name')
@@ -65,10 +70,10 @@ class CreateBajaSemanal(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Cr
         if not BajaSemanal.objects.filter(user_code=user_code, user_name=user_name):
 
             new  = BajaSemanal(
-                tipo = tipo,
+                type = type,
                 subject = subject,
-                user_code = user_code,
-                user_name = user_name,
+                user_code = user_code.capitalize(),
+                user_name = user_name.title(),
                 request_date = request_date,
                 created_date = now,
                 user = User.objects.get(id=request.user.id)
@@ -78,6 +83,14 @@ class CreateBajaSemanal(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Cr
             for a in application_list:
                 new.application.add(a)
 
+
+            #Si el registro tiene todas las bajas marcar el "already checked"
+            if new.application.all().count() == Application.objects.filter(
+                                            is_active=True,
+                                            is_for_bajas_semanales=True
+                                        ).count():
+                new.already_checked = True
+                new.save()
 
             msg = 'Baja ' + subject + ' saved successfully'
             messages.success(request, msg)
