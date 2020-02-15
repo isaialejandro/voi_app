@@ -8,9 +8,29 @@ from apps.application.models import Application
 now = timezone.now
 
 
+class TipoBaja(models.Model):
+
+    type = models.CharField(max_length=100, blank=False, null=False)
+    created_date = models.DateTimeField(default=now)
+    is_active = models.BooleanField(default=True)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, default=1)
+
+    def __str__(self):
+        return self.type
+
+    class Meta:
+
+        permissions = (
+            ('view_tipo_bajas_list', 'Visualize Tipo de Bajas List'),
+            ('create_tipo_baja', 'Create Tipo Baja'),
+            ('update_tipo_baja', 'Update Tipo de Baja'),
+            ('deactivate_tipo_baja', 'Deactivate Tipo de Baja'),
+        )
+
+
 class BajaSemanal(models.Model):
 
-    type = models.CharField(max_length=50, blank=True, null=False)
+    type = models.ForeignKey('TipoBaja', on_delete=models.DO_NOTHING)
     subject = models.CharField(max_length=200, blank=False, null=False)
     user_code = models.CharField(max_length=20, blank=False, null=False)
     user_name = models.CharField(max_length=50, blank=False, null=False)

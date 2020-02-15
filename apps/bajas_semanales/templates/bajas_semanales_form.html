@@ -7,6 +7,10 @@
         New Baja Semanal
     {% elif update_baja_semanal %}
         Update Baja Semanal | {{ form.subject }}
+    {% elif new_tipo_baja  %}
+        New Tipo de Baja
+    {% elif update_tipo_baja %}
+        Update | {{ form.type }}
     {% endif %}
 {% endblock %}
 
@@ -53,14 +57,22 @@
 
                                 <div class="form-group">
                                     <div class="col-lg-10">
-                                        {{form.as_p}}
+                                        {% if new_tipo_baja or update_tipo_baja %}
+                                          {{form.as_p}}
+                                        {% elif new_baja_semanal or update_baja_semanal %}
+                                          {{form.as_p}}
+                                        {% endif %}
                                     </div>
                                 </div>
                                 <div class="hr-line-dashed"></div>
 
                                 <div class="form-group">
                                     <div class="col-sm-4 col-sm-offset-2">
-                                        <a class="btn btn-white" type="button" href="{% url 'bajas_semanales:list' %}">Cancel</a>
+                                      {% if new_tipo_baja or update_tipo_baja %}
+                                        <a class="btn btn-white" type="button" href="{% url 'bajas_semanales:tipo_bajas_list' %}">Cancel</a>
+                                      {% elif new_baja_semanal or update_baja_semanal %}
+                                          <a class="btn btn-white" type="button" href="{% url 'bajas_semanales:bajas_semanales_list' %}">Cancel</a>
+                                      {% endif %}
                                         <button class="btn btn-primary" type="submit">Save changes</button>
                                     </div>
                                 </div>
@@ -82,6 +94,7 @@
 
     $(document).ready(function(){
 
+      var s_type = $('#id_type');
       var request_date = $('#id_request_date');
       var s_app = $('#id_application');
 
@@ -94,8 +107,28 @@
           autoclose: true,
           format: 'yyyy-mm-dd'
       });
+
       s_app.addClass("form-control");
-      s_app.select2();
+      s_app.select2({
+        placeholder: "Select an application"
+      });
+      s_type.select2({
+        placeholder: "Select a type"
+      });
+
+
+      //----------------
+      request_date.on('keydown keyup keypress', function(){
+          var $regexp = /^[_0-9]/;
+
+          if (!$(this).val().match($regexp)){
+            $(this).val('');
+            //console.log('not match');
+          }
+
+    });
+
+
 
     });
 

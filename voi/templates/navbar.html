@@ -94,19 +94,32 @@
                         </li>
                     {% endif %}
 
-                    {% if perms.bajas_semanales.view_bajas_semanales_list or perms.bajas_semanales.create_baja_semanal %}
+                    {% if perms.bajas_semanales.view_bajas_semanales_list or perms.bajas_semanales.create_baja_semanal or perms.bajas_semanales.view_tipo_bajas_list  %}
                         <li class="dropdown">
                             <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> Bajas Semanales <span class="caret"></span></a>
                             <ul role="menu" class="dropdown-menu">
+
+                                {% if perms.bajas_semanales.view_tipo_bajas_list %}
+                                    {% if not tipo_bajas_list %}
+                                        <li><a href="{% url 'bajas_semanales:tipo_bajas_list' %}">Tipo de Bajas List</a></li>
+                                    {% endif %}
+                                {% endif %}
+
+                                {% if perms.bajas_semanales.create_tipo_baja %}
+                                    {% if not new_tipo_baja %}
+                                        <li><a href="{% url 'bajas_semanales:create_tipo_baja' %}">New Tipo de Baja</a></li>
+                                    {% endif %}
+                                {% endif %}
+
                                 {% if perms.bajas_semanales.view_bajas_semanales_list %}
                                     {% if not bajas_semanales_list %}
-                                        <li><a href="{% url 'bajas_semanales:list' %}">List</a></li>
+                                        <li><a href="{% url 'bajas_semanales:bajas_semanales_list' %}">Bajas Semanales List</a></li>
                                     {% endif %}
                                 {% endif %}
                                 {% if perms.bajas_semanales.create_baja_semanal %}
                                     {% if not new_baja_semanal %}
                                         <li>
-                                            <a href="{% url 'bajas_semanales:new' %}">New Baja</a>
+                                            <a href="{% url 'bajas_semanales:new' %}">New Baja Semanal</a>
                                         </li>
                                     {% endif %}
                                 {% endif %}

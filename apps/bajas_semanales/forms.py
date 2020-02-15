@@ -3,18 +3,24 @@ from django import forms
 from django.contrib import messages
 
 from apps.application.models import Application
-from apps.bajas_semanales.models import BajaSemanal
+from apps.bajas_semanales.models import TipoBaja, BajaSemanal
 
 #from apps.extra_incidents.choices import *
 
+class TipoBajaForm(forms.ModelForm):
+
+    class Meta:
+
+        model = TipoBaja
+        fields = ['type']
+        labels = {'type': 'Tipo de Baja Semanal'}
+        widgets = {'type': forms.TextInput(attrs={'class': 'form-control'})}
 
 class BajaSemanalForm(forms.ModelForm):
 
     def __init__(self, request, *args, **kwargs):
         super(BajaSemanalForm, self).__init__(*args, **kwargs)
         self.fields['application'].queryset=Application.objects.filter(is_active=True, is_for_bajas_semanales=True)
-
-        #application: forms.ChoiceField(widget=forms.Select
 
     class Meta:
 
@@ -30,7 +36,7 @@ class BajaSemanalForm(forms.ModelForm):
         ]
 
         widgets = {
-            'type': forms.TextInput(attrs={'class': 'form-control'}),
+            'type': forms.Select(attrs={'class': 'form-control select2'}),
             'subject': forms.TextInput(attrs={'class': 'form-control'}),
             'user_code': forms.TextInput(attrs={'class': 'form-control'}),
             'user_name': forms.TextInput(attrs={'class': 'form-control'}),

@@ -51,6 +51,7 @@
                                           <th>Request Date</th>
                                           <th>Created</th>
                                           <th>Applications</th>
+                                          <th>Update</th>
                                           <th>Checked</th>
                                           {% if user.is_superuser %}
                                             <th>User</th>
@@ -71,6 +72,11 @@
                                                 {% for a in b.application.all %}
                                                   {{ a }}&nbsp;
                                                 {% endfor %}
+                                              </td>
+                                              <td>
+                                                {% if b.already_checked is False %}
+                                                  <button class="btn btn-outline btn-success  dim" type="button"><i class="fa fa-gear"></i></button>
+                                                {% endif %}
                                               </td>
                                               <td align="center">
                                                 <a href="#">
