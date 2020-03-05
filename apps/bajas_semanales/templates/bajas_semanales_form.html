@@ -1,0 +1,137 @@
+{% extends 'base/base.html' %}
+{% load static from staticfiles %}
+
+
+{% block title %}
+    {% if new_baja_semanal %}
+        New Baja Semanal
+    {% elif update_baja_semanal %}
+        Update Baja Semanal | {{ form.subject }}
+    {% elif new_tipo_baja  %}
+        New Tipo de Baja
+    {% elif update_tipo_baja %}
+        Update | {{ form.type }}
+    {% endif %}
+{% endblock %}
+
+{% block extracss %}
+    <link href="{% static 'css/plugins/datapicker/datepicker3.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                {{error.field}}
+                <div class="alert alert-danger">
+                    {{error|escape}}.
+                </div>
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger">
+                {{message}}.
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="wrapper wrapper-content animated fadeInUp">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            {% if new_baja_semanal %}
+                                <h5>New Baja Semanal</h5>
+                            {% elif update_baja_semanal %}
+                                <h5>Update Baja - <strong>{{form.subject}}</strong></h5>
+                            {% endif %}
+
+                        </div>
+
+                        <div class="ibox-content">
+                            <form method="post" class="form-horizontal">{% csrf_token %}
+
+                                <div class="form-group">
+                                    <div class="col-lg-10">
+                                        {% if new_tipo_baja or update_tipo_baja %}
+                                          {{form.as_p}}
+                                        {% elif new_baja_semanal or update_baja_semanal %}
+                                          {{form.as_p}}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="hr-line-dashed"></div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-4 col-sm-offset-2">
+                                      {% if new_tipo_baja or update_tipo_baja %}
+                                        <a class="btn btn-white" type="button" href="{% url 'bajas_semanales:tipo_bajas_list' %}">Cancel</a>
+                                      {% elif new_baja_semanal or update_baja_semanal %}
+                                          <a class="btn btn-white" type="button" href="{% url 'bajas_semanales:bajas_semanales_list' %}">Cancel</a>
+                                      {% endif %}
+                                        <button class="btn btn-primary" type="submit">Save changes</button>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extrajs %}
+  <!-- Data picker -->
+  <script src="{% static 'js/plugins/datapicker/bootstrap-datepicker.js' %}"></script>
+
+  <script>
+
+    $(document).ready(function(){
+
+      var s_type = $('#id_type');
+      var request_date = $('#id_request_date');
+      var s_app = $('#id_application');
+
+
+      request_date.datepicker({
+          todayBtn: "linked",
+          keyboardNavigation: false,
+          forceParse: false,
+          calendarWeeks: true,
+          autoclose: true,
+          format: 'yyyy-mm-dd'
+      });
+
+      s_app.addClass("form-control");
+      s_app.select2({
+        placeholder: "Select an application"
+      });
+      s_type.select2({
+        placeholder: "Select a type"
+      });
+
+
+      //------------------------------------------------------
+      request_date.on('keydown keyup keypress', function(){
+          var $regexp = /^[_0-9]/;
+
+          if (!$(this).val().match($regexp)){
+            $(this).val('');
+            //console.log('not match');
+          }
+
+    });
+
+
+
+    });
+
+  </script>
+
+{% endblock %}

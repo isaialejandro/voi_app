@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from rest_framework import authentication, permissions
 from rest_framework.response import Response
 
-from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin, PermissionRequiredMixin
+#from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin, PermissionRequiredMixin
 
 from apps.extra_incidents.models import ExtraIncident
 
@@ -17,7 +17,7 @@ from apps.extra_incidents.models import ExtraIncident
 now = datetime.datetime.now()
 
 
-class FinalizeIncident(NeverCacheMixin, CSRFExemptMixin, APIView):
+class FinalizeIncident(APIView):
 
     """
     Change extra_incident status: Finalize it
