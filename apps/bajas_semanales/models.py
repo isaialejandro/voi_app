@@ -38,7 +38,8 @@ class BajaSemanal(models.Model):
     application = models.ManyToManyField(Application)
     created_date = models.DateTimeField(default=now)
     already_checked = models.BooleanField(default=False)
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True)
+    last_user_update = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='last_updated_user')
 
     def __str__(self):
         return '{}'.format(self.subject + ' | ' + '{}'.format(self.created_date))

@@ -50,9 +50,11 @@
                                           <th>User name </th>
                                           <th>Request Date</th>
                                           <th>Created</th>
+                                          <th>Created by</th>
                                           <th>Applications</th>
                                           <th>Update</th>
                                           <th>Checked</th>
+                                          <th>Last user update</th>
                                           {% if user.is_superuser %}
                                             <th>User</th>
                                           {% endif %}
@@ -68,6 +70,7 @@
                                               <td>{{ b.user_name }}</td>
                                               <td>{{ b.request_date }}</td>
                                               <td>{{ b.created_date }}</td>
+                                              <td>{{ b.user }}</td>
                                               <td>
                                                 {% for a in b.application.all %}
                                                   {{ a }}&nbsp;
@@ -75,19 +78,28 @@
                                               </td>
                                               <td>
                                                 {% if b.already_checked is False %}
-                                                  <button class="btn btn-outline btn-success  dim" type="button"><i class="fa fa-gear"></i></button>
+                                                  <a href="#" class="btn btn-outline btn-success dim btn-update" type="button" data-id="{{ b.id }}">
+                                                    <i class="fa fa-gear"></i>
+                                                  </a>
                                                 {% endif %}
                                               </td>
                                               <td align="center">
                                                 <a href="#">
-                                                  {% if b.already_checked == True  %}
+                                                  {% if b.already_checked is True  %}
                                                     <i class="fa fa-check"></i>
                                                   {% endif %}
 
-                                                  {% if not b.already_checked %}
+                                                  {% if b.already_checked is False %}
                                                     <i class="fa fa-times"></i>
                                                   {% endif %}
                                                 </a>
+                                              </td>
+                                              <td>
+                                                {% if not b.last_user_update %}
+                                                  N/A
+                                                {% else %}
+                                                  {{ b.last_user_update }}
+                                                {% endif %}
                                               </td>
                                               {% if user.is_superuser %}
                                                 <td>{{ b.user }}</td>
@@ -140,6 +152,60 @@
                                   </div>
                               </div>
                           </div>
+
+                          <!--MODAL START-->
+                          <div class="modal inmodal" id="modal_update" tabindex="-1" role="dialog" aria-hidden="true">
+                              <div class="modal-dialog">
+                                  <div class="modal-content animated fadeIn">
+                                      <div class="modal-header">
+                                          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                          <h4 id="modal_title" class="modal-title">Recheck Baja Semanal</h4>
+                                          <small id="modal_little_desc" class="font-bold">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</small>
+                                      </div>
+                                      <form action="#" id="modal_form">{% csrf_token %}
+                                          <div id="modal_body" class="modal-body">
+                                              <div class="form-group">
+                                                <label>Type</label>
+                                                <select class="form-control js-data-example-ajax" id="s_type" name="type" style="width: 100%">
+                                                </select>
+                                              </div>
+
+                                              <div class="form-group">
+                                                <label>Subject</label>
+                                                <input type="text" id="subject_input" name="subject" required placeholder="Subject" class="form-control">
+                                              </div>
+
+                                              <div class="form-group">
+                                                 <label>User ID</label>
+                                                 <input type="text" id="user_code_input" name="user_code" required placeholder="User ID" class="form-control">
+                                              </div>
+
+                                              <div class="form-group">
+                                                 <label>Username</label>
+                                                 <input type="text" id="user_name_input" name="user_name" required placeholder="Username" class="form-control">
+                                              </div>
+
+                                             <div class="form-group">
+                                                 <label>Request date</label>
+                                                 <input type="date" id="request_date_input" name="request_date" class="form-control">
+                                             </div>
+
+                                            <div class="form-group">
+                                                 <label>Applications</label>
+                                                  <select class="form-control" multiple="multiple" id="s_application" name="application" style="width: 100%"></select>
+                                            </div>
+                                          </div>
+                                          {{form.as_p}}
+
+                                          <div class="modal-footer">
+                                              <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                                              <button type="button" id="btn_modal_save" data-id="" class="btn btn-primary">Save changes</button>
+                                          </div>
+                                      </form>
+                                  </div>
+                              </div>
+                          </div>
+                          <!--MODAL ENDS-->
                       </div>
                   </div>
               </div>
@@ -150,7 +216,7 @@
                           <h5>Filter</h5>
                       </div>
                       <div class="ibox-content">
-                          <form method="get">
+                          <form method="get">{% csrf_token %}
                               <button type="submit" class="btn btn-block btn-outline btn-success">Filter!</button>
                               <button type="button" class="btn btn-block btn-outline btn-info">Clean filter</button>
                               <br><br>
@@ -209,7 +275,6 @@
                               <br><br>
                               <button type="button" class="btn btn-block btn-outline btn-success">Filter!</button>
                               <button type="button" class="btn btn-block btn-outline btn-info">Clean filter</button>
-
                           </form>
                       </div>
                   </div>
@@ -258,15 +323,151 @@
     <script>
 
         $(document).ready(function(){
-          /*
-          var search = $('#search');
 
-          search.addEventListener('keypress', function(e){
-            if(e.keyCode==13){
+          var btn_update = $('.btn-update');
 
-            }
-          });*/
+          var modal_update = $('#modal_update');
+          var modal_title = $('#modal_title');
+          var modal_little_desc = $('#modal_little_desc');
+          var modal_body = $('#modal_body');
+          var btn_modal_save = $('#btn_modal_save');
 
+          var s_type = $('#s_type');
+          var subject_input = $('#subject_input');
+          var user_code_input = $('#user_code_input');
+          var user_name_input = $('#user_name_input');
+          var request_date_input = $('#request_date_input');
+          var s_app = $('#s_application');
+
+
+          s_app.select2();
+
+          //GET BAJASEMANAL IN MODAL
+          btn_update.on('click', function(){
+            var id = $(this).data("id");
+            //Passing id record to Save Changes modal btn for post method.
+            btn_modal_save.data('id', id)
+
+            $.ajax({
+              url: "{% url 'bajas-semanales-api-v1:recheck_baja' %}",
+              dataType: 'json',
+              method: 'get',
+              data: {
+                "id": id
+              },
+              success: function(data){
+                if(data.success){
+
+                  $.each(data.baja_semanal, function(index, item){
+                    modal_title.empty().html(item.type);
+                    modal_little_desc.empty().html(item.subject);
+
+
+                    subject_input.empty().val(item.subject);
+                    user_code_input.empty().val(item.user_code);
+                    user_name_input.empty().val(item.user_name);
+                    request_date_input.empty().val(item.request_date);
+                  });
+
+                  s_type.empty();
+                  $.each(data.tipo_bajas, function(index, item){
+                    if(item.selected == true){
+                      s_type.append('<option value="'+ item.id +'" selected="selected">'+ item.text +'</option>');
+                    } else {
+                      s_type.append('<option value="'+ item.id +'">'+ item.text +'</option>');
+                    }
+                  });
+                  //NO TRABAJA CORRECTAMENTE CARGANDOLE EL SELECT2
+                  //s_type.empty().trigger('change');
+                  /*$.map(data.tipo_bajas, function(obj){
+                    if(obj.selected == true){
+                      var newOption = new Option(obj.text, obj.id, true, true);
+                      console.log(obj.text, ' - ', newOption);
+                      s_type.append(newOption).trigger('change');
+                    } else {
+                      var newOption = new Option(obj.text, obj.id, false, false);
+                      console.log('Else: ', obj, ' - ', newOption);
+                      s_app.append(newOption);
+                    }
+                  });*/
+
+                  s_app.empty().trigger("change");
+                  $.each(data.results, function(index, item){
+
+                     if(item.selected == true){
+                         var newOption = new Option(item.text, item.id, true, true);
+                         s_app.append(newOption).trigger('change');
+                     }
+                     if(item.selected == false){
+                       var newOption = new Option(item.text, item.id, false, false);
+                       s_app.append(newOption);
+                     }
+                  });
+
+                  modal_update.modal('show');
+                } else {
+                  console.log('Msg: ', data.message);
+                }
+              },
+              error: function(data){
+                console.log('Error to try to get recheck data modal: ', data);
+              }
+            });
+          });
+
+          //POST BAJASEMANAL IN MODAL
+          btn_modal_save.click(function(e){
+
+            e.preventDefault();
+            $.ajax({
+              url: "{% url 'bajas-semanales-api-v1:recheck_baja' %}",
+              method: 'post',
+              dataTye: 'json',
+              data: {
+                "id": $(this).data('id'),
+                "type": s_type.val(),
+                "subject": subject_input.val(),
+                "user_code": user_code_input.val(),
+                "user_name": user_name_input.val(),
+                "request_date": request_date_input.val(),
+                "application": s_app.val(),
+              },
+              beforeSend: function(xhr, settings) {
+                  if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                      // Only send the token to relative URLs i.e. locally.
+                      xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                  }
+              },
+              success: function(data){
+                if(data.success){
+                  var txt = '';
+                  if(data.current_detail_status == true) {
+                    txt = data.already_checked
+                  } else {
+                    txt = data.updated
+                  }
+                  swal({
+                      title: data.updated,
+                      text: txt,
+                      type: "success",
+                      showConfirmButton: false,
+                  });
+                  setTimeout(function(data){
+                    window.location.href="/bajas/list/";
+                  }, 2000);
+                } else {
+                  console.log('Error: ', data.message);
+                }
+              },
+              error: function(data){
+                console.log('Error: ', data);
+              },
+            });
+            console.log('prevent modal');
+          });
+
+
+          //FINALIZE BajaSemenal
           $('.finalize').click(function(){
             var id = $(this).data('id');
             swal({
@@ -288,33 +489,31 @@
                             showConfirmButton: false,
                         });
 
-                        if(id){
-
-                          $.ajax({
-                            url: "{% url 'extra_incidents-api-v1:finalize' %}",
-                            type: 'json',
-                            method: 'post',
-                            data: {
-                              "id": id,
-                              "flag": 1,
-                            },
-                            beforeSend: function(xhr, settings) {
-                                if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
-                                    // Only send the token to relative URLs i.e. locally.
-                                    xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                        if(id) {
+                            $.ajax({
+                              url: "{% url 'extra_incidents-api-v1:finalize' %}",
+                              type: 'json',
+                              method: 'post',
+                              data: {
+                                "id": id,
+                                "flag": 1,
+                              },
+                              beforeSend: function(xhr, settings) {
+                                  if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                                      // Only send the token to relative URLs i.e. locally.
+                                      xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                                  }
+                              },
+                              success: function(data){
+                                if(data.success){
+                                  window.location.href="/extra_incidents/list/";
                                 }
-                            },
-                            success: function(data){
-                              if(data.success){
-                                console.log('success, redirect now')
-                                window.location.href="/extra_incidents/list/";
+                              },
+                              error: function(data){
+                                console.log('Error: ', data.message);
                               }
-                            },
-                            error: function(data){
-                              console.log('Error: ', data.message);
-                            }
-                          });
-                        }else{
+                            });
+                        } else {
                           conso.e.log('No id identified..');
                         }
 
@@ -324,36 +523,6 @@
                 });
           });
 
-          //bbb not exist. In progress
-          $('.bbb').click(function(){
-
-              var id = $(this).data('id');
-              console.log(id);
-
-
-              $.ajax({
-                url: "{% url 'extra_incidents-api-v1:finalize' %}",
-                type: 'json',
-                method: 'post',
-                data: {
-                  "id": id,
-                },
-                beforeSend: function(xhr, settings) {
-                    if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
-                        // Only send the token to relative URLs i.e. locally.
-                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-                    }
-                },
-                success: function(data){
-                  if(data.success){
-                    ShowModal(data.title, data.message, '', data.button);
-                  }
-                },
-                error: function(data){
-                  console.log('Error: ', data.message);
-                }
-              });
-          });
 
           //------------------SEARCH FILTER-------------------------
           var search_btn = $('#search_btn');

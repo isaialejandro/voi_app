@@ -20,6 +20,7 @@ class BajaSemanalForm(forms.ModelForm):
 
     def __init__(self, request, *args, **kwargs):
         super(BajaSemanalForm, self).__init__(*args, **kwargs)
+        self.fields['type'].queryset=TipoBaja.objects.filter(is_active=True)
         self.fields['application'].queryset=Application.objects.filter(is_active=True, is_for_bajas_semanales=True)
 
     class Meta:

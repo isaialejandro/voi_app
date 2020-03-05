@@ -75,4 +75,5 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('tickets-api-v1/', include(('apps.ticket.api.v1.urls', ticket), namespace='ticket-api-v1')),
     path('extra_incidents-api-v1/', include(('apps.extra_incidents.api.v1.urls', ticket), namespace='extra_incidents-api-v1')),
+    path('bajas_semanales-api-v1/', include(('apps.bajas_semanales.api.v1.urls', bajas_semanales), namespace='bajas-semanales-api-v1')),
 ]

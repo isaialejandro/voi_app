@@ -36,8 +36,9 @@ class TipoBajaList(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, ListVie
     def get_context_data(self, **kwargs):
         context = super(TipoBajaList, self).get_context_data(**kwargs)
         context['tipo_bajas_list'] = True
-        context['tipo_bajas'] = TipoBaja.objects.filter(is_active=True)
-        context['count'] = TipoBaja.objects.filter(is_active=True)
+        context['tipo_bajas'] = TipoBaja.objects.all()
+        context['form'] = TipoBajaForm()
+        context['count'] = TipoBaja.objects.all()
         return context
 
 
@@ -125,14 +126,16 @@ class CreateBajaSemanal(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Cr
 
         if not BajaSemanal.objects.filter(user_code=user_code, user_name=user_name):
 
+            currnt_usr = User.objects.get(id=request.user.id)
             new  = BajaSemanal(
                 type = TipoBaja.objects.get(id=type),
-                subject = subject,
+                subject = subject.title(),
                 user_code = user_code.capitalize(),
                 user_name = user_name.title(),
                 request_date = request_date,
                 created_date = now,
-                user = User.objects.get(id=request.user.id)
+                user = currnt_usr,
+                last_user_update = currnt_usr
             )
             new.save()
 

@@ -4,7 +4,12 @@ from django.contrib import admin
 from apps.application.models import Application, TresSesentaEnUnClick, Zendesk, \
 OpCenter, NetTracer, SmartKargo, ZendeskGroup, ZendeskRol
 
-admin.site.register(Application)
+
+@admin.register(Application)
+class ApplicationAdmin(admin.ModelAdmin):
+
+    list_display = ('name', 'app_type', 'is_active', 'is_for_bajas_semanales')
+
 admin.site.register(TresSesentaEnUnClick)
 admin.site.register(Zendesk)
 admin.site.register(OpCenter)
