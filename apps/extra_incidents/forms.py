@@ -6,8 +6,6 @@ from django.core.exceptions import ValidationError
 
 from apps.extra_incidents.models import ExtraIncident
 
-from apps.extra_incidents.models import ExtraIncident
-
 from apps.extra_incidents.choices import *
 
 

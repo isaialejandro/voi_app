@@ -40,6 +40,7 @@ user = apps.get_app_config('user').verbose_name
 import_export = apps.get_app_config('import_export').verbose_name
 bi_modules = apps.get_app_config('bi_modules').verbose_name
 extra_incidents = apps.get_app_config('extra_incidents').verbose_name
+bajas_semanales = apps.get_app_config('bajas_semanales').verbose_name
 
 
 class Dashboard(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
@@ -69,8 +70,10 @@ urlpatterns = [
     path('applicant/', include(('apps.applicant.urls', applicant), namespace='applicant')),
     path('sox/', include(('apps.sox.urls', sox), namespace='sox')),
     path('bi_modules/', include(('apps.bi_modules.urls', bi_modules), namespace='bi_modules')),
+    path('bajas/', include(('apps.bajas_semanales.urls', bajas_semanales), namespace='bajas_semanales')),
 
     path('api-auth/', include('rest_framework.urls')),
     path('tickets-api-v1/', include(('apps.ticket.api.v1.urls', ticket), namespace='ticket-api-v1')),
     path('extra_incidents-api-v1/', include(('apps.extra_incidents.api.v1.urls', ticket), namespace='extra_incidents-api-v1')),
+    path('bajas_semanales-api-v1/', include(('apps.bajas_semanales.api.v1.urls', bajas_semanales), namespace='bajas-semanales-api-v1')),
 ]
