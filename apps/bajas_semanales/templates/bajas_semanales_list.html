@@ -192,7 +192,7 @@
 
                                             <div class="form-group">
                                                  <label>Applications</label>
-                                                  <select class="form-control" multiple="multiple" id="s_application" name="application" style="width: 100%"></select>
+                                                  <select class="form-control " multiple="multiple" id="s_application" name="application" style="width: 100%"></select>
                                             </div>
                                           </div>
                                           {{form.as_p}}
@@ -341,7 +341,7 @@
           var s_app = $('#s_application');
 
 
-          s_app.select2();
+          //s_app.select2();
 
           //GET BAJASEMANAL IN MODAL
           btn_update.on('click', function(){
@@ -416,6 +416,15 @@
             });
           });
 
+          modal_update.on('show.bs.modal', function() {
+            s_app.select2({dropdownParent: modal_update});
+            console.log('show');
+          })
+          modal_update.on('hidden.bs.modal', function() {
+            s_app.select2('destroy');
+            console.log('hidden');
+          })
+
           //POST BAJASEMANAL IN MODAL
           btn_modal_save.click(function(e){
 
@@ -455,7 +464,7 @@
                   });
                   setTimeout(function(data){
                     window.location.href="/bajas/list/";
-                  }, 2000);
+                  }, 800);
                 } else {
                   console.log('Error: ', data.message);
                 }

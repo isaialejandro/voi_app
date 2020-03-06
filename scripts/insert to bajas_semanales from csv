@@ -1,0 +1,13 @@
+﻿COPY bajas_semanales_bajasemanal(
+	type,
+	subject,
+	user_code,
+	user_name,
+	request_date,
+	application,
+	created_date,
+	already_checked,
+	user,
+	last_user_update as True
+) FROM '/home/isaialejandro/Descargas/registro_bajas.csv'
+  DELIMITER ',' CSV HEADER;

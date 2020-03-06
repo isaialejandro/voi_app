@@ -1,11 +1,35 @@
 from django.contrib import admin
 
-from apps.bajas_semanales.models import TipoBaja, BajaSemanal
+from import_export.admin import ImportExportModelAdmin
 
-# Register your models here.
+from apps.bajas_semanales.models import TipoBaja, BajaSemanal
+from apps.bajas_semanales.resources import BajaSemanalResource
+
+
 @admin.register(TipoBaja)
-class TipoBajaAdmin(admin.ModelAdmin):
+#class TipoBajaAdmin(admin.ModelAdmin):
+class TipoBajaAdmin(ImportExportModelAdmin):
+
 
     list_display = ('type', 'created_date', 'is_active')
 
-admin.site.register(BajaSemanal)
+
+@admin.register(BajaSemanal)
+#class BajaSemanalAdmin(admin.ModelAdmin):
+class BajaSemanalAdmin(ImportExportModelAdmin):
+
+
+    list_display = (
+        'type',
+        'subject',
+        'user_code',
+        'user_name',
+        'request_date',
+        'user',
+        'already_checked',
+        'last_user_update'
+    )
+
+    baja_semanal = BajaSemanalResource()
+    dataset = baja_semanal.export()
+    dataset.csv
