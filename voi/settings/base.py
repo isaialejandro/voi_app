@@ -47,7 +47,6 @@ LOCAL_APPS = [
     'apps.user',
     'apps.tools',
     'apps.sox',
-    'apps.import_export',
     'apps.bi_modules',
     'apps.extra_incidents',
     'apps.bajas_semanales',
@@ -56,6 +55,7 @@ LOCAL_APPS = [
 THIRD_PARTY_APPS = [
     'django_filters',
     'rest_framework',
+    'import_export',
 ]
 
 
@@ -150,8 +150,8 @@ LOGOUT_REDIRECT_URL = 'login'
 #default = /accounts/login/
 #LOGIN_URL = 'login'
 
-
-
+#Import-Export Module Config
+IMPORT_EXPORT_USE_TRANSACTIONS = True
 
 
 #Email BackEnd

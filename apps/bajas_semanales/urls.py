@@ -9,4 +9,5 @@ urlpatterns = [
     path('list/', BajasSemanalesList.as_view(), name='bajas_semanales_list'),
     path('new/', CreateBajaSemanal.as_view(), name='new'),
    #path('update/<int:pk>/', UpdateBaja.as_view(), name='update'),
+
 ]

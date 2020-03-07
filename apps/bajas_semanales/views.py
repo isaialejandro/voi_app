@@ -9,6 +9,8 @@ from django.urls import reverse_lazy
 
 from django.utils import timezone
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView, View
 
@@ -22,6 +24,8 @@ from braces.views import LoginRequiredMixin
 
 from apps.bajas_semanales.models import TipoBaja, BajaSemanal
 from apps.bajas_semanales.forms import BajaSemanalForm, TipoBajaForm
+from apps.bajas_semanales.filters import BajaSemanalFilter
+
 from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin,\
  PermissionRequiredMixin
 
@@ -45,6 +49,7 @@ class TipoBajaList(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, ListVie
 class CreateTipoBaja(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, CreateView):
 
     def get(self, request):
+
         context = {}
         context['new_tipo_baja'] = True
         context['form'] = TipoBajaForm()
@@ -66,14 +71,9 @@ class CreateTipoBaja(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Creat
             messages.success(request, msg)
             return HttpResponseRedirect(reverse_lazy('bajas_semanales:tipo_bajas_list'))
         else:
-
-            #context = {}
-            #form = TipoBajaForm(initial = {'type': type})
-            #context['form'] = form
-
             msg = 'Tipo ' + type + ' already exists, try with another one'
             messages.error(request, msg)
-            return HttpResponseRedirect(reverse_lazy('bajas_semanales:create_tipo_baja'), context)
+            return HttpResponseRedirect(reverse_lazy('bajas_semanales:create_tipo_baja'))
 
 
 class BajasSemanalesList(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, ListView):
@@ -81,12 +81,33 @@ class BajasSemanalesList(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, L
     model = BajaSemanal
     template_name = 'bajas_semanales_list.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(BajasSemanalesList, self).get_context_data(**kwargs)
+    def get(self, request):
+
+        #---Pagination begins---#
+        bajas_list = BajaSemanal.objects.order_by('-created_date')
+        bajas_filter = BajaSemanalFilter(request.GET, queryset=bajas_list)
+        bajas_list = bajas_filter.qs
+
+        page = request.GET.get('page')
+        paginator = Paginator(bajas_list, 10)
+        try:
+            bajas_semanales_paginator = paginator.page(page)
+        except PageNotAnInteger:
+            bajas_semanales_paginator = paginator.page(1)
+        except EmptyPage:
+            bajas_semanales_paginator = paginator.page(paginator.num_pages)
+        #---Pagination ends---#
+
+
+        context = {}
         context['bajas_semanales_list'] = True
-        context['bajas'] = BajaSemanal.objects.order_by('-created_date')
-        context['count'] = BajaSemanal.objects.all()
-        return context
+        #context['bajas_paginator'] = bajas_list #bajas_semanales_paginator
+        #context['bajas_filter'] =
+
+        context['paginator'] = paginator
+        context['bajas_filter'] = bajas_filter
+        context['bajas'] = bajas_semanales_paginator
+        return render(request, 'bajas_semanales_list.html', context)
 
 
 class CreateBajaSemanal(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, CreateView):
@@ -142,7 +163,6 @@ class CreateBajaSemanal(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Cr
             for a in application_list:
                 new.application.add(a)
 
-
             #Si el registro tiene todas las bajas marcar el "already checked"
             if new.application.all().count() == Application.objects.filter(
                                             is_active=True,
@@ -153,6 +173,9 @@ class CreateBajaSemanal(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Cr
 
             msg = 'Baja ' + subject + ' saved successfully'
             messages.success(request, msg)
+            return HttpResponseRedirect(reverse_lazy('bajas_semanales:bajas_semanales_list'))
+        else:
+            messages.success(error, 'Username and user_id cannot be same')
             return HttpResponseRedirect(reverse_lazy('bajas_semanales:bajas_semanales_list'))
 
 

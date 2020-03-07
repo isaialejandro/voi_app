@@ -37,7 +37,6 @@ application = apps.get_app_config('application').verbose_name
 applicant = apps.get_app_config('applicant').verbose_name
 sox = apps.get_app_config('sox').verbose_name
 user = apps.get_app_config('user').verbose_name
-import_export = apps.get_app_config('import_export').verbose_name
 bi_modules = apps.get_app_config('bi_modules').verbose_name
 extra_incidents = apps.get_app_config('extra_incidents').verbose_name
 bajas_semanales = apps.get_app_config('bajas_semanales').verbose_name
