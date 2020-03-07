@@ -63,7 +63,6 @@ class ListView(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
 
             context['extra_incident_list'] = extra_incidents
             context['filter'] = ExtraIncidentFilter(request.GET)
-            context['count'] = ExtraIncident.objects.all()
             context['incident_filter'] = ExtraIncidentFilter(self.request.GET, queryset=extra_incident_list)
             context['extra_incidents'] = True
             context['app'] = Application.objects.filter(is_active=True)
