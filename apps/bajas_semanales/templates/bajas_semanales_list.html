@@ -38,7 +38,7 @@
                             <br>
                             <br>
                             Total items:
-                            <strong>{{ count.count }}</strong>
+                            <strong>{{ bajas_filter.qs.count }}</strong>
                           </div>
                           <div class="table-responsive">
                               <table class="table table-striped">
@@ -61,7 +61,6 @@
                                       </tr>
                                   </thead>
                                   <tbody>
-                                      {#{% for b in filter.qs %}#}
                                       {% for b in bajas %}
                                           <tr>
                                               <td>{{ b.type }}</td>
@@ -109,12 +108,13 @@
                                   </tbody>
                               </table>
 
+                              <!--PAGINATOR BEGINS-->
                               <div class="paginator">
-                                  {% if extra_incident_list.has_other_pages %}
+                                  {% if bajas.has_other_pages %}
                                       <ul class="pagination">
-                                        {% if extra_incident_list.has_previous %}
+                                        {% if bajas.has_previous %}
                                             <li class="page-item active">
-                                              <a class="page-link" href="?page={{ extra_incidents.previous_page_number }}" tabindex="-1">Previous</a>
+                                              <a class="page-link" href="?page={{ bajas.previous_page_number }}" tabindex="-1">Previous</a>
                                             </li>
                                         {% else %}
                                             <li class="page-item disabled">
@@ -122,8 +122,8 @@
                                             </li>
                                         {% endif %}
 
-                                        {% for x in extra_incident_list.paginator.page_range %}
-                                            {% if extra_incident_list.number == x %}
+                                        {% for x in bajas.paginator.page_range %}
+                                            {% if bajas.number == x %}
                                                 <li class="page-item active">
                                                   <a class="page-link" href="#">{{x}}
                                                     <span class="sr-only">(current)</span>
@@ -134,9 +134,9 @@
                                             {% endif %}
                                         {% endfor %}
 
-                                        {% if extra_incident_list.has_next %}
+                                        {% if bajas.has_next %}
                                             <li class="page-item">
-                                              <a class="page-link" href="?page={{extra_incident_list.next_page_number}}">Next</a>
+                                              <a class="page-link" href="?page={{bajas.next_page_number}}">Next</a>
                                             </li>
                                         {% else %}
                                             <li class="page-item disabled">
@@ -148,10 +148,12 @@
                                   <div>
 
                                     Total items:
-                                    <strong>{{ count.count }}</strong>
+                                    <strong>{{ bajas_filter.qs.count }}</strong>
                                   </div>
                               </div>
+                              <!--PAGINATOR ENDS-->
                           </div>
+
 
                           <!--MODAL START-->
                           <div class="modal inmodal" id="modal_update" tabindex="-1" role="dialog" aria-hidden="true">
@@ -211,73 +213,53 @@
               </div>
               <!--FILTER LIST BEGGINS-->
               <div class="col-lg-3">
-                  <!--<div class="wrapper wrapper-content animated fadeInUp">
+                  <div class="wrapper wrapper-content animated fadeInUp">
                       <div class="ibox-title">
                           <h5>Filter</h5>
                       </div>
                       <div class="ibox-content">
-                          <form method="get">{% csrf_token %}
+                          <form method="get">
                               <button type="submit" class="btn btn-block btn-outline btn-success">Filter!</button>
                               <button type="button" class="btn btn-block btn-outline btn-info">Clean filter</button>
                               <br><br>
-                              <h4>Type</h4>
-                              {% for v, t in type %}
-                                <ul class="todo-list m-t small-list">
-                                  <li>
-                                      <a href="#" data-id="{{ v }}" class="check-link"><i class="fa fa-square-o"></i> </a>
-                                      <span class="m-l-xs">{{ t.capitalize }}</span>
-                                  </li>
-                                </ul>
-                              {% endfor %}
 
-                                <h4>Application</h4>
-                                {% for a in app %}
-                                  <ul class="todo-list m-t small-list">
-                                    <li>
-                                        <a href="#" class="check-link"><i class="fa fa-square-o"></i> </a>
-                                        <span class="m-l-xs">{{ a.name.capitalize }}</span>
-                                    </li>
-                                  </ul>
-                                {% endfor %}
+                              <div class="form-group">
+                                <label>Type</label>
+                                {{bajas_filter.form.type}}
+                              </div>
+                              <div class="form-group">
+                                <label>Subject</label>
+                                {{bajas_filter.form.subject}}
+                              </div>
+                              <div class="form-group">
+                                <label>User ID</label>
+                                {{bajas_filter.form.user_code}}
+                              </div>
+                              <div class="form-group">
+                                <label>User name</label>
+                                {{bajas_filter.form.user_name}}
+                              </div>
+                              <div class="form-group">
+                                <label>Request Date</label>
+                                {{bajas_filter.form.request_date}}
+                              </div>
+                              <div class="form-group">
+                                <label>Created Date</label>
+                                {{bajas_filter.form.created_date}}
+                              </div>
+                              <div class="form-group">
+                                <label>Checked</label>
+                                {{bajas_filter.form.already_checked}}
+                              </div>
 
-                              <h4>Finalized</h4>
-                              <ul class="todo-list m-t small-list">
-                                <li>
-                                    <a href="#" class="check-link"><i class="fa fa-square-o"></i> </a>
-                                    <span class="m-l-xs">Yes</span>
-                                </li>
-                                &nbsp;
-                                <li>
-                                    <a href="#" class="check-link"><i class="fa fa-square-o"></i> </a>
-                                    <span class="m-l-xs">No</span>
-                                </li>
-                              </ul>
 
-                              <h4>Source</h4>
-                              <ul class="todo-list m-t small-list">
-                                {% for v, s in source %}
-                                  <li>
-                                      <a href="#" data-id="{{ v }}" class="check-link"><i class="fa fa-square-o"></i> </a>
-                                      <span class="m-l-xs">{{ s.capitalize }}</span>
-                                  </li>
-                                {% endfor %}
-                              </ul>
-
-                              <h4>User</h4>
-                              <ul class="todo-list m-t small-list">
-                                {% for u in user_creation %}
-                                  <li>
-                                      <a href="#" class="check-link"><i class="fa fa-square-o"></i> </a>
-                                      <span class="m-l-xs">{{ u.username.capitalize }}</span>
-                                  </li>
-                                {% endfor %}
-                              </ul>
+                              {# {{bajas_filter.form.as_p}} #}
                               <br><br>
-                              <button type="button" class="btn btn-block btn-outline btn-success">Filter!</button>
+                              <button type="submit" class="btn btn-block btn-outline btn-success">Filter!</button>
                               <button type="button" class="btn btn-block btn-outline btn-info">Clean filter</button>
                           </form>
                       </div>
-                  </div>-->
+                  </div>
 
                   <!--Exporting files by DateRange-->
                   <!--Manda a llamar un modal/popUp para definir el rango de fechas únicametne en el que se exportará la data-->
@@ -302,7 +284,7 @@
                             </li>
                         </ul>
                       </div>
-                  </div>-->
+                  </div>
               </div>
               <!--FILTER LIST ENDS-->
 
@@ -340,8 +322,6 @@
           var request_date_input = $('#request_date_input');
           var s_app = $('#s_application');
 
-
-          //s_app.select2();
 
           //GET BAJASEMANAL IN MODAL
           btn_update.on('click', function(){
