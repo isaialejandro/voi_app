@@ -89,7 +89,7 @@ class BajasSemanalesList(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, L
         bajas_list = bajas_filter.qs
 
         page = request.GET.get('page')
-        paginator = Paginator(bajas_list, 10)
+        paginator = Paginator(bajas_list, 100)
         try:
             bajas_semanales_paginator = paginator.page(page)
         except PageNotAnInteger:
