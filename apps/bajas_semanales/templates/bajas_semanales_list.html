@@ -35,6 +35,20 @@
                       </div>
                       <div class="ibox-content">
                           <div>
+                            <div class="form-group">
+                              <br>
+
+                                <!--<div class="form-group">
+                                  <label>Paginate by</label>
+                                  <br>
+                                  <select class="col-sm-2" id="s_pagination" name="s_pagination">
+                                            <option>option 1</option>
+                                            <option>option 2</option>
+                                            <option>option 3</option>
+                                            <option>option 4</option>
+                                  </select>
+                                </div>-->
+                            </div>
                             <br>
                             <br>
                             Total items:
@@ -220,23 +234,18 @@
                       <div class="ibox-content">
                           <form method="get">
                               <button type="submit" class="btn btn-block btn-outline btn-success">Filter!</button>
-                              <button type="button" class="btn btn-block btn-outline btn-info">Clean filter</button>
                               <br><br>
 
                               <div class="form-group">
-                                <label>Type</label>
                                 {{bajas_filter.form.type}}
                               </div>
                               <div class="form-group">
-                                <label>Subject</label>
                                 {{bajas_filter.form.subject}}
                               </div>
                               <div class="form-group">
-                                <label>User ID</label>
                                 {{bajas_filter.form.user_code}}
                               </div>
                               <div class="form-group">
-                                <label>User name</label>
                                 {{bajas_filter.form.user_name}}
                               </div>
                               <div class="form-group">
@@ -251,12 +260,6 @@
                                 <label>Checked</label>
                                 {{bajas_filter.form.already_checked}}
                               </div>
-
-
-                              {# {{bajas_filter.form.as_p}} #}
-                              <br><br>
-                              <button type="submit" class="btn btn-block btn-outline btn-success">Filter!</button>
-                              <button type="button" class="btn btn-block btn-outline btn-info">Clean filter</button>
                           </form>
                       </div>
                   </div>
@@ -321,6 +324,33 @@
           var user_name_input = $('#user_name_input');
           var request_date_input = $('#request_date_input');
           var s_app = $('#s_application');
+
+
+          //---FILTER ATTR FDIELD DEFINITIONS---
+          $('#id_type').addClass('form-control');
+          $('#id_subject').addClass('form-control');
+          $('#id_subject').attr('placeholder', 'Subject');
+          $('#id_user_code').addClass('form-control');
+          $('#id_user_code').attr('placeholder', 'User ID');
+          $('#id_user_name').addClass('form-control');
+          $('#id_user_name').attr('placeholder', 'Name');
+          $('#id_request_date').addClass('form-control');
+          $('#id_created_date').addClass('form-control');
+          $('#id_already_checked').addClass('form-control');
+          $('#id_already_checked').attr('placeholder', 'User ID');
+
+
+          $('#id_already_checked').select2(
+            {
+              allowClear: true,
+              placeholder: 'Already checked'
+            });
+            $('#id_type').select2(
+              {
+                allowClear: true,
+                placeholder: 'Type'
+              });
+          //---FILTER ATTR FDIELD DEFINITIONS---
 
 
           //GET BAJASEMANAL IN MODAL
@@ -402,7 +432,6 @@
           })
           modal_update.on('hidden.bs.modal', function() {
             s_app.select2('destroy');
-            console.log('hidden');
           })
 
           //POST BAJASEMANAL IN MODAL
@@ -513,62 +542,6 @@
                 });
           });
 
-
-          //------------------SEARCH FILTER-------------------------
-          var search_btn = $('#search_btn');
-          var search_form = $('search_form');
-          var title = $('#id_title');
-          var app = $('#id_application');
-          var type = $('#id_type');
-          var source = $('#id_inc_source');
-          var finalized = $('#id_finalized');
-          var datepicker = $('input[name="end_date"]');
-          var ordering = $('#id_ordering');
-
-
-          search_btn.click(function(){
-
-            $('#div_form').toggle(200);
-            app.val(null).trigger('change');
-            type.val(null).trigger('change');
-            source.val(null).trigger('change');
-            datepicker.val('01/01/2020 - 01/02/2020');
-          });
-
-          title.prop("placeholder", "Title");
-
-
-          app.select2({
-            placeholder: "Select an app",
-            allowClear: true
-          });
-          type.select2({
-            placeholder: "Select reg type",
-            allowClear: true
-          });
-          source.select2({
-            placeholder: "Select the source",
-            allowClear: true
-          });
-
-          finalized.select2({
-            placeholder: "Finalized",
-            allowClear: true
-          });
-
-          datepicker.daterangepicker({
-            locale: {
-              format: 'YYYY-MM-DD'
-            }
-          });
-
-          ordering.select2({
-            placeholder: "Ordering",
-            allowClear: true
-          });
-
-          //daterange.prop('disabled', true);
-          //------------------SEARCH FILTER-------------------------
 
         });
     </script>

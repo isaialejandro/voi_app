@@ -7,7 +7,7 @@
 	application,
 	created_date,
 	already_checked,
-	user,
-	last_user_update as True
+	'user',
+	last_user_update
 ) FROM '/home/isaialejandro/Descargas/registro_bajas.csv'
   DELIMITER ',' CSV HEADER;
