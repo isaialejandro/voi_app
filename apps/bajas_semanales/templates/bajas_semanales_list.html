@@ -23,7 +23,7 @@
           {% endif %}
 
           <div class="row">
-              <div class="col-lg-9">
+              <div class="col-lg-12">
                   <div class="wrapper wrapper-content animated fadeInUp">
                       <div class="ibox-title">
                           <h5> Bajas Semanales </h5>
@@ -34,26 +34,54 @@
                           </div>
                       </div>
                       <div class="ibox-content">
-                          <div>
-                            <div class="form-group">
-                              <br>
+                          <br><br>
+                          <form method="get">
+                              <!--<div class="form-group">
+                                <label>Paginate by</label>
+                                <br>
+                                <select class="col-sm-2" id="s_pagination" name="s_pagination">
+                                          <option>option 1</option>
+                                          <option>option 2</option>
+                                          <option>option 3</option>
+                                          <option>option 4</option>
+                                </select>
+                              </div>-->
+                              <div class="form-group col-md-4">
+                                {{bajas_filter.form.type}}
+                              </div>
+                              <div class="form-group col-md-4">
+                                {{bajas_filter.form.subject}}
+                              </div>
+                              <div class="form-group col-md-4">
+                                {{bajas_filter.form.user_code}}
+                              </div>
+                              <div class="form-group col-md-4">
+                                {{bajas_filter.form.user_name}}
+                              </div>
+                              <div class="form-group col-md-4">
+                                {{bajas_filter.form.request_date}}
+                              </div>
+                              <div class="form-group col-md-4">
+                                {{bajas_filter.form.created_date}}
+                              </div>
+                              <div class="form-group col-md-4">
+                                {{bajas_filter.form.already_checked}}
+                              </div>
+                              <div class="form-group col-md-8">
+                              </div>
+                              <div class="form-group col-md-8">
+                              </div>
+                              <div class="form-group col-md-8">
+                              </div>
+                              <div class="form-group col-md-12">
+                                <button type="submit" class="btn btn-block btn-outline btn-success">Search</button>
+                              </div>
+                          </form>
+                          <br>
+                          <br>
+                          Total items:
+                          <strong>{{ bajas_filter.qs.count }}</strong>
 
-                                <!--<div class="form-group">
-                                  <label>Paginate by</label>
-                                  <br>
-                                  <select class="col-sm-2" id="s_pagination" name="s_pagination">
-                                            <option>option 1</option>
-                                            <option>option 2</option>
-                                            <option>option 3</option>
-                                            <option>option 4</option>
-                                  </select>
-                                </div>-->
-                            </div>
-                            <br>
-                            <br>
-                            Total items:
-                            <strong>{{ bajas_filter.qs.count }}</strong>
-                          </div>
                           <div class="table-responsive">
                               <table class="table table-striped">
                                   <thead>
@@ -226,7 +254,7 @@
                   </div>
               </div>
               <!--FILTER LIST BEGGINS-->
-              <div class="col-lg-3">
+              <!--<div class="col-lg-3">
                   <div class="wrapper wrapper-content animated fadeInUp">
                       <div class="ibox-title">
                           <h5>Filter</h5>
@@ -263,36 +291,8 @@
                           </form>
                       </div>
                   </div>
-
-                  <!--Exporting files by DateRange-->
-                  <!--Manda a llamar un modal/popUp para definir el rango de fechas únicametne en el que se exportará la data-->
-                  <!--<div class="wrapper wrapper-content animated fadeInUp">
-                      <div class="ibox-title">
-                          <h5>Export</h5>
-                          <div class="ibox-tools">
-
-                          </div>
-                      </div>
-                      <div class="ibox-content" style="overflow-y: scroll;">
-                        <ul class="todo-list m-t small-list">
-                            <li>
-                              &nbsp;
-                                <button data-toggle="button" class="btn btn-primary btn-outline" type="button">*Csv</button>
-                            </li>
-                        </ul>
-                        <ul class="todo-list m-t small-list">
-                            <li>
-                                &nbsp;
-                                <button data-toggle="button" class="btn btn-primary btn-outline" type="button">*Json</button>
-                            </li>
-                        </ul>
-                      </div>
-                  </div>
-              </div>
-              <!--FILTER LIST ENDS-->
-
-          </div>
-
+            </div>-->
+            <!--FILTER LIST ENDS-->
     </div>
 {% endblock %}
 
