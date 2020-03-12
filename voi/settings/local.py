@@ -29,7 +29,7 @@ DATABASES = {
 
 #STATIC_URL = '/static/'
 STATIC_URL = '/voi/staticfiles/'
-
+STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static")
 #Indica la ruta para cargar la carpeta  static en el ambiente local.
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "staticfiles"),
