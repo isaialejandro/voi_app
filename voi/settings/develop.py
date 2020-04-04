@@ -4,7 +4,7 @@ from .base import *
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['www.voiregadmin.com']
+ALLOWED_HOSTS = ['voiregadmin.com']
 
 
 # Database
@@ -31,7 +31,6 @@ STATIC_URL = '/home/isai/Django_projects/static'
 STATIC_ROOT = '/home/isai/Django_projects/static'
 MEDIA_ROOT = '/home/isai/Django_projects/media'
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "staticfiles"),
-
-]
+#STATICFILES_DIRS = [
+#    os.path.join(BASE_DIR, "staticfiles"),
+#]
