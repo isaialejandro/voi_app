@@ -2,9 +2,9 @@ import os
 from .base import *
 
 
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['voiregadmin.com']
 
 
 # Database
@@ -27,11 +27,10 @@ DATABASES = {
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-#STATIC_URL = '/static/'
-STATIC_URL = '/voi/staticfiles/'
+STATIC_URL = '/home/isai/Django_projects/static/'
+STATIC_ROOT = '/home/isai/Django_projects/static'
+MEDIA_ROOT = '/home/isai/Django_projects/media'
 
-#Indica la ruta para cargar la carpeta  static en el ambiente local.
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "staticfiles"),
-
-]
+#STATICFILES_DIRS = [
+#    os.path.join(BASE_DIR, "staticfiles"),
+#]
