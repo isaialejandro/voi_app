@@ -27,7 +27,7 @@ DATABASES = {
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-STATIC_URL = '/home/isai/Django_projects/static'
+STATIC_URL = '/home/isai/Django_projects/static/'
 STATIC_ROOT = '/home/isai/Django_projects/static'
 MEDIA_ROOT = '/home/isai/Django_projects/media'
 
