@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from apps.wiki_module.models import AppDocument, Article
+from apps.wiki_module.models import BlogDoc, ArticleFile
 
 
-admin.site.register(AppDocument)
-admin.site.register(Article)
+admin.site.register(BlogDoc)
+admin.site.register(ArticleFile)

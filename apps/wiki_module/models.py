@@ -8,10 +8,10 @@ from django.contrib.auth.models import User
 """
 Wiki Module--
 
-*Blog:
+*BlogDoc:
 Destinado para artículos pequeños o grandes acerca de funciones, instrucciones cortas,
- acciones extra  relacionados con aplicaciones,
-interfaces, etc.
+ acciones extra relacionados con aplicaciones,
+interfaces, etc. Estos se encontrarán dentro de la misma aplicación con PageDown.
 
 *Artículos:
 Módulo para almacenamiento de artículos completos acerca de reseteo de contraseñas,
@@ -35,7 +35,7 @@ STATUS = [
 ]
 
 
-class AppDocument(models.Model):
+class BlogDoc(models.Model):
 
     title = models.CharField(max_length=200,  blank=False, null=False)
     reg_date = models.DateTimeField(auto_now_add=True)
@@ -53,7 +53,7 @@ class AppDocument(models.Model):
         )
 
 
-class Article(models.Model):
+class ArticleFile(models.Model):
 
     name = models.CharField(max_length=200,  blank=False, null=False)
     article_version = models.CharField(max_length=200,  blank=False)
