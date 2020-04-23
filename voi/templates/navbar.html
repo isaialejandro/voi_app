@@ -138,6 +138,17 @@
                         </li>
                     {% endif %}
 
+                    {% if perms.wiki_module.can_view_wiki_module %}
+                        <li class="dropdown">
+                            <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> Documentación <span class="caret"></span></a>
+                            <ul role="menu" class="dropdown-menu">
+
+                                <li><a href="{% url 'wiki_module:wiki_dashaboard' %}">Wiki</a></li>
+
+                            </ul>
+                        </li>
+                    {% endif %}
+
                     {% if user.is_superuser %}
                         <li class="dropdown">
                             <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> Users <span class="caret"></span></a>

@@ -28,3 +28,7 @@ STATICFILES_DIRS = [
 
 #Cloud Storage
 #STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
+#For media files
+#MEDIA_ROOT= os.path.join(BASE_DIR, 'media')

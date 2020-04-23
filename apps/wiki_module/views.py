@@ -9,10 +9,14 @@ from django.urls import reverse_lazy
 
 from django.utils import timezone
 
+from django.views import View
+from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.detail import DetailView
+
 
 class WikiDashboard(View):
 
-    def get(request):
+    def get(self, request):
         context = {}
         context['dashboard'] = True
-    return render(request 'wiki-dashboard.html', context)
+        return render(request, 'wiki_dashboard.html', context)

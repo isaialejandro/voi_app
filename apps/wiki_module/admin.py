@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from apps.wiki_module.models import AppDocument, Article
+
+
+admin.site.register(AppDocument)
+admin.site.register(Article)

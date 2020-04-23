@@ -6,127 +6,369 @@
 {% endblock %}
 
 {% block content %}
-    <div class="wrapper wrapper-content">
-        <div class="container">
+    <div class="gray-bg" style="min-height: 1962.7px;">
+        {% if messages %}
+            {% for message in messages %}
 
-            {% if messages %}
-                {% for message in messages %}
+                <div class="alert alert-success">
+                    {{message}}.
+                </div>
+            {% endfor %}
+        {% endif %}
 
-                    <div class="alert alert-success">
-                        {{message}}.
+        <div class="row">
+            {% if perms.application.view_application_list %}
+            <div class="col-xs-12">
+            <div class="wrapper wrapper-content animated fadeInRight">
+
+                <div class="ibox-content m-b-sm border-bottom">
+                    <div class="p-xs">
+                        <div class="pull-left m-r-md">
+                            <i class="fa fa-globe text-navy mid-icon"></i>
+                        </div>
+                        <h2>VOI Documentation</h2>
+                        <span>Blogs y documentos para soporte T-II</span>
                     </div>
-                {% endfor %}
-            {% endif %}
+                </div>
 
-            <div class="row">
-                {% if perms.application.view_application_list %}
-                    <div class="col-lg-12">
-                        <div class="ibox float-e-margins">
-                            <div class="ibox-title">
-                                <h5> Application List </h5>
-                                <div class="ibox-tools">
-                                    <a class="collapse-link">
-                                        <i class="fa fa-chevron-up"></i>
-                                    </a>
+                <div class="ibox-content forum-container">
+
+                    <div class="forum-title">
+                        <div class="pull-right forum-desc">
+                            <samll>Total posts: 320,800</samll>
+                        </div>
+                        <h3>General subjects</h3>
+                    </div>
+
+                    <div class="forum-item active">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="forum-icon">
+                                    <i class="fa fa-shield"></i>
+                                </div>
+                                <a href="forum_post.html" class="forum-item-title">Apps Articles</a>
+                                <div class="forum-sub-title">Articles about application administration.</div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    1216
+                                </span>
+                                <div>
+                                    <small>Views</small>
                                 </div>
                             </div>
-                            <div class="ibox-content">
-                                <div class="row">
-                                <div class="col-sm-9 m-b-xs">
-
-                                    </div>
-                                    <!--
-                                    <div class="col-sm-3">
-                                        <div class="input-group"><input type="text" placeholder="Search" class="input-sm form-control"> <span class="input-group-btn">
-                                        <button type="button" class="btn btn-sm btn-primary"> Go!</button> </span></div>
-                                    </div>
-                                    -->
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    368
+                                </span>
+                                <div>
+                                    <small>Topics</small>
                                 </div>
-                                <div class="table-responsive">
-                                    <table class="table table-striped" id="yes">
-                                        <thead>
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Application Type</th>
-                                                <th>Reg Date </th>
-                                                {% if user.is_superuser %}
-                                                    <th>User </th>
-                                                {% endif %}
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for app in applications %}
-                                                <tr>
-                                                    <td>{{ app.name }}</td>
-                                                    <td>{{ app.app_type}}</td>
-                                                    <td>{{ app.registry_date }}</td>
-                                                    {% if user.is_superuser %}
-                                                        <th>{{ app.user }} </th>
-                                                    {% endif %}
-                                                </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    140
+                                </span>
+                                <div>
+                                    <small>Posts</small>
                                 </div>
                             </div>
                         </div>
                     </div>
-                {% endif %}
+                    <div class="forum-item">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="forum-icon">
+                                    <i class="fa fa-bolt"></i>
+                                </div>
+                                <a href="forum_post.html" class="forum-item-title">Iterfaces</a>
+                                <div class="forum-sub-title">Interfaces and apps structures. </div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    890
+                                </span>
+                                <div>
+                                    <small>Views</small>
+                                </div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    120
+                                </span>
+                                <div>
+                                    <small>Topics</small>
+                                </div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    154
+                                </span>
+                                <div>
+                                    <small>Posts</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="forum-item active">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="forum-icon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                                <a href="forum_post.html" class="forum-item-title">Procecess</a>
+                                <div class="forum-sub-title">Procecess. </div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    680
+                                </span>
+                                <div>
+                                    <small>Views</small>
+                                </div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    124
+                                </span>
+                                <div>
+                                    <small>Topics</small>
+                                </div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    61
+                                </span>
+                                <div>
+                                    <small>Posts</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="forum-item">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="forum-icon">
+                                    <i class="fa fa-star"></i>
+                                </div>
+                                <a href="forum_post.html" class="forum-item-title">Account Resets</a>
+                                <div class="forum-sub-title">Reseteo de cuentas para aplicativos. </div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    1450
+                                </span>
+                                <div>
+                                    <small>Views</small>
+                                </div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    652
+                                </span>
+                                <div>
+                                    <small>Topics</small>
+                                </div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    572
+                                </span>
+                                <div>
+                                    <small>Posts</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="forum-item">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="forum-icon">
+                                    <i class="fa fa-bolt"></i>
+                                </div>
+                                <a href="forum_post.html" class="forum-item-title">ABC</a>
+                                <div class="forum-sub-title">Altas-Bajas-Cambios. </div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    890
+                                </span>
+                                <div>
+                                    <small>Views</small>
+                                </div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    120
+                                </span>
+                                <div>
+                                    <small>Topics</small>
+                                </div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    154
+                                </span>
+                                <div>
+                                    <small>Posts</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                {% if perms.applicant.view_applicant_list %}
-                  <div class="col-lg-12">
-                      <div class="ibox float-e-margins">
-                          <div class="ibox-title">
-                              <h5> Applicant List </h5>
-                              <div class="ibox-tools">
-                                  <a class="collapse-link">
-                                      <i class="fa fa-chevron-up"></i>
-                                  </a>
-                              </div>
-                              <div class="ibox-content">
-                                  <div class="row">
-                                      <div class="col-sm-9 m-b-xs">
+                    <div class="forum-title">
+                        <div class="pull-right forum-desc">
+                            <samll>Total posts: 17,800,600</samll>
+                        </div>
+                        <h3>Other subjects</h3>
+                    </div>
 
-                                      </div>
-                                  </div>
-                                  <div class="table-responsive">
-                                      <table class="table table-striped">
-                                          <thead>
-                                              <tr>
-                                                  <th>First Name</th>
-                                                  <th>First Lastname</th>
-                                                  <th>Second Lastname</th>
-                                                  <th>Email </th>
-                                                  {% if user.is_superuser %}
-                                                      <th>Reg Date </th>
-                                                      <th>User </th>
-                                                  {% endif %}
-                                              </tr>
-                                          </thead>
-                                          <tbody>
-                                              {% for ap in applicants %}
-                                                  <tr>
-                                                      <td>{{ ap.first_name }}</td>
-                                                      <td>{{ ap.first_lastname}}</td>
-                                                      <td>{{ ap.second_lastname}}</td>
-                                                      <td>{{ ap.email }}</td>
-                                                      {% if user.is_superuser %}
-                                                          <th>{{ap.registry_date}} </th>
-                                                          <th>{{ ap.user }} </th>
-                                                      {% endif %}
-                                                  </tr>
-                                              {% endfor %}
-                                          </tbody>
-                                      </table>
-                                  </div>
+                    <div class="forum-item">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="forum-icon">
+                                    <i class="fa fa-clock-o"></i>
+                                </div>
+                                <a href="forum_post.html" class="forum-item-title">Lorem Ipsum is simply dummy text. </a>
+                                <div class="forum-sub-title">Various versions have evolved over the years, sometimes by accident, sometimes on purpose passage of Lorem Ipsum (injected humour and the like).</div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    1516
+                                </span>
+                                <div>
+                                    <small>Views</small>
+                                </div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    238
+                                </span>
+                                <div>
+                                    <small>Topics</small>
+                                </div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    180
+                                </span>
+                                <div>
+                                    <small>Posts</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="forum-item">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="forum-icon">
+                                    <i class="fa fa-bomb"></i>
+                                </div>
+                                <a href="forum_post.html" class="forum-item-title">There are many variations of passages</a>
+                                <div class="forum-sub-title"> If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the . </div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    1766
+                                </span>
+                                <div>
+                                    <small>Views</small>
+                                </div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    321
+                                </span>
+                                <div>
+                                    <small>Topics</small>
+                                </div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    42
+                                </span>
+                                <div>
+                                    <small>Posts</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="forum-item">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="forum-icon">
+                                    <i class="fa fa-bookmark"></i>
+                                </div>
+                                <a href="forum_post.html" class="forum-item-title">The standard chunk of Lorem Ipsum</a>
+                                <div class="forum-sub-title">Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet.</div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    765
+                                </span>
+                                <div>
+                                    <small>Views</small>
+                                </div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    90
+                                </span>
+                                <div>
+                                    <small>Topics</small>
+                                </div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    11
+                                </span>
+                                <div>
+                                    <small>Posts</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="forum-item">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="forum-icon">
+                                    <i class="fa fa-ambulance"></i>
+                                </div>
+                                <a href="forum_post.html" class="forum-item-title">Lorem Ipsum, you need to be sure there</a>
+                                <div class="forum-sub-title">Internet tend to repeat predefined chunks as necessary, making this the</div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    2550
+                                </span>
+                                <div>
+                                    <small>Views</small>
+                                </div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    122
+                                </span>
+                                <div>
+                                    <small>Topics</small>
+                                </div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    92
+                                </span>
+                                <div>
+                                    <small>Posts</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-                {% endif %}
-
+                </div>
+            </div>
         </div>
+            {% endif %}
+
     </div>
 {% endblock %}
 

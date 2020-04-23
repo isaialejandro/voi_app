@@ -57,6 +57,7 @@ THIRD_PARTY_APPS = [
     'django_filters',
     'rest_framework',
     'import_export',
+    'pagedown',
 ]
 
 
