@@ -35,9 +35,45 @@
 
                     <div class="forum-title">
                         <div class="pull-right forum-desc">
-                            <samll>Total posts: 320,800</samll>
+                            <samll>Total docs: {{total_docs}}</samll>
                         </div>
                         <h3>General subjects</h3>
+                    </div>
+
+                    <div class="forum-item active">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="forum-icon">
+                                    <i class="fa fa-newspaper-o"></i>
+                                </div>
+                                <a href="{% url 'wiki_module:blog_doc_list' %}" class="forum-item-title">Blog Docs</a>
+                                <div class="forum-sub-title">Blog for small references and troubleshooting guides.</div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    {{ total_blog_docs_views }}
+                                </span>
+                                <div>
+                                    <small>Views</small>
+                                </div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    XXX
+                                </span>
+                                <div>
+                                    <small>Topics</small>
+                                </div>
+                            </div>
+                            <div class="col-md-1 forum-info">
+                                <span class="views-number">
+                                    {{total_blog_docs}}
+                                </span>
+                                <div>
+                                    <small>Posts</small>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="forum-item active">
@@ -51,7 +87,7 @@
                             </div>
                             <div class="col-md-1 forum-info">
                                 <span class="views-number">
-                                    1216
+                                    {{total_articles_views}}
                                 </span>
                                 <div>
                                     <small>Views</small>
@@ -59,7 +95,7 @@
                             </div>
                             <div class="col-md-1 forum-info">
                                 <span class="views-number">
-                                    368
+                                    XXXX
                                 </span>
                                 <div>
                                     <small>Topics</small>
@@ -67,7 +103,7 @@
                             </div>
                             <div class="col-md-1 forum-info">
                                 <span class="views-number">
-                                    140
+                                    {{total_articles}}
                                 </span>
                                 <div>
                                     <small>Posts</small>

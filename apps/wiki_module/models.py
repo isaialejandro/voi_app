@@ -27,22 +27,43 @@ administración de interfaces, aplicaciones,
 """
 
 
-ACTIVE = 'Active'
-INACTIVE = 'Inactive'
+ACTIVE = 'active'
+INACTIVE = 'inactive'
 STATUS = [
-    (ACTIVE, 'active'),
-    (INACTIVE, 'inactive'),
+    (ACTIVE, 'Active'),
+    (INACTIVE, 'Inactive'),
 ]
+
+class WikiModule(models.Model):
+
+    #NOT IN USE
+    #blog_visits = models.CharField(max_length=999999, blank=True, null=True)
+    article_visits = models.CharField(max_length=999999, blank=True, null=True)
+
+
+    class Meta:
+
+        permissions = (
+            ('view_wiki_module', 'Visualize Wiki Module'),
+        )
 
 
 class BlogDoc(models.Model):
 
     title = models.CharField(max_length=200,  blank=False, null=False)
+    description = models.CharField(max_length=350, blank=True, null=True)
     reg_date = models.DateTimeField(auto_now_add=True)
-    update_date = models.DateTimeField()
+    publish_date = models.DateField(blank=True, null=True)
+    content = models.TextField(max_length=15000, blank=False, null=False)
+    views = models.IntegerField(blank=True, null=True)
+    blog_tags = models.TextField(max_length=250, blank=True, null=True)
+    update_date = models.DateTimeField(blank=True, null=True)
     update_user = models.ForeignKey(User, blank=True, null=True, on_delete=models.DO_NOTHING, related_name='app_update_user')
     status = models.CharField(max_length=8, choices=STATUS, default=ACTIVE)
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    created_by = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='created_by')
+
+    def __str__(self):
+        return self.title.capitalize() + ' | ' + '{}'.format(self.reg_date)
 
     class Meta:
 
@@ -59,7 +80,7 @@ class ArticleFile(models.Model):
     article_version = models.CharField(max_length=200,  blank=False)
     desc = models.CharField(max_length=100,  blank=False, null=False)
     file = models.FileField(upload_to='uploads/wiki_module/articles/', blank=True, null=True)
-    views =  models.CharField(max_length=10, blank=True, null=False)
+    views =  models.IntegerField()
     reg_date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     update_user = models.ForeignKey(User, blank=True, null=True, on_delete=models.DO_NOTHING, related_name='art_update_user')
@@ -77,5 +98,3 @@ class ArticleFile(models.Model):
             ('versioning_app_article', 'Versioning App Article'),
             ('deactivate_app_article', 'Deactivate App Article'),
         )
-
-#class AccountReset(models.Model):
