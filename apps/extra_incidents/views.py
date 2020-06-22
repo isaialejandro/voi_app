@@ -232,7 +232,7 @@ class IncidentDetail(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View)
                 resol_time = str(h) + ':' + str(m) + ':' + str(s)
                 """
 
-                created = datetime.datetime.strptime(str(inc.created)[:19], "%Y-%m-%d %H:%M:%S")
+                created = datetime.datetime.strptime(str(inc.created_date)[:19], "%Y-%m-%d %H:%M:%S")
                 print(datetime.datetime.now())
                 finalized = inc.end_date
 

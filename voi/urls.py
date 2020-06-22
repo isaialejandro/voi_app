@@ -40,6 +40,7 @@ user = apps.get_app_config('user').verbose_name
 bi_modules = apps.get_app_config('bi_modules').verbose_name
 extra_incidents = apps.get_app_config('extra_incidents').verbose_name
 bajas_semanales = apps.get_app_config('bajas_semanales').verbose_name
+wiki_module = apps.get_app_config('wiki_module').verbose_name
 
 
 class Dashboard(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
@@ -51,10 +52,8 @@ class Dashboard(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
         context = {}
         context['dashboard'] = True
         context['pending_tickets'] = Ticket.objects.filter(is_active=True)
-
         #permissions = Permission.objects.filter(user=request.user.id)
         #print('Current user permssions from Dashboard View: ', permissions,', ', request.user.id)
-
         return render(request, 'index.html', context)
 
 
@@ -70,6 +69,7 @@ urlpatterns = [
     path('sox/', include(('apps.sox.urls', sox), namespace='sox')),
     path('bi_modules/', include(('apps.bi_modules.urls', bi_modules), namespace='bi_modules')),
     path('bajas/', include(('apps.bajas_semanales.urls', bajas_semanales), namespace='bajas_semanales')),
+    path('wiki/', include(('apps.wiki_module.urls', bajas_semanales), namespace='wiki_module')),
 
     path('api-auth/', include('rest_framework.urls')),
     path('tickets-api-v1/', include(('apps.ticket.api.v1.urls', ticket), namespace='ticket-api-v1')),

@@ -50,12 +50,14 @@ LOCAL_APPS = [
     'apps.bi_modules',
     'apps.extra_incidents',
     'apps.bajas_semanales',
+    'apps.wiki_module',
 ]
 
 THIRD_PARTY_APPS = [
     'django_filters',
     'rest_framework',
     'import_export',
+    'pagedown',
 ]
 
 

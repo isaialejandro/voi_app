@@ -10,14 +10,12 @@ from apps.bajas_semanales.resources import BajaSemanalResource
 #class TipoBajaAdmin(admin.ModelAdmin):
 class TipoBajaAdmin(ImportExportModelAdmin):
 
-
     list_display = ('type', 'created_date', 'is_active')
 
 
 @admin.register(BajaSemanal)
 #class BajaSemanalAdmin(admin.ModelAdmin):
 class BajaSemanalAdmin(ImportExportModelAdmin):
-
 
     list_display = (
         'type',
@@ -29,7 +27,3 @@ class BajaSemanalAdmin(ImportExportModelAdmin):
         'already_checked',
         'last_user_update'
     )
-
-    baja_semanal = BajaSemanalResource()
-    dataset = baja_semanal.export()
-    dataset.csv
