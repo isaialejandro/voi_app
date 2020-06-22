@@ -12,14 +12,14 @@
                 <div class="ibox">
                     <div class="ibox-content">
                         <div class="pull-right">
-                            {% for t in object.blog_tags %}
-                                <button class="btn btn-white btn-xs" type="button">{{t}}</button>
+                            {#{% for t in object.blog_tags %}#}
+                                <button class="btn btn-white btn-xs" type="button">{{object.blog_tags}}</button>
                                 <!--<button class="btn btn-white btn-xs" type="button">Publishing</button>-->
                                 <!--<button class="btn btn-white btn-xs" type="button">Modern</button>-->
-                            {% endfor %}
+                            {#{% endfor %}#}
                         </div>
                         <div class="text-center article-title">
-                        <span class="text-muted"><i class="fa fa-clock-o"></i> {{object.reg_date}}</span>
+                        <small>Added by <strong>{{ object.created_by }}</strong> <i class="fa fa-clock-o"></i> {{ object.reg_date }}</small>
                             <h1>
                                 {{object.title}}
                             </h1>
@@ -46,7 +46,7 @@
                             </div>
                         </div>
                         <br>
-                        <a class="btn btn-white" type="button" href="{% url 'wiki_module:blog_doc_list' %}">Cancel</a>
+                        <a class="btn btn-white" type="button" href="{% url 'wiki_module:blog_doc_list' %}">Go back</a>
 
                     </div>
                 </div>

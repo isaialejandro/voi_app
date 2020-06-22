@@ -69,12 +69,17 @@ class CreateBlogDoc(CreateView):
 
     def form_valid(self, form):
 
+        #form.instance.key = generate_random_id()
+        #print(form.instance.key)
+
         cap_title = form.instance.title.capitalize()
 
         form.instance.created_by = self.request.user
         form.instance.title = cap_title
 
+
         if not BlogDoc.objects.filter(status='active', title=cap_title):
+
             messages.success(self.request, 'Blog '+ cap_title +' created successfully!')
             return super().form_valid(form)
         else:

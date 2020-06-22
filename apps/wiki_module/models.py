@@ -34,11 +34,19 @@ STATUS = [
     (INACTIVE, 'Inactive'),
 ]
 
+
+class Tags(models.Model):
+
+    key = models.CharField(max_length=10, null=False, blank=False, default='')
+    name = models.CharField(max_length=30, blank=True, null=False)
+    created_by = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True)
+
+
 class WikiModule(models.Model):
 
     #NOT IN USE
     #blog_visits = models.CharField(max_length=999999, blank=True, null=True)
-    article_visits = models.CharField(max_length=999999, blank=True, null=True)
+    #article_visits = models.CharField(max_length=999999, blank=True, null=True)
 
 
     class Meta:
@@ -50,6 +58,7 @@ class WikiModule(models.Model):
 
 class BlogDoc(models.Model):
 
+    key = models.CharField(max_length=500, null=False, blank=False, default='')
     title = models.CharField(max_length=200,  blank=False, null=False)
     description = models.CharField(max_length=350, blank=True, null=True)
     reg_date = models.DateTimeField(auto_now_add=True)
@@ -76,6 +85,7 @@ class BlogDoc(models.Model):
 
 class ArticleFile(models.Model):
 
+    key = models.CharField(max_length=500, null=False, blank=False, default='')
     name = models.CharField(max_length=200,  blank=False, null=False)
     article_version = models.CharField(max_length=200,  blank=False)
     desc = models.CharField(max_length=100,  blank=False, null=False)
