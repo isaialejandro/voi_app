@@ -38,8 +38,7 @@ class Applicant(models.Model):
     process = models.CharField(max_length=2, null=True)
     id_enterprise = models.CharField(max_length=4, null=True)
 
-    registry_date = models.DateTimeField(auto_now_add=True)
-    #applicant_reg_date = models.CharField(max_length=8, null=True, blank=True) #default with applicant manual list load.
+    registry_date = models.CharField(max_length=10, null=True, blank=True) #default with applicant manual list load.
 
     is_active = models.BooleanField(default=True)
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)

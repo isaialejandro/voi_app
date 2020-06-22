@@ -1,0 +1,58 @@
+{% extends 'base/base.html' %}
+{% load static from staticfiles %}
+
+{% block title %}
+    Blogs
+{% endblock %}
+
+{% block content %}
+    <div class="wrapper wrapper-content  animated fadeInRight article">
+        <div class="row">
+            <div class="col-lg-10 col-lg-offset-1">
+                <div class="ibox">
+                    <div class="ibox-content">
+                        <div class="pull-right">
+                            {#{% for t in object.blog_tags %}#}
+                                <button class="btn btn-white btn-xs" type="button">{{object.blog_tags}}</button>
+                                <!--<button class="btn btn-white btn-xs" type="button">Publishing</button>-->
+                                <!--<button class="btn btn-white btn-xs" type="button">Modern</button>-->
+                            {#{% endfor %}#}
+                        </div>
+                        <div class="text-center article-title">
+                        <small>Added by <strong>{{ object.created_by }}</strong> <i class="fa fa-clock-o"></i> {{ object.reg_date }}</small>
+                            <h1>
+                                {{object.title}}
+                            </h1>
+                        </div>
+                        <p>
+                            {{object.content|linebreaks}}
+
+                        </p>
+
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-6">
+                                    <h5>Tags:</h5>
+                                    {% for t in object.blog_tags %}
+                                      <button class="btn btn-primary btn-xs" type="button">{{t}}</button>
+                                      <!--<button class="btn btn-white btn-xs" type="button">Publishing</button>-->
+                                    {% endfor %}
+                            </div>
+                            <div class="col-md-6">
+                                <div class="small text-right">
+                                    <h5>Stats:</h5>
+                                    <i class="fa fa-eye"> </i> {{object.views}} views
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <a class="btn btn-white" type="button" href="{% url 'wiki_module:blog_doc_list' %}">Go back</a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+{% endblock %}

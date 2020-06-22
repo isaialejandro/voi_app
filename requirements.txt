@@ -5,6 +5,8 @@ Django==2.1.7
 django-braces==1.13.0
 django-filter==2.1.0
 django-import-export==2.0.2
+django-markdown==0.8.4
+django-pagedown==2.0.3
 djangorestframework==3.9.1
 et-xmlfile==1.0.1
 gunicorn==19.9.0

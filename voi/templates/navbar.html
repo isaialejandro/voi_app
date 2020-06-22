@@ -138,6 +138,18 @@
                         </li>
                     {% endif %}
 
+                    {% if perms.wiki_module.view_wiki_module %}
+                        <li class="dropdown">
+                            <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> Documentación <span class="caret"></span></a>
+                            <ul role="menu" class="dropdown-menu">
+                                {% if not wiki_dashboard %}
+                                  <li><a href="{% url 'wiki_module:wiki_dashaboard' %}">Wiki</a></li>
+                                {% endif %}
+
+                            </ul>
+                        </li>
+                    {% endif %}
+
                     {% if user.is_superuser %}
                         <li class="dropdown">
                             <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> Users <span class="caret"></span></a>
