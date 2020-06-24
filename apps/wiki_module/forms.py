@@ -19,12 +19,13 @@ class BlogDocForm(forms.ModelForm):
             'description',
             'content',
             'publish_date',
-            'blog_tags',
+            'related_tags',
             'status'
         ]
 
         widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-control select2'}),
-            'description': forms.TextInput(attrs={'class': 'form-control select2'}),
-            'content': forms.TextInput(attrs={'class': 'form-control select2'}),
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.TextInput(attrs={'class': 'form-control'}),
+            'content': forms.TextInput(attrs={'class': 'form-control'}),
+            #'related_tags': forms.Select(attrs={'class': 'form-control'}),
         }
