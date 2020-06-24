@@ -9,6 +9,11 @@
     {% endif %}
 {% endblock %}
 
+{% block extraccs %}
+
+  <link href="{% static 'css/plugins/select2/select2.min.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% block media_pagedown %}
   {{form.media}}
 {% endblock %}
@@ -78,4 +83,22 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block extrajs %}
+  <!-- Select2 -->
+  <script src="{% static 'js/plugins/select2/select2.full.min.js' %}"></script>
+
+
+  <script>
+    $(document).ready(function(){
+      var s_tags = $('#id_related_tags');
+
+      s_tags.addClass("form-control");
+      s_tags.select2({
+        placeholder: "Select at least 2 tags",
+        width: "element"
+      });
+    });
+  </script>
 {% endblock %}
