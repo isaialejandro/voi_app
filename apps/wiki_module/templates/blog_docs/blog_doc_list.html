@@ -36,10 +36,17 @@
                           </div>
                           <div class="col-md-3">
                               <span class="small font-bold">Related Tags</span>
-                              <div class="tag-list">
-                                    <span class="tag-item">{{ faq_item.blog_tags }}</span>
-                                    <!--<span class="tag-item">License</span>-->
+                              <br><br>
+                              {% for x in faq_item.related_tags.all %}
+                                  <div class="tag-list">
+                                            <span class="tag-item">{{ x.name }}</span>
+                                  </div>
+                              {% empty %}
+                              <br><br>
+                              <div>
+                                  <span>Empty</span>
                               </div>
+                              {% endfor %}
                           </div>
                           <a href="{% url 'wiki_module:blog_doc_detail' faq_item.id %}" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i> <span class="bold"></span></a>
                           <div class="col-md-2 text-right">

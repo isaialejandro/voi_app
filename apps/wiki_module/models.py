@@ -35,11 +35,14 @@ STATUS = [
 ]
 
 
-class Tags(models.Model):
+class Tag(models.Model):
 
     key = models.CharField(max_length=10, null=False, blank=False, default='')
     name = models.CharField(max_length=30, blank=True, null=False)
     created_by = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True)
+
+    def __str__(self):
+        return self.name
 
 
 class WikiModule(models.Model):
@@ -65,8 +68,8 @@ class BlogDoc(models.Model):
     publish_date = models.DateField(blank=True, null=True)
     content = models.TextField(max_length=15000, blank=False, null=False)
     views = models.IntegerField(blank=True, null=True)
-    blog_tags = models.TextField(max_length=250, blank=True, null=True)
     update_date = models.DateTimeField(blank=True, null=True)
+    related_tags = models.ManyToManyField(Tag)
     update_user = models.ForeignKey(User, blank=True, null=True, on_delete=models.DO_NOTHING, related_name='app_update_user')
     status = models.CharField(max_length=8, choices=STATUS, default=ACTIVE)
     created_by = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='created_by')
