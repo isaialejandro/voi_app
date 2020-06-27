@@ -58,7 +58,8 @@ class RecheckBaja(APIView):
     def get(self, request, **kwargs):
 
         id = request.GET.get('id')
-        detail = BajaSemanal.objects.get(id=id)
+        print(id)
+        detail = BajaSemanal.objects.get(uid=id)
         data = {'success': True}
 
         try:
@@ -116,7 +117,7 @@ class RecheckBaja(APIView):
         try:
             if request.user.is_authenticated:
 
-                update = BajaSemanal.objects.get(id=request.POST.get('id'))
+                update = BajaSemanal.objects.get(uid=request.POST.get('id'))
 
                 type = request.POST.get('type')
                 subject = request.POST.get('subject')
