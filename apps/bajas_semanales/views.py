@@ -140,7 +140,8 @@ class CreateBajaSemanal(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Cr
     @transaction.atomic
     def post(self, request, *args):
 
-        uid = str(uuid.uuid4())
+        uid = str(uuid.uuid4()).replace('-', '')
+
         type = request.POST.get('type')
         subject = request.POST.get('subject')
         user_code = request.POST.get('user_code')
@@ -152,7 +153,7 @@ class CreateBajaSemanal(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, Cr
 
             currnt_usr = User.objects.get(id=request.user.id)
             new  = BajaSemanal(
-                uid = str(uuid.uuid4()),
+                uid = uid,
                 type = TipoBaja.objects.get(id=type),
                 subject = subject.title(),
                 user_code = user_code.capitalize(),
