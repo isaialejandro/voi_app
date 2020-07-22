@@ -30,6 +30,7 @@ class TipoBaja(models.Model):
 
 class BajaSemanal(models.Model):
 
+    uid = models.CharField(max_length=100, null=True, blank=True)
     type = models.ForeignKey('TipoBaja', on_delete=models.DO_NOTHING)
     subject = models.CharField(max_length=200, blank=False, null=False)
     user_code = models.CharField(max_length=20, blank=False, null=False)
