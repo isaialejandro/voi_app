@@ -1,1 +1,151 @@
-<h1>cuentas por cobrar</h1>
+
+{% extends 'base/base.html' %}
+{% load static from staticfiles %}
+
+{% block title %}
+        Amount Files Match
+{% endblock %}
+
+{% block content %}
+
+    <div class="wrapper wrapper-content">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <div class="file-manager">
+
+                            <div class="hr-line-dashed"></div>
+                            <button class="btn btn-primary btn-block">Upload Files</button>
+                            <div class="hr-line-dashed"></div>
+                            <h5>Files to Process:</h5>
+                            {% for f in file_list %}
+                              <ul class="folder-list" style="padding: 0">
+                                  <li><a href=""><i class="fa fa-file"></i> something here</a></li>
+                              </ul>
+                            {% empty %}
+                            <ul class="folder-list" style="padding: 0">
+                                <li><span href=""> Nothing to process yet . . . </span><br><br></li>
+                            </ul>
+                            {% endfor %}
+
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-9 animated fadeInRight">
+                <div class="row">
+                    <div class="col-lg-12">
+                        {% for f in file_list %}
+                            <div class="file-box">
+                                <div class="file">
+                                    <a href="#">
+                                        <span class="corner"></span>
+
+                                        <div class="icon">
+                                            <i class="fa fa-file"></i>
+                                        </div>
+                                        <div class="file-name">
+                                            {{ f.name }}
+                                            Document_2014.doc
+                                            <br/>
+                                            <small>Added: Jan 11, 2014 {{ f.uploaded_date }}</small>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block extrajs %}
+  <script>
+      $(document).ready(function(){
+
+          $('.file-box').each(function() {
+              animationHover(this, 'pulse');
+          });
+
+
+        $('#add_more').click(function() {
+           "use strict";
+           $(this).before($("<div/>", {
+             id: 'filediv'
+           }).fadeIn('slow').append(
+             $("<input/>", {
+               name: 'file[]',
+               type: 'file',
+               id: 'file',
+               multiple: 'multiple',
+               accept: 'image/*'
+             })
+           ));
+       });
+
+       $('#upload').click(function(e) {
+         "use strict";
+         e.preventDefault();
+
+         if (window.filesToUpload.length === 0 || typeof window.filesToUpload === "undefined") {
+           alert("No files are selected.");
+           return false;
+         }
+
+         // Now, upload the files below...
+         // https://developer.mozilla.org/en-US/docs/Using_files_from_web_applications#Handling_the_upload_process_for_a_file.2C_asynchronously
+       });
+
+       deletePreview = function (ele, i) {
+         "use strict";
+         try {
+           $(ele).parent().remove();
+           window.filesToUpload.splice(i, 1);
+         } catch (e) {
+           console.log(e.message);
+         }
+       }
+
+       $("#file").on('change', function() {
+         "use strict";
+
+         // create an empty array for the files to reside.
+         window.filesToUpload = [];
+
+         if (this.files.length >= 1) {
+           $("[id^=previewImg]").remove();
+           $.each(this.files, function(i, img) {
+             var reader = new FileReader(),
+               newElement = $("<div id='previewImg" + i + "' class='previewBox'><img /></div>"),
+               deleteBtn = $("<span class='delete' onClick='deletePreview(this, " + i + ")'>X</span>").prependTo(newElement),
+               preview = newElement.find("img");
+
+             reader.onloadend = function() {
+               preview.attr("src", reader.result);
+               preview.attr("alt", img.name);
+             };
+
+             try {
+               window.filesToUpload.push(document.getElementById("file").files[i]);
+             } catch (e) {
+               console.log(e.message);
+             }
+
+             if (img) {
+               reader.readAsDataURL(img);
+             } else {
+               preview.src = "";
+             }
+
+             newElement.appendTo("#filediv");
+           });
+         }
+       });
+      });
+  </script>
+{% endblock %}

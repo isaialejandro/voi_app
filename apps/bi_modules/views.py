@@ -74,3 +74,5 @@ class IngresosYCuentasPorCobrarView(View):
 
         messages.success(request, 'Proccess no. ' + process_code + ' finished successfully')
         return HttpResponse('/cuenntas_por_cobrar_dashboard/')
+
+    
