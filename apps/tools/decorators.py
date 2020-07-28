@@ -7,8 +7,6 @@ from django.views.decorators.csrf import csrf_exempt
 
 from django.views import View
 
-#from braces.views import LoginRequiredMixin
-
 
 class LoginRequiredMixin(object):
     @method_decorator(login_required)
