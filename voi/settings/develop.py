@@ -2,9 +2,9 @@ import os
 from .base import *
 
 
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['voiregadmin.com']
+ALLOWED_HOSTS = ['*']
 
 
 # Database
@@ -27,10 +27,10 @@ DATABASES = {
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-STATIC_URL = '/home/isai/Django_projects/static/'
-STATIC_ROOT = '/home/isai/Django_projects/static'
-MEDIA_ROOT = '/home/isai/Django_projects/media'
+STATIC_URL = '/voi/staticfiles/'
+#STATIC_ROOT = '/voi/staticfiles/'
+#MEDIA_ROOT = '/voi/staticfiles/'
 
-#STATICFILES_DIRS = [
-#    os.path.join(BASE_DIR, "staticfiles"),
-#]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "staticfiles"),
+]
