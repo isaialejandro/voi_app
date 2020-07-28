@@ -16,7 +16,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'voireg_db',
-        'HOST': '172.16.0.28',
+        'HOST': '10.102.2.10',
         'USER': 'voireg_admin',
         'PORT': '5432',
         'PASSWORD': 'mario bross 2',
