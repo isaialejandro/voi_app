@@ -1,6 +1,9 @@
+from datetime import datetime
+import dateutil.parser
 import uuid
 import random
 import glob
+import sys
 
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
@@ -52,62 +55,148 @@ class MatchAcountFiles(APIView):
 
     def get(self, request):
 
-
         data = {}
-
-
         return Response(data)
 
-    def post(self, request, format=None):
+    def RoudToTwoDigits(self, df,  column):
+        
+        print('Rounding column: ', column, ' to 2 digits . . .')
+        rounded_list = []
 
-        files_list = glob.glob('/home/isaialejandro/Documentos/Django_projects/voi_app/accounts/JunY42020/*.csv')  #request.FILES
+        rounded = df[column].round(decimals=2)
+        df[column] = rounded 
+        
+        return df
 
-        total = []
-        account_period = []
-        cuentas = []
-        reference_date = []
-        transaction_key = []
-        local_curr = []
-        local_amount = []
+    def ConvertToDatetime(self, df, column):
 
-        for f in files_list:
+        """
+        Receive specific column of entire DF for format the Date.
+        """
+        print('Parsing dates of column: ', column, '\n')
 
-            csv = pd.read_csv(f, index_col=None, header=0)
+        def get_new_format(d_time):
+            
+            prev_date = datetime.strptime(str(d_time), '%Y-%m-%d  %H:%M:%S')
+            final_format = prev_date.strftime('%m/%d/%Y')
+            return final_format
+
+        date_list = []
+        for date in df[column]:
+
+            #Parsing each item to: "Y-m-d H-M-S"
+            datetetime_obj = dateutil.parser.parse(date)
+            time  = ' %H:%M:%S'
+            bad_format_01 = '%Y-%m-%d  %H:%M:%S'
+            bad_format_02 = '%d%b%Y  %H:%M:%S'
+            #Final desired format: "%m/%d/%Y"
+
+            try:
+                prev_date = datetime.strptime(str(datetetime_obj), bad_format_01)
+                new_format = get_new_format(prev_date)
+            except Exception as e:
+                print('Input format not found!')
+                
+            date_list.append(new_format)
+
+        df[column] = date_list
+        return df
+
+    def FormatPNR(self, df, column):
+
+        """
+        Receive DF with all processed files and specific column name for formatting.
+        """
+        current_col = column
+        pnr_list = []
+
+        for col in df[current_col]:
+            pnr_list.append(col[:-4])
+
+        df[current_col] = pnr_list
+
+        return df
+
+    def CountFileRows(self, file_list):
+        
+        for f in file_list:
+
+            #Getting filename & Counting all *csv Rows:
             filename = f.split('/')[-1]
-
-            total_local_amount = csv.agg({'local_amount': ['sum'] })
             total_rows = len(csv.index)
+            total_local_amount = csv.agg({'local_amount': ['sum'] })
 
-            print('Reading <<' + filename + '>> file . . .\n\n')
-            total.append({
+            print('Reading: <<' + filename + '>> file . . .\n\n')
+            sumatoria.append({
                 "File: ": filename,
                 "Total Rows:": total_rows,
                 "Aggregate": total_local_amount,
             })
 
-            print('Creating list . . .')
-            account_period.append(csv['account_period'])
-            cuentas.append(csv['debit_account_number'])
-            reference_date.append(csv['reference_date'])
-            transaction_key.append(csv['transaction_key'])
-            local_curr.append(csv['local_currency'])
-            local_amount.append(csv['local_amount'])
+    def GetCSV(self, path):
 
-        print('Creating DataFrames . . .')
-        df_account = pd.DataFrame(account_period)
-        df_cuentas = pd.DataFrame(cuentas)
-        df_reference_date = pd.DataFrame(reference_date)
-        df_transaction_key = pd.DataFrame(transaction_key)
-        df_local_currency = pd.DataFrame(local_curr)
-        df_local_amount = pd.DataFrame(local_amount)
+        try:
+            files_list = glob.glob(path + '*.csv')  #request.FILES
 
-        print('Concatenating DataFrames. . .')
-        all_columns = pd.concat([df_account, df_cuentas,df_reference_date, df_transaction_key, df_local_currency])
-        all_columns.to_csv(
-            '/home/isaialejandro/Documentos/Django_projects/voi_app/accounts/JunY42020/output_Y4Jun2020.txt',
-            sep='\t'
-            )
+            csv_list = []
+            for file in files_list:
 
+                print('Processing File: \n', file.split('/')[-1] , '\n\n')
+
+                csv_list.append(
+                    pd.read_csv(file, index_col=None, usecols=[
+                        'account_period',
+                        'debit_account_number', #Cuentas
+                        'local_amount',
+                        'local_currency',
+                        'transaction_key',
+                        'reference_date',
+                    ])
+                )
+
+            full_data = pd.concat(csv_list, ignore_index=True)
+            full_data.columns = [
+                'Account Period',
+                'Cuentas',
+                'Local Amount',
+                'Local Currency',
+                'Transaction Key',
+                'Reference Date',
+            ]
+            df = pd.DataFrame(full_data)
+
+            return df
+        except BaseException as e:
+            print('Error trying to read file (s).\nCheck your files route:')
+            sys.exit(e)
+
+    def post(self, request, format=None):
+        
+        #File Output
+        linux_output_path = '/home/isaialejandro/Documentos/Django_projects/voi_app/accounts/JunY42020/output_Y4Jun2020.txt'
+        osx_output_path = '/Users/isaialejandro/Downloads/Y4Jun2020/output_Y4Jun2020.csv'
+
+
+        path = '/Users/isaialejandro/Downloads/Y4Jun2020/'
+
+        #Getting All files in DataFrame from "get_csv()"
+        df_csvs = self.GetCSV(path)
+
+        #Passing entire DataFrame for format PNR column.
+        df_formatted_01 = self.FormatPNR(df_csvs, 'Transaction Key')
+
+        #Formating Date of 2 fields:
+        df_formatted_02 = self.ConvertToDatetime(df_formatted_01, 'Account Period')
+        df_formatted_03 =  self.ConvertToDatetime(df_formatted_02, 'Reference Date')
+
+        #Rounding column data to 2 digits:
+        #df_formatted_04 =self.RoudToTwoDigits(df_formatted_03, 'Local Amount')
+        
+        #Exporting to *TXT:
+        print('Exporting to *.TXT . . .')
+        df_formatted_03.to_csv(osx_output_path, sep='\t', encoding='utf-8', index=False)
+        print('File exported successfully to: \n', osx_output_path)
+        
 
         #Temporal random int generator:
         """
@@ -120,8 +209,7 @@ class MatchAcountFiles(APIView):
         df1.to_csv('/home/isaialejandro/Documentos/Django_projects/voi_app/accounts/JunY42020/random_int.csv')
         """
 
-        return Response(data={
-            "Files": "{} files uploaded".format(len(files_list)),
-            "Total Local Amount": total,
-            "Final Output": all_columns
-            })
+        #return Response(data={
+        #    "Files": "{} files uploaded".format(len(files_list)),
+        #    })
+        return Response(data={"ok":"ok"})
