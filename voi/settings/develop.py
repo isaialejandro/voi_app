@@ -34,3 +34,5 @@ STATIC_URL = '/voi/staticfiles/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "staticfiles"),
 ]
+
+STATIC_URL = '/voi/staticfiles/'
