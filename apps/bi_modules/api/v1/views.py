@@ -174,7 +174,7 @@ class MatchAcountFiles(APIView):
         
         #File Output
         linux_output_path = '/home/isaialejandro/Documentos/Django_projects/voi_app/accounts/JunY42020/output_Y4Jun2020.txt'
-        osx_output_path = '/Users/isaialejandro/Downloads/Y4Jun2020/output_Y4Jun2020.csv'
+        osx_output_path = '/Users/isaialejandro/Downloads/Y4Jun2020/output_Y4Jun2020.txt'
 
 
         path = '/Users/isaialejandro/Downloads/Y4Jun2020/'
@@ -204,9 +204,6 @@ class MatchAcountFiles(APIView):
         new_ids = []
         for r in range(843748, 2990101):
             new_ids.append(r)
-
-        df1 = pd.DataFrame(new_ids)
-        df1.to_csv('/home/isaialejandro/Documentos/Django_projects/voi_app/accounts/JunY42020/random_int.csv')
         """
 
         #return Response(data={
