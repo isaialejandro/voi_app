@@ -6,33 +6,21 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-
-# Database
-# https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-
-
-#Raspberry Local
+#DELL Optiplex780 - Local:
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'voireg_db',
-        'HOST': '10.102.2.10',
-        'USER': 'voireg_admin',
-        'PORT': '5432',
-        'PASSWORD': 'mario bross 2',
+        'NAME': os.getenv('DEV_DB_NAME'),
+        'HOST': os.getenv('DEV_DB_HOST'),
+        'USER': os.getenv('DEV_DB_USR'),
+        'PORT': os.getenv('DEV_DB_PORT'),
+        'PASSWORD': os.getenv('DEB_DB_PWD'),
     }
 }
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.1/howto/static-files/
-
-STATIC_URL = '/voi/staticfiles/'
-#STATIC_ROOT = '/voi/staticfiles/'
-#MEDIA_ROOT = '/voi/staticfiles/'
-
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "staticfiles"),
 ]
-
 STATIC_URL = '/voi/staticfiles/'
+#MEDIA_ROOT = '/voi/staticfiles/'

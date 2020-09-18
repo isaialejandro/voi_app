@@ -13,6 +13,10 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os
 
 from django.urls import reverse_lazy
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -22,7 +26,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '3cg+&i6+$urlz=%7@xda+c1i7hk#f8oy^rc1sv10-hvs8v-pyu'
+SECRET_KEY = os.getenv('VOI_SECRET')
 
 
 # Application definition

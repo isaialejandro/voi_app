@@ -40,7 +40,7 @@ class MatchAcountFiles(APIView):
     """
 
     """
-    Saving to Formatted *txt File:
+    Output to Formatted *txt File:
     *AccountPeriod
     *Cuentas
     *ReferenceDate
@@ -71,8 +71,9 @@ class MatchAcountFiles(APIView):
     def ConvertToDatetime(self, df, column):
 
         """
-        Receive specific column of entire DF for format the Date.
+        Receive specific date column of entire DF for date formatting.
         """
+
         print('Parsing dates of column: ', column, '\n')
 
         def get_new_format(d_time):
@@ -82,25 +83,30 @@ class MatchAcountFiles(APIView):
             return final_format
 
         date_list = []
-        for date in df[column]:
+        try:
 
-            #Parsing each item to: "Y-m-d H-M-S"
-            datetetime_obj = dateutil.parser.parse(date)
-            time  = ' %H:%M:%S'
-            bad_format_01 = '%Y-%m-%d  %H:%M:%S'
-            bad_format_02 = '%d%b%Y  %H:%M:%S'
-            #Final desired format: "%m/%d/%Y"
-
-            try:
-                prev_date = datetime.strptime(str(datetetime_obj), bad_format_01)
-                new_format = get_new_format(prev_date)
-            except Exception as e:
-                print('Input format not found!')
+            for date in df[column]:
                 
-            date_list.append(new_format)
+                #Parsing each item to: "Y-m-d H-M-S"
+                datetetime_obj = dateutil.parser.parse(date)
+                time  = ' %H:%M:%S'
+                bad_format = '%Y-%m-%d  %H:%M:%S'
+                #Final desired format: "%m/%d/%Y"
 
-        df[column] = date_list
-        return df
+                try:
+                    prev_date = datetime.strptime(str(datetetime_obj), bad_format)
+                    new_format = get_new_format(prev_date)
+                except Exception as e:
+                    print('Input format not found!')
+                    
+                date_list.append(new_format)
+
+            df[column] = date_list
+            return df
+
+        except Exception as g:
+            print("Enccountered exception trying to format date columns.\nSystem exit:\n")
+            sys.exit(e)
 
     def FormatPNR(self, df, column):
 
@@ -139,29 +145,40 @@ class MatchAcountFiles(APIView):
             files_list = glob.glob(path + '*.csv')  #request.FILES
 
             csv_list = []
+            #Getting unsorted columns form each file:
+            current_cols = [
+                'account_period',
+                'debit_account_number', #Cuentas
+                'local_amount',
+                'transaction_key',
+                'local_currency',
+                'reference_date'
+            ]
+
             for file in files_list:
 
                 print('Processing File: \n', file.split('/')[-1] , '\n\n')
-
-                csv_list.append(
-                    pd.read_csv(file, index_col=None, usecols=[
-                        'account_period',
-                        'debit_account_number', #Cuentas
-                        'local_amount',
-                        'local_currency',
-                        'transaction_key',
-                        'reference_date',
-                    ])
-                )
-
+                
+                csv_list.append(pd.read_csv(file, index_col=None, header=0, usecols=current_cols))
+            
             full_data = pd.concat(csv_list, ignore_index=True)
+            #Sorting columns:
+            full_data = full_data.reindex(columns=[
+                'account_period',
+                'debit_account_number',
+                'reference_date',
+                'transaction_key',
+                'local_currency',
+                'local_amount'
+            ])
+
             full_data.columns = [
                 'Account Period',
                 'Cuentas',
-                'Local Amount',
-                'Local Currency',
-                'Transaction Key',
                 'Reference Date',
+                'Transaction Key',
+                'Local Currency',
+                'Local Amount'
             ]
             df = pd.DataFrame(full_data)
 
@@ -176,11 +193,11 @@ class MatchAcountFiles(APIView):
         linux_output_path = '/home/isaialejandro/Documentos/Django_projects/voi_app/accounts/JunY42020/output_Y4Jun2020.txt'
         osx_output_path = '/Users/isaialejandro/Downloads/Y4Jun2020/output_Y4Jun2020.txt'
 
-
         path = '/Users/isaialejandro/Downloads/Y4Jun2020/'
 
         #Getting All files in DataFrame from "get_csv()"
         df_csvs = self.GetCSV(path)
+
 
         #Passing entire DataFrame for format PNR column.
         df_formatted_01 = self.FormatPNR(df_csvs, 'Transaction Key')
@@ -189,14 +206,19 @@ class MatchAcountFiles(APIView):
         df_formatted_02 = self.ConvertToDatetime(df_formatted_01, 'Account Period')
         df_formatted_03 =  self.ConvertToDatetime(df_formatted_02, 'Reference Date')
 
-        #Rounding column data to 2 digits:
+        #Rounding column data to 2 digits: - PENDING!!
         #df_formatted_04 =self.RoudToTwoDigits(df_formatted_03, 'Local Amount')
-        
+
+        #Aggregate LocalAmount column here:
+        df_formatted_03.loc['Total Local Amount', 'Local Amount'] = df_formatted_03['Local Amount'].sum()
+
         #Exporting to *TXT:
         print('Exporting to *.TXT . . .')
         df_formatted_03.to_csv(osx_output_path, sep='\t', encoding='utf-8', index=False)
         print('File exported successfully to: \n', osx_output_path)
-        
+
+
+
 
         #Temporal random int generator:
         """
