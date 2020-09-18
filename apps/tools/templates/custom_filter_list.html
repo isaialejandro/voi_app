@@ -1,0 +1,40 @@
+
+
+{% block filter_list %}
+    <form method="get">
+        <div class="form-group col-md-4">
+        {{bajas_filter.form.type}}
+        </div>
+        <div class="form-group col-md-4">
+        {{bajas_filter.form.subject}}
+        </div>
+        <div class="form-group col-md-4">
+        {{bajas_filter.form.user_code}}
+        </div>
+        <div class="form-group col-md-4">
+        {{bajas_filter.form.user_name}}
+        </div>
+        <div class="form-group col-md-4">
+        {{bajas_filter.form.request_date}}
+        </div>
+        <div class="form-group col-md-4">
+        {{bajas_filter.form.created_date}}
+        </div>
+        <div class="form-group col-md-4">
+        {{bajas_filter.form.already_checked}}
+        </div>
+        <div class="form-group col-md-8">
+        </div>
+        <div class="form-group col-md-8">
+        </div>
+        <div class="form-group col-md-8">
+        </div>
+        <div class="form-group col-md-12">
+        <button type="submit" class="btn btn-block btn-outline btn-success">Search</button>
+        </div>
+    </form>
+    <br>
+    <br>
+    Total items:
+    <strong>{{ bajas_filter.qs.count }}</strong>
+{% endblock %}

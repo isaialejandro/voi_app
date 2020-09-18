@@ -1,0 +1,56 @@
+
+{% block custom_modal %}
+    <!--MODAL START-->
+    <div class="modal inmodal" id="modal_update" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content animated fadeIn">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 id="modal_title" class="modal-title">Recheck Baja Semanal</h4>
+                    <small id="modal_little_desc" class="font-bold">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</small>
+                </div>
+                <form action="#" id="modal_form">{% csrf_token %}
+                    <div id="modal_body" class="modal-body">
+                        <div class="form-group">
+                        <label>Type</label>
+                        <select class="form-control js-data-example-ajax" id="s_type" name="type" style="width: 100%">
+                        </select>
+                        </div>
+
+                        <div class="form-group">
+                        <label>Subject</label>
+                        <input type="text" id="subject_input" name="subject" required placeholder="Subject" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label>User ID</label>
+                            <input type="text" id="user_code_input" name="user_code" required placeholder="User ID" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" id="user_name_input" name="user_name" required placeholder="Username" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Request date</label>
+                            <input type="date" id="request_date_input" name="request_date" class="form-control">
+                        </div>
+
+                    <div class="form-group">
+                            <label>Applications</label>
+                            <select class="form-control " multiple="multiple" id="s_application" name="application" style="width: 100%"></select>
+                    </div>
+                    </div>
+                    {{form.as_p}}
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                        <button type="button" id="btn_modal_save" data-id="" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--MODAL ENDS-->
+{% endblock %}   
