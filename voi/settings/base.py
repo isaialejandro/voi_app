@@ -47,7 +47,6 @@ LOCAL_APPS = [
     'apps.application',
     'apps.user',
     'apps.tools',
-    'apps.sox',
     'apps.bi_modules',
     'apps.extra_incidents',
     'apps.bajas_semanales',
