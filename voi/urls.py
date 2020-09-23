@@ -35,7 +35,7 @@ from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin, PermissionRe
 ticket = apps.get_app_config('ticket').verbose_name
 application = apps.get_app_config('application').verbose_name
 applicant = apps.get_app_config('applicant').verbose_name
-sox = apps.get_app_config('sox').verbose_name
+#sox = apps.get_app_config('sox').verbose_name
 user = apps.get_app_config('user').verbose_name
 bi_modules = apps.get_app_config('bi_modules').verbose_name
 extra_incidents = apps.get_app_config('extra_incidents').verbose_name
@@ -66,7 +66,7 @@ urlpatterns = [
     path('tickets/', include(('apps.ticket.urls', ticket), namespace='ticket')),
     path('application/', include(('apps.application.urls', application), namespace='application')),
     path('applicant/', include(('apps.applicant.urls', applicant), namespace='applicant')),
-    path('sox/', include(('apps.sox.urls', sox), namespace='sox')),
+    #path('sox/', include(('apps.sox.urls', sox), namespace='sox')),
     path('bi_modules/', include(('apps.bi_modules.urls', bi_modules), namespace='bi_modules')),
     path('bajas/', include(('apps.bajas_semanales.urls', bajas_semanales), namespace='bajas_semanales')),
     path('wiki/', include(('apps.wiki_module.urls', bajas_semanales), namespace='wiki_module')),

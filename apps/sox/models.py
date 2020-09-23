@@ -8,7 +8,7 @@ from apps.application.models import Application
 
 now = datetime.datetime.now()
 
-
+"""
 class SOXRegistry(models.Model):
 
     YES = 'yes'
@@ -85,3 +85,4 @@ class SoxHistory(models.Model):
     registry_date = models.DateTimeField(auto_now=now)
     update = models.BooleanField(default=True)     #Bandera que indica si el registro se actualizó o no.
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, default='')
+"""

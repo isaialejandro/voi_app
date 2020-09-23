@@ -45,28 +45,6 @@
                         </li>
                     {% endif %}
 
-                    {% if perms.sox.view_sox_list or perms.sox.create_sox %}
-                        <li class="dropdown">
-                            <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> SOX <span class="caret"></span></a>
-                            <ul role="menu" class="dropdown-menu">
-                                {% if perms.sox.view_sox_list%}
-                                    {% if not sox_list %}
-                                        <li>
-                                            <a aria-expanded="false" role="button" href="{% url 'sox:list' %}">Sox List</a>
-                                        </li>
-                                    {% endif %}
-                                {% endif %}
-                                {% if perms.sox.create_sox %}
-                                    {% if not new_sox %}
-                                        <li>
-                                            <a href="{% url 'sox:new' %}">Add new SOX registry</a>
-                                        </li>
-                                    {% endif %}
-                                {% endif %}
-                            </ul>
-                        </li>
-                    {% endif %}
-
                     {% if perms.application.view_application_list or perms.application.create_application or perms.application.view_applicant_list or perms.applicant.create_applicant %}
                         <li class="dropdown">
                             <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> Applications <span class="caret"></span></a>

@@ -1,5 +1,5 @@
 from django.contrib import admin
 
-from apps.sox.models import SOXRegistry
+#from apps.sox.models import SOXRegistry
 
-admin.site.register(SOXRegistry)
+#admin.site.register(SOXRegistry)
