@@ -51,6 +51,7 @@ LOCAL_APPS = [
     'apps.extra_incidents',
     'apps.bajas_semanales',
     'apps.wiki_module',
+    'apps.zendesk',
 ]
 
 THIRD_PARTY_APPS = [
