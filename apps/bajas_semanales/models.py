@@ -19,7 +19,6 @@ class TipoBaja(models.Model):
         return self.type
 
     class Meta:
-
         permissions = (
             ('view_tipo_bajas_list', 'Visualize Tipo de Bajas List'),
             ('create_tipo_baja', 'Create Tipo Baja'),
@@ -46,7 +45,6 @@ class BajaSemanal(models.Model):
         return '{}'.format(self.subject + ' | ' + '{}'.format(self.created_date))
 
     class Meta:
-
         permissions = (
             ('view_bajas_semanales_list', 'Visualize Bajas Semanales list'),
             ('create_baja_semanal', 'Create Baja Semanale'),

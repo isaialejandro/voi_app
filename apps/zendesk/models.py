@@ -69,4 +69,41 @@ class ABC(models.Model):
             ('view_extra_incident_detail', 'Visualize Extra Incident Detail'),
             ('finalize_extra_incident', 'Finalize Extra Incident'),
         )
+    
+    #----------------------------------------------------------------
+    previous_agent_name = models.CharField(max_length=100, blank=False, null=False)
+    previous_agent_email = models.CharField(max_length=50, blank=False, null=False)
+    current_agent_name = models.CharField(max_length=100, blank=False, null=False)
+    current_agent_email = models.CharField(max_length=50, blank=False, null=False)
+    rol = models.ForeignKey('ZendeskRol', null=True, blank=True, on_delete=models.DO_NOTHING)
+    group = models.ManyToManyField(ZendeskGroup)
+    registry_date = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, blank=True)
+
+    def __str__(self):
+        return 'Current agent: ' + self.current_agent_name + ' || ' + '{}'.format(self.registry_date)
+    
 """
+
+"""
+################################################################################
+class ZendeskRol(models.Model):
+
+    rol = models.CharField(max_length=25, null=True, blank=True)
+    registry_date = models.DateTimeField(auto_now_add=True)
+
+    def ___str__(self):
+        return self.rol + ' || ' + '{}'.format(self.registry_date)
+
+
+class ZendeskGroup(models.Model):
+
+    group = models.CharField(max_length=40, null=True, blank=True)
+    registry_date = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, blank=True, null=True)
+
+    def __str__(self):
+        return self.group + ' || ' + '{}'.format(self.registry_date)
+        """
