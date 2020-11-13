@@ -11,6 +11,11 @@ now = timezone.now()
 class ZendeskUser(models.Model):
     class Meta:
         verbose_name = 'Zendesk User'
+        permissions = (
+            ('view_active_zendesk_user_list', 'View active Zendesk userlist'),
+            ('get_active_zendesk_user_list', 'Get active Zendesk userlist'),
+            ('export_active_zendesk_user_list', 'Export Zendesk userlist'),
+        )
     
     user_id = models.CharField(max_length=11, null=False, blank=True)
     name = models.CharField(max_length=50, null=False, blank=True)
@@ -26,6 +31,9 @@ class ZendeskUserHistory(models.Model):
     class Meta:
         verbose_name = 'Request History'
         verbose_name_plural = 'User Request Histories'
+        permissions = (
+            ('view_zendesk_active_user_hist', 'View Zendesk active User History'),
+        )
 
     total_occupied_licenses = models.CharField(max_length=3, null=True, blank=True)
     current_admins = models.CharField(max_length=3, null=True, blank=True)
