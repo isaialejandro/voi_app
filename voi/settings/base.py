@@ -42,15 +42,11 @@ BASE_APPS = [
 
 
 LOCAL_APPS = [
-    'apps.ticket',
-    'apps.applicant',
-    'apps.application',
     'apps.user',
+    'apps.application',
     'apps.tools',
     'apps.bi_modules',
-    'apps.extra_incidents',
     'apps.bajas_semanales',
-    'apps.wiki_module',
     'apps.zendesk',
 ]
 

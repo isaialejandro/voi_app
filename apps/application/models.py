@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from apps.extra_incidents.choices import TYPE, REGISTRY, INC_SOURCE, PAPERLESS, \
+from apps.tools.choices import TYPE, REGISTRY, INC_SOURCE, PAPERLESS, \
 AMBASSADOR_TYPE, AEROPUERTOS, SK_ROLES, GSA
 
 
