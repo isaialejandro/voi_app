@@ -44,6 +44,7 @@ BASE_APPS = [
 LOCAL_APPS = [
     'apps.user',
     'apps.application',
+    'apps.applicant',
     'apps.tools',
     'apps.bi_modules',
     'apps.bajas_semanales',

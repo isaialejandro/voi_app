@@ -22,9 +22,26 @@
                             <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> Zendesk <span class="caret"></span></a>
                             <ul role="menu" class="dropdown-menu">
                                 {% if perms.zendesk.view_zendesk_active_user_list %}
+                                  {% if not userlist %}
                                     <li><a href="#">User List</a></li>
-                                  {% if not zendesk %}
-                                    <!--<li><a href="#">List</a></li>-->
+                                  {% endif %}
+                                {% endif %}
+                            </ul>
+                        </li>
+                    {% endif %}
+
+                    {% if perms.application.view_application_list or perms.application.create_application %}
+                        <li class="dropdown">
+                            <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> Application <span class="caret"></span></a>
+                            <ul role="menu" class="dropdown-menu">
+                                {% if perms.application.view_application_list %}
+                                  {% if not app_list %}
+                                    <li><a href="{% url 'application:list' %}">List</a></li>
+                                  {% endif %}
+                                  {% if perms.application.create_application %}
+                                    {% if not new_app %}
+                                        <li><a href="{% url 'application:new' %}">New Application</a></li>
+                                    {% endif %}
                                   {% endif %}
                                 {% endif %}
                             </ul>
@@ -38,7 +55,7 @@
 
                                 {% if perms.bajas_semanales.view_tipo_bajas_list %}
                                     {% if not tipo_bajas_list %}
-                                        <li><a href="{% url 'bajas_semanales:tipo_bajas_list' %}">Tipo de Bajas List</a></li>
+                                        <li><a href="{% url 'bajas_semanales:tipo_bajas_list' %}">Tipo de Bajas - List</a></li>
                                     {% endif %}
                                 {% endif %}
 
@@ -50,7 +67,7 @@
 
                                 {% if perms.bajas_semanales.view_bajas_semanales_list %}
                                     {% if not bajas_semanales_list %}
-                                        <li><a href="{% url 'bajas_semanales:bajas_semanales_list' %}">Bajas Semanales List</a></li>
+                                        <li><a href="{% url 'bajas_semanales:bajas_semanales_list' %}">Bajas Semanales - List</a></li>
                                     {% endif %}
                                 {% endif %}
                                 {% if perms.bajas_semanales.create_baja_semanal %}

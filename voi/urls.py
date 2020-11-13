@@ -29,7 +29,7 @@ from braces.views import LoginRequiredMixin
 
 from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin, PermissionRequiredMixin
 
-
+application = apps.get_app_config('application').verbose_name
 user = apps.get_app_config('user').verbose_name
 bi_modules = apps.get_app_config('bi_modules').verbose_name
 bajas_semanales = apps.get_app_config('bajas_semanales').verbose_name
@@ -51,6 +51,7 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
 
     path('dashboard/', Dashboard.as_view(), name='dashboard'),
+    path('application/', include(('apps.application.urls', application), namespace='application')),
     path('bi_modules/', include(('apps.bi_modules.urls', bi_modules), namespace='bi_modules')),
     path('bajas/', include(('apps.bajas_semanales.urls', bajas_semanales), namespace='bajas_semanales')),
 
