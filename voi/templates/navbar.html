@@ -17,16 +17,6 @@
             <div class="navbar-collapse collapse" id="navbar">
                 <ul class="nav navbar-nav">
 
-                    {% if perms.ticket.create_ticket %}
-                        {% if not new_ticket %}
-                            <li class="active">
-                                <a aria-expanded="false" role="button"
-                                    href="{% url 'ticket:new' %}"
-                                > Add new ticket</a>
-                            </li>
-                        {% endif %}
-                    {% endif %}
-
                     {% if perms.zendesk.view_zendesk_active_user_list or perms.zendesk.get_active_user_list %}
                         <li class="dropdown">
                             <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> Zendesk <span class="caret"></span></a>
@@ -102,9 +92,6 @@
                                 <li><a href="#" onclick="InProgress();">Users</a></li>
                                 <li>
                                     <a href="#" onclick="InProgress();">Applications</a>
-                                </li>
-                                <li>
-                                    <a href="#" onclick="InProgress();">Tickets</a>
                                 </li>
                             </ul>
                         </li>
