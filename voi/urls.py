@@ -33,14 +33,13 @@ application = apps.get_app_config('application').verbose_name
 user = apps.get_app_config('user').verbose_name
 bi_modules = apps.get_app_config('bi_modules').verbose_name
 bajas_semanales = apps.get_app_config('bajas_semanales').verbose_name
+zendesk = apps.get_app_config('zendesk').verbose_name
 
 
 class Dashboard(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
 
     def get(self, request):
-
         user = request.user
-
         context = {}
         context['dashboard'] = True
         return render(request, 'index.html', context)
@@ -54,6 +53,7 @@ urlpatterns = [
     path('application/', include(('apps.application.urls', application), namespace='application')),
     path('bi_modules/', include(('apps.bi_modules.urls', bi_modules), namespace='bi_modules')),
     path('bajas/', include(('apps.bajas_semanales.urls', bajas_semanales), namespace='bajas_semanales')),
+    path('zendesk/', include(('apps.zendesk.urls', zendesk), namespace='zendesk')),
 
     path('api-auth/', include('rest_framework.urls')),
     path('bajas_semanales-api-v1/', include(('apps.bajas_semanales.api.v1.urls', bajas_semanales), namespace='bajas-semanales-api-v1')),
