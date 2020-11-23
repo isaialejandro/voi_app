@@ -106,7 +106,7 @@ class MatchAcountFiles(APIView):
             return df
         except Exception as g:
             logging.error('Enccountered exception trying to format date columns.\nSystem exit:\n', g)
-            sys.exit(e)
+            sys.exit(g)
 
     def FormatPNR(self, df, column):
         """

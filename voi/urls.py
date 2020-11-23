@@ -58,4 +58,5 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('bajas_semanales-api-v1/', include(('apps.bajas_semanales.api.v1.urls', bajas_semanales), namespace='bajas-semanales-api-v1')),
     path('bi_modules-api-v1/', include(('apps.bi_modules.api.v1.urls', bi_modules), namespace='bi_modules-api-v1')),
+    path('zendesk-api-v1/', include(('apps.zendesk.api.v1.urls', zendesk), namespace='zendesk-api-v1')),
 ]
