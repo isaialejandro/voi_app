@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
@@ -17,15 +19,16 @@ class ZendeskUser(models.Model):
             ('export_active_zendesk_user_list', 'Export Zendesk userlist'),
         )
     
-    user_id = models.CharField(max_length=11, null=False, blank=True)
+    user_id = models.CharField(max_length=50, null=False, blank=True)
     name = models.CharField(max_length=50, null=False, blank=True)
     email = models.EmailField()
     role = models.CharField(max_length=350, null=False, blank=True)
     group = models.CharField(max_length=350, null=True, blank=True)
-    hist = models.OneToOneField('ZendeskUserHistory', on_delete=models.DO_NOTHING)
+    hist = models.OneToOneField('ZendeskUserHistory', on_delete=models.DO_NOTHING, null=True)
 
     def __str__(self):
-        return self.name + ' - ' + self.hist.date.strftime('%d-%m-%Y %I:%M:%S %p')
+        return self.name + ' - ' + datetime.now().strftime('%d-%m-%Y %I:%M:%S %p')
+        #Cuando ya se ha guardado un historial: self.hist.date.strftime('%d-%m-%Y %I:%M:%S %p')
 
 class ZendeskUserHistory(models.Model):
     class Meta:
