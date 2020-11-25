@@ -5,6 +5,8 @@ from django.views.generic.list import ListView, View
 from django.contrib.auth.models import User
 
 from rest_framework.views import APIView
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from apps.zendesk.models import ZendeskUser
@@ -17,10 +19,14 @@ now = datetime.now()
 
 class GetActiveUsersAPI(APIView):
 
-    authentication_classes = []
-    permission_classes = []
+    authentication_classes = [ SessionAuthentication, BasicAuthentication ]
+    permission_classes = [ IsAuthenticated ]
 
     def get(self, request):
+        data = { 'message': 'Ok' }
+        return Response(data)
+
+    def post(self, request):
 
         data = {}
         domain = 'https://volaris.zendesk.com/'
@@ -38,7 +44,6 @@ class GetActiveUsersAPI(APIView):
             get_user_group = UserGroup(user_list, domain)
             final_user_list = get_user_group.get_user_group()
             for u in final_user_list:
-                print('USER: ', u['email'])
                 zendeskUser = ZendeskUser(
                     user_id=u['id'],
                     name=u['name'],
@@ -46,10 +51,8 @@ class GetActiveUsersAPI(APIView):
                     role=u['role'],
                     group=u['group(s)']
                 )
-                #hist_id = self.create_hist(final_user_list)
-                #zendeskUser.hist=ZendeskUserHistory.objects.get(id=hist_id)
                 zendeskUser.save()
-
+            self.create_hist(final_user_list)
             #export = Export(final_user_list)
             #export.export_to_csv()
         except Exception as t:
@@ -59,32 +62,28 @@ class GetActiveUsersAPI(APIView):
         data['status_code'] = '200'
         return Response(data)
 
-    def create_hist(self, userlist):
-        user_list = userlist
+    def create_hist(self, user_list):
         try:
-            #total_licenses = len(user_list)
-
-            admins, agents = []
-            dict_len = len(user_list)
-            print('LEN: ', dict_len)
-            
-                    #print(key['role'])
-                    #admins.append({ key['id'] if key['role'] == 'admin' else None })
-                    #agents.append({ key['id'] if key['role'] == 'agent' else None })
-            sys.exit(1)
-            """
-            admins = len(admins)
-            agents = len(agents)
-
+            total_licenses = len(user_list)
+            total_admins = []
+            total_agents = []
+            for u in user_list:
+                for i in u.values():
+                    total_admins.append( i if i == 'admin' else None )
+                    total_agents.append( i if i == 'agent' else None )
+            total_agents = [len(a) for a in total_agents if a == 'agent']
+            total_admins = [len(a) for a in total_admins if a == 'admin']
             zendesk_hist = ZendeskUserHistory(
                 total_occupied_licenses=total_licenses,
-                current_admins=admins,
-                current_agents=agents,
+                current_admins=str(len(total_admins)),
+                current_agents=str(len(total_agents)),
                 date=now.strftime('%d-%m-%Y %H:%M:%S %p'),
-                exec_user=User.objects.get(id=self.user.id)
+                exec_user=User.objects.get(id=self.request.user.id)
             )
             zendesk_hist.save()
-            return zendesk_hist
-            """
+            print('HIST: ', zendesk_hist.id)
+            for u in ZendeskUser.objects.all():
+                u.hist=ZendeskUserHistory.objects.get(id=zendesk_hist.id)
+                u.save()
         except Exception as g:
             print('Error trying to create History: ', g)

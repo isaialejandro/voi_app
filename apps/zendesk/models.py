@@ -24,7 +24,7 @@ class ZendeskUser(models.Model):
     email = models.EmailField()
     role = models.CharField(max_length=350, null=False, blank=True)
     group = models.CharField(max_length=350, null=True, blank=True)
-    hist = models.OneToOneField('ZendeskUserHistory', on_delete=models.DO_NOTHING, null=True)
+    hist = models.ForeignKey('ZendeskUserHistory', on_delete=models.DO_NOTHING, null=True)
 
     def __str__(self):
         return self.name + ' - ' + datetime.now().strftime('%d-%m-%Y %I:%M:%S %p')
