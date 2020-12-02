@@ -1,5 +1,6 @@
 import sys
 from datetime import datetime
+from django.utils import timezone
 
 from django.views.generic.list import ListView, View
 from django.contrib.auth.models import User
@@ -77,11 +78,11 @@ class GetActiveUsersAPI(APIView):
                 total_occupied_licenses=total_licenses,
                 current_admins=str(len(total_admins)),
                 current_agents=str(len(total_agents)),
-                date=now.strftime('%d-%m-%Y %H:%M:%S %p'),
+                date=now,
                 exec_user=User.objects.get(id=self.request.user.id)
             )
+            print('Timezone: ', now)
             zendesk_hist.save()
-            print('HIST: ', zendesk_hist.id)
             for u in ZendeskUser.objects.all():
                 u.hist=ZendeskUserHistory.objects.get(id=zendesk_hist.id)
                 u.save()
