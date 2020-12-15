@@ -1,10 +1,12 @@
-import sys
+import sys, json
 from datetime import datetime
-from django.utils import timezone
+
+from django.db import transaction
 
 from django.views.generic.list import ListView, View
 from django.contrib.auth.models import User
 
+from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -23,13 +25,15 @@ class GetActiveUsersAPI(APIView):
     authentication_classes = [ SessionAuthentication, BasicAuthentication ]
     permission_classes = [ IsAuthenticated ]
 
-    def get(self, request):
+    """def get(self, request):
         data = { 'message': 'Ok' }
-        return Response(data)
+        return Response(data)"""
 
-    def post(self, request):
+    @transaction.atomic
+    def get(self, request):
 
         data = {}
+        hist = None
         domain = 'https://volaris.zendesk.com/'
         path = 'api/v2/users.json'
         filter_query = '?role[]=admin&role[]=agent'
@@ -53,16 +57,19 @@ class GetActiveUsersAPI(APIView):
                     group=u['group(s)']
                 )
                 zendeskUser.save()
-            self.create_hist(final_user_list)
+            hist = self.create_hist(final_user_list)
+            data['total_occupied'] = hist.total_occupied_licenses
+            data['current_admins'] = hist.current_admins
+            data['current_agents'] = hist.current_agents
+            data['success'] = True
+            data['message'] = final_user_list
+            data['status_code'] = '200'
+            return Response(data)
             #export = Export(final_user_list)
             #export.export_to_csv()
         except Exception as t:
             data['message'] = str(t)
-            print('Error trying to retrieve API: ', t)
-        data['message'] = final_user_list
-        data['status_code'] = '200'
-        return Response(data)
-
+            print('Error trying to retrieve API: ', str(t))
     def create_hist(self, user_list):
         try:
             total_licenses = len(user_list)
@@ -78,13 +85,12 @@ class GetActiveUsersAPI(APIView):
                 total_occupied_licenses=total_licenses,
                 current_admins=str(len(total_admins)),
                 current_agents=str(len(total_agents)),
-                date=now,
                 exec_user=User.objects.get(id=self.request.user.id)
             )
-            print('Timezone: ', now)
             zendesk_hist.save()
             for u in ZendeskUser.objects.all():
                 u.hist=ZendeskUserHistory.objects.get(id=zendesk_hist.id)
                 u.save()
+            return zendesk_hist
         except Exception as g:
             print('Error trying to create History: ', g)

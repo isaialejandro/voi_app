@@ -10,7 +10,7 @@ class Zendesk(ListView):
     template_name = 'active_user_list.html'
     
     def get_context_data(self, **kwargs):
-        context =  super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         #context['active_users'] = True
         return context
 

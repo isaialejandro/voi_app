@@ -27,7 +27,7 @@ class ZendeskUser(models.Model):
     hist = models.ForeignKey('ZendeskUserHistory', on_delete=models.DO_NOTHING, null=True)
 
     def __str__(self):
-        return self.name + ' - ' + self.hist.date.strftime('%d-%m-%Y %I:%M:%S %p')
+        return self.name + ' - ' + '{}'.format(self.hist.date) #self.hist.date.strftime('%d-%m-%Y %I:%M:%S %p')
 
 class ZendeskUserHistory(models.Model):
     class Meta:
@@ -40,11 +40,11 @@ class ZendeskUserHistory(models.Model):
     total_occupied_licenses = models.CharField(max_length=3, null=True, blank=True)
     current_admins = models.CharField(max_length=3, null=True, blank=True)
     current_agents = models.CharField(max_length=3, null=True, blank=True)
-    date = models.DateTimeField(blank=True)
+    date = models.DateTimeField(auto_now_add=True)
     exec_user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
 
     def __str__(self):
-        return '%s Occupied Licenses - ' % self.total_occupied_licenses + self.date.strftime('%d-%m-%Y %I:%M:%S %p')
+        return '%s Occupied Licenses - ' % self.total_occupied_licenses + '{}'.format(self.date) #self.date.strftime('%d-%m-%Y %I:%M:%S %p')
 
 #---
 """

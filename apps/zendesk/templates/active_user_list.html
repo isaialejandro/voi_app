@@ -6,10 +6,11 @@
 {% endblock %}
 
 {% block extracss %}
-  <!-- FooTable -->
-  <link href="{% static 'css/plugins/footable/footable.core.css' %}" rel="stylesheet">
-  <link href="{% static 'css/plugins/select2/select2.min.css' %}" rel="stylesheet">
   <link href="{% static 'css/plugins/daterangepicker/daterangepicker-bs3.css' %}" rel="stylesheet">
+  <link href="{% static 'css/animate.css' %}" rel="stylesheet">
+  <link href="{% static 'css/style.css' %}" rel="stylesheet">
+  <!-- Ladda style -->
+  <link href="{% static 'css/plugins/ladda/ladda-themeless.min.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -36,10 +37,11 @@
                 </div>
                 <div class="ibox-content">
                     <div class="text-center">
-                      <a class="btn btn-primary" href="{% url 'zendesk-api-v1:get_active_users' %}">Get users</a>
+                      <!--<a class="btn btn-primary" id="get_data" href="#">Get users</a>-->
+                      <button class="ladda-button ladda-button-demo btn btn-primary" id="get_data" data-style="zoom-in">Get users</button>
                     </div>
                     <div class="text-center">
-                      <a class="btn btn-success" href="#">Export to *csv</a>
+                      <a class="btn btn-success" id='export_btn' data-href="#">Export to *csv</a>
                     </div>
                 </div>
             </div>
@@ -49,7 +51,7 @@
             <div class="widget navy-bg p-lg text-center">
                 <div class="m-b-md">
                     <i class="fa fa-users fa-4x"></i>
-                    <h1 class="m-xs">1234</h1>
+                    <h1 class="m-xs" id="users_no">xx</h1>
                     <small>Active</small>
                     <h3 class="font-bold no-margins">
                         Users
@@ -62,7 +64,7 @@
             <div class="widget yellow-bg p-lg text-center">
                 <div class="m-b-md">
                     <i class="fa fa-shield fa-4x"></i>
-                    <h1 class="m-xs">1234</h1>
+                    <h1 class="m-xs" id="agents_no">xx</h1>
                     <small>Active</small>
                     <h3 class="font-bold no-margins">
                         Agents
@@ -74,7 +76,7 @@
             <div class="widget red-bg p-lg text-center">
                 <div class="m-b-md">
                     <i class="fa fa-gear fa-4x"></i>
-                    <h1 class="m-xs">1234</h1>
+                    <h1 class="m-xs" id="admins_no">xx</h1>
                     <small>Active</small>
                     <h3 class="font-bold no-margins">
                         Admins
@@ -86,7 +88,7 @@
             <div class="widget navy-bg p-lg text-center">
                 <div class="m-b-md">
                     <i class="fa fa-user-o fa-4x"></i>
-                    <h1 class="m-xs">1234</h1>
+                    <h1 class="m-xs" id="end_users_no">xx</h1>
                     <small>End</small>
                     <h3 class="font-bold no-margins">
                         Users
@@ -101,64 +103,72 @@
 {% endblock %}
 
 {% block extrajs %}
-    <!-- FooTable -->
-    <script src="{% static 'js/plugins/footable/footable.all.min.js' %}"></script>
-    <!-- Select2 -->
-    <script src="{% static 'js/plugins/select2/select2.full.min.js' %}"></script>
-    <!-- Date range use moment.js same as full calendar plugin -->
-    <script src="{% static 'js/plugins/fullcalendar/moment.min.js' %}"></script>
-    <!-- Date range picker -->
-    <script src="{% static 'js/plugins/daterangepicker/daterangepicker.js' %}"></script>
+    <!-- Ladda -->
+    <script src="{% static 'js/plugins/ladda/spin.min.js' %}"></script>
+    <script src="{% static 'js/plugins/ladda/ladda.min.js' %}"></script>
+    <script src="{% static 'js/plugins/ladda/ladda.jquery.min.js' %}"></script>
 
     <script>
+        /*
+        var l = $( '.ladda-button-demo' ).ladda();
+        l.click(function(){
+            // Start loading
+            l.ladda( 'start' );
+            setTimeout(function(){
+                l.ladda('stop');
+            },12000)
+        });*/
 
         $(document).ready(function(){
+          
+          var get_data = $('#get_data');
+          var export_btn = $('#export_btn');
+          var users_number = $('#users_no');
+          var agents_number = $('#agents_no');
+          var admins_number = $('#admins_no');
+          var end_users_number = $('#end_users_no');
+          var l = $( '.ladda-button-demo' ).ladda();
 
-          var btn_update = $('.btn-update');
-
-          var modal_update = $('#modal_update');
-          var modal_title = $('#modal_title');
-          var modal_little_desc = $('#modal_little_desc');
-          var modal_body = $('#modal_body');
-          var btn_modal_save = $('#btn_modal_save');
-
-          var s_type = $('#s_type');
-          var subject_input = $('#subject_input');
-          var user_code_input = $('#user_code_input');
-          var user_name_input = $('#user_name_input');
-          var request_date_input = $('#request_date_input');
-          var s_app = $('#s_application');
-
-
-          //---FILTER ATTR FDIELD DEFINITIONS---
-          $('#id_type').addClass('form-control');
-          $('#id_subject').addClass('form-control');
-          $('#id_subject').attr('placeholder', 'Subject');
-          $('#id_user_code').addClass('form-control');
-          $('#id_user_code').attr('placeholder', 'User ID');
-          $('#id_user_name').addClass('form-control');
-          $('#id_user_name').attr('placeholder', 'Name');
-          $('#id_request_date').addClass('form-control');
-          $('#id_created_date').addClass('form-control');
-          $('#id_already_checked').addClass('form-control');
-          $('#id_already_checked').attr('placeholder', 'User ID');
-
-
-          $('#id_already_checked').select2(
-            {
-              allowClear: true,
-              placeholder: 'Already checked'
+          users_number.empty().html('- -');
+          agents_number.empty().html('- -');
+          admins_number.empty().html('- -');
+          end_users_number.empty().html('- -');
+          
+          get_data.click(function() {
+            l.ladda( 'start' );
+            $.ajax({
+              url: '{% url "zendesk-api-v1:get_active_users" %}',
+              method: 'get',
+              dataType: 'json',
+              success: function(data) {
+                console.log('data: ', data);
+                if(data.success) {
+                  users_number.empty().html(data.total_occupied);
+                  agents_number.empty().html(data.current_agents);
+                  admins_number.empty().html(data.current_admins);
+                  end_users_number.empty().html('x');
+                  /*
+                  $.each(data.user_hist, function(index, item){
+                    console.log('asdasd: ', item);
+                    users_number.empty().html(item.total_occupied);
+                    agents_number.empty().html(item.current_agents);
+                    admins_number.empty().html(item.current_admins);
+                    end_users_number.empty().html('x');
+                  });*/
+                  l.ladda( 'stop' );
+                }
+              },
+              error: function(data) {
+                console.log('Error, something happened: ', data.message);
+                l.ladda( 'stop' );
+              },
             });
-            $('#id_type').select2(
-              {
-                allowClear: true,
-                placeholder: 'Type'
-              });
-          //---FILTER ATTR FDIELD DEFINITIONS---
+          });
+
 
 
           //GET BAJASEMANAL IN MODAL
-          btn_update.on('click', function(){
+          /*btn_update.on('click', function(){
             var id = $(this).data("id");
             //Passing id record to Save Changes modal btn for post method.
             btn_modal_save.data('id', id)
@@ -192,19 +202,6 @@
                       s_type.append('<option value="'+ item.id +'">'+ item.text +'</option>');
                     }
                   });
-                  //NO TRABAJA CORRECTAMENTE CARGANDOLE EL SELECT2
-                  //s_type.empty().trigger('change');
-                  /*$.map(data.tipo_bajas, function(obj){
-                    if(obj.selected == true){
-                      var newOption = new Option(obj.text, obj.id, true, true);
-                      console.log(obj.text, ' - ', newOption);
-                      s_type.append(newOption).trigger('change');
-                    } else {
-                      var newOption = new Option(obj.text, obj.id, false, false);
-                      console.log('Else: ', obj, ' - ', newOption);
-                      s_app.append(newOption);
-                    }
-                  });*/
 
                   s_app.empty().trigger("change");
                   $.each(data.results, function(index, item){
@@ -237,59 +234,7 @@
           modal_update.on('hidden.bs.modal', function() {
             s_app.select2('destroy');
           })
-
-          //POST BAJASEMANAL IN MODAL
-          btn_modal_save.click(function(e){
-
-            e.preventDefault();
-            $.ajax({
-              url: "{% url 'bajas-semanales-api-v1:recheck_baja' %}",
-              method: 'post',
-              dataTye: 'json',
-              data: {
-                "id": $(this).data('id'),
-                "type": s_type.val(),
-                "subject": subject_input.val(),
-                "user_code": user_code_input.val(),
-                "user_name": user_name_input.val(),
-                "request_date": request_date_input.val(),
-                "application": s_app.val(),
-              },
-              beforeSend: function(xhr, settings) {
-                  if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
-                      // Only send the token to relative URLs i.e. locally.
-                      xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-                  }
-              },
-              success: function(data){
-                if(data.success){
-                  var txt = '';
-                  if(data.current_detail_status == true) {
-                    txt = data.already_checked
-                  } else {
-                    txt = data.updated
-                  }
-                  swal({
-                      title: data.updated,
-                      text: txt,
-                      type: "success",
-                      showConfirmButton: false,
-                  });
-                  setTimeout(function(data){
-                    window.location.href="/bajas/list/";
-                  }, 800);
-                } else {
-                  console.log('Error: ', data.message);
-                }
-              },
-              error: function(data){
-                console.log('Error: ', data);
-              },
-            });
-            console.log('prevent modal');
-          });
-
-
+          */
         });
     </script>
 {% endblock %}
