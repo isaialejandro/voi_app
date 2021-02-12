@@ -120,7 +120,7 @@ class Export:
     def export_to_csv(self):
         file = self.file
         df = pd.DataFrame(file)
-        output_path = os.path.dirname(os.path.abspath('README.md'))
+        output_path = os.path.dirname(os.path.abspath('README.md')) #Fix.
         print(output_path)
         df.to_csv(
             output_path + '/Active_Zendesk_usesrs_' + 

@@ -25,13 +25,8 @@ class GetActiveUsersAPI(APIView):
     authentication_classes = [ SessionAuthentication, BasicAuthentication ]
     permission_classes = [ IsAuthenticated ]
 
-    """def get(self, request):
-        data = { 'message': 'Ok' }
-        return Response(data)"""
-
     @transaction.atomic
     def get(self, request):
-
         data = {}
         hist = None
         domain = 'https://volaris.zendesk.com/'
@@ -65,8 +60,6 @@ class GetActiveUsersAPI(APIView):
             data['message'] = final_user_list
             data['status_code'] = '200'
             return Response(data)
-            #export = Export(final_user_list)
-            #export.export_to_csv()
         except Exception as t:
             data['message'] = str(t)
             print('Error trying to retrieve API: ', str(t))
@@ -94,3 +87,17 @@ class GetActiveUsersAPI(APIView):
             return zendesk_hist
         except Exception as g:
             print('Error trying to create History: ', g)
+
+class ExportUserAPI(APIView):
+    
+    def post(self, user_list):
+        data = {}
+        try:
+            print('User list: ', user_list)
+            export = Export(user_list)
+            export.export_to_csv()
+            data['success'] = True
+            data['message'] = 'File exported Successfully!'
+        except Exception as f:
+            data['message'] = str(f)
+        return Response(data)

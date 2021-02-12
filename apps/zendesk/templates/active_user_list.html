@@ -37,12 +37,14 @@
                 </div>
                 <div class="ibox-content">
                     <div class="text-center">
-                      <!--<a class="btn btn-primary" id="get_data" href="#">Get users</a>-->
                       <button class="ladda-button ladda-button-demo btn btn-primary" id="get_data" data-style="zoom-in">Get users</button>
                     </div>
-                    <div class="text-center">
-                      <a class="btn btn-success" id='export_btn' data-href="#">Export to *csv</a>
-                    </div>
+                    <form method="post" action="#">
+                      {% csrf_token %}
+                      <div class="text-center">
+                        <button class="btn btn-success" id='export_file' disabled="disabled" data-href="#">Export to *csv</button>
+                      </div>  
+                    </form>
                 </div>
             </div>
           </div>
@@ -109,16 +111,6 @@
     <script src="{% static 'js/plugins/ladda/ladda.jquery.min.js' %}"></script>
 
     <script>
-        /*
-        var l = $( '.ladda-button-demo' ).ladda();
-        l.click(function(){
-            // Start loading
-            l.ladda( 'start' );
-            setTimeout(function(){
-                l.ladda('stop');
-            },12000)
-        });*/
-
         $(document).ready(function(){
           
           var get_data = $('#get_data');
@@ -128,13 +120,15 @@
           var admins_number = $('#admins_no');
           var end_users_number = $('#end_users_no');
           var l = $( '.ladda-button-demo' ).ladda();
+          //var export_file = $('#export_file');
+          var current_data = '';
 
           users_number.empty().html('- -');
           agents_number.empty().html('- -');
           admins_number.empty().html('- -');
           end_users_number.empty().html('- -');
           
-          get_data.click(function() {
+          get_data.click(function() { //Get users button
             l.ladda( 'start' );
             $.ajax({
               url: '{% url "zendesk-api-v1:get_active_users" %}',
@@ -143,19 +137,13 @@
               success: function(data) {
                 console.log('data: ', data);
                 if(data.success) {
+                  current_data = data;
                   users_number.empty().html(data.total_occupied);
                   agents_number.empty().html(data.current_agents);
                   admins_number.empty().html(data.current_admins);
                   end_users_number.empty().html('x');
-                  /*
-                  $.each(data.user_hist, function(index, item){
-                    console.log('asdasd: ', item);
-                    users_number.empty().html(item.total_occupied);
-                    agents_number.empty().html(item.current_agents);
-                    admins_number.empty().html(item.current_admins);
-                    end_users_number.empty().html('x');
-                  });*/
                   l.ladda( 'stop' );
+                  $('#export_file').prop('disabled', false);
                 }
               },
               error: function(data) {
@@ -164,6 +152,55 @@
               },
             });
           });
+
+          $('#export_file').click(function(e){
+            e.preventDefault();
+            console.log('Exporting data to a file: ', current_data);
+            $.ajax({
+              url: '{% url "zendesk-api-v1:export_users" %}',
+              method: 'post',
+              dataType: 'json',
+              beforeSend: function(xhr, settings) {
+                  if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                      xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                  }
+              },
+              data: {
+                data: current_data
+              },
+              success: function(data) {
+                if (data.success) {
+                  alert(data.message);
+                }
+              },
+              error: function(data){
+                alert(data.message);
+              },
+            });
+          });
+
+          /* CSRF Token */
+          function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        /* CSRF Token */
+        const csrftoken = getCookie('csrftoken');
+
+
+          /*ladda-button-demo.click(function(){
+          });*/
 
 
 
