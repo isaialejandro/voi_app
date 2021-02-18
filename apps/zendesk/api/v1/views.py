@@ -1,4 +1,6 @@
 import sys, json
+from itertools import groupby
+from operator import itemgetter 
 from datetime import datetime
 
 from django.db import transaction
@@ -90,14 +92,26 @@ class GetActiveUsersAPI(APIView):
 
 class ExportUserAPI(APIView):
     
-    def post(self, user_list):
+    def post(self, request):
         data = {}
+        user_list = []
+        #print('OBJECT: \n', request.data)
         try:
-            print('User list: ', user_list)
-            export = Export(user_list)
+            full_data = request.data
+            c = 0
+            for k, v in full_data.items():
+                match_substr = 'data[' + str(c) + ']'
+                r =[v for k, v in full_data.items() if match_substr in k]
+                user_list.append(r)
+                c = c + 1
+            headers = ['Id', 'Name', 'Email', 'Role', 'Active', 'Group(s)']
+
+            export = Export(user_list, headers)
             export.export_to_csv()
+            print('Exported:', export)
             data['success'] = True
             data['message'] = 'File exported Successfully!'
         except Exception as f:
             data['message'] = str(f)
+            print('EXC: ', f)
         return Response(data)

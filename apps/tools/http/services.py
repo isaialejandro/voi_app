@@ -70,7 +70,7 @@ class GetZendeskUser:
 
             })
             count += 1
-        """get first get response and iterate trough next possible pagination"""
+        """Get first get response and iterate trough next possible pagination"""
         next_page = json_response['next_page']
         if next_page:
             domain = next_page.split('/', 1)[1][1:] + '/'
@@ -115,13 +115,14 @@ class UserGroup:
 
 
 class Export:
-    def __init__(self, file):
+    def __init__(self, file, header):
         self.file = file
+        self.header = header
     def export_to_csv(self):
         file = self.file
-        df = pd.DataFrame(file)
+        df = pd.DataFrame(file, columns=self.header)
         output_path = os.path.dirname(os.path.abspath('README.md')) #Fix.
-        print(output_path)
+        print('Output:', output_path)
         df.to_csv(
             output_path + '/Active_Zendesk_usesrs_' + 
                 datetime.now().strftime('%d-%m-%Y - %H.%m.%s') + '.csv',

@@ -111,6 +111,7 @@
     <script src="{% static 'js/plugins/ladda/ladda.jquery.min.js' %}"></script>
 
     <script>
+
         $(document).ready(function(){
           
           var get_data = $('#get_data');
@@ -127,6 +128,9 @@
           agents_number.empty().html('- -');
           admins_number.empty().html('- -');
           end_users_number.empty().html('- -');
+
+          var cookie = document.cookie
+          var csrfToken = cookie.substring(cookie.indexOf('=') + 1)
           
           get_data.click(function() { //Get users button
             l.ladda( 'start' );
@@ -135,7 +139,7 @@
               method: 'get',
               dataType: 'json',
               success: function(data) {
-                console.log('data: ', data);
+                console.log('data: ', data.message[1]);
                 if(data.success) {
                   current_data = data;
                   users_number.empty().html(data.total_occupied);
@@ -153,20 +157,19 @@
             });
           });
 
-          $('#export_file').click(function(e){
+          //Send list to API
+          $('#export_file').click(function(e){ 
             e.preventDefault();
-            console.log('Exporting data to a file: ', current_data);
+            console.log('Exporting data to a file: ', current_data.message);
             $.ajax({
               url: '{% url "zendesk-api-v1:export_users" %}',
               method: 'post',
               dataType: 'json',
-              beforeSend: function(xhr, settings) {
-                  if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                      xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                  }
+              headers: {
+                'X-CSRFToken': csrfToken
               },
               data: {
-                data: current_data
+                data: current_data.message
               },
               success: function(data) {
                 if (data.success) {
