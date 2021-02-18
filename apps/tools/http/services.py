@@ -36,8 +36,6 @@ class GetAPI:
             msg = 'An error was occurred trying to get API response.'
             logging.error(msg)
             raise AuthorizationError(response.status_code, msg)
-            
-        print('Getting API Response. . .')
         return response
         
         
@@ -70,6 +68,7 @@ class GetZendeskUser:
 
             })
             count += 1
+            
         """Get first get response and iterate trough next possible pagination"""
         next_page = json_response['next_page']
         if next_page:
@@ -100,6 +99,7 @@ class UserGroup:
         user_list = self.user_list
         domain = self.domain
         path = '/api/v2/users/'
+
         count = 1
         for r in user_list:
             get_api = GetAPI(domain, path + str(r['id']) + '/groups.json')
@@ -107,9 +107,11 @@ class UserGroup:
             json_response = response.json()
             group_list = []
             for g in json_response['groups']:
-                group_list.append(g['name'])
+                group_list.append({
+                    'name': g['name']
+                })
             r['group(s)'] = group_list
-            print('# ', count , r['group(s)']) 
+            #print('# ', count , r['group(s)']) 
             count += 1
         return user_list
 

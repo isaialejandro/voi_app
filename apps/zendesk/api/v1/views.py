@@ -45,6 +45,7 @@ class GetActiveUsersAPI(APIView):
             print('Getting User Groups . . .')
             get_user_group = UserGroup(user_list, domain)
             final_user_list = get_user_group.get_user_group()
+            print('Final user list: ', final_user_list)
             for u in final_user_list:
                 zendeskUser = ZendeskUser(
                     user_id=u['id'],
@@ -92,23 +93,29 @@ class GetActiveUsersAPI(APIView):
 
 class ExportUserAPI(APIView):
     
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         data = {}
         user_list = []
+        q = request.GET.get('user_list')
         #print('OBJECT: \n', request.data)
+
         try:
             full_data = request.data
             c = 0
             for k, v in full_data.items():
+                #print()
                 match_substr = 'data[' + str(c) + ']'
                 r =[v for k, v in full_data.items() if match_substr in k]
                 user_list.append(r)
                 c = c + 1
             headers = ['Id', 'Name', 'Email', 'Role', 'Active', 'Group(s)']
 
-            export = Export(user_list, headers)
+            """export = Export(user_list, headers)
             export.export_to_csv()
-            print('Exported:', export)
+            print('Exported:', export)"""
             data['success'] = True
             data['message'] = 'File exported Successfully!'
         except Exception as f:

@@ -139,7 +139,7 @@
               method: 'get',
               dataType: 'json',
               success: function(data) {
-                console.log('data: ', data.message[1]);
+                console.log('Getting user list: ', data.message);
                 if(data.success) {
                   current_data = data;
                   users_number.empty().html(data.total_occupied);
@@ -160,17 +160,21 @@
           //Send list to API
           $('#export_file').click(function(e){ 
             e.preventDefault();
-            console.log('Exporting data to a file: ', current_data.message);
+            //console.log('Exporting data into a file: ', current_data.message);
             $.ajax({
               url: '{% url "zendesk-api-v1:export_users" %}',
-              method: 'post',
+              method: 'POST',
               dataType: 'json',
               headers: {
                 'X-CSRFToken': csrfToken
               },
-              data: {
-                data: current_data.message
-              },
+              data: current_data.message,
+              /*
+              data: function(item, index){
+                console.log();
+                console.log();
+                console.log();
+              },*/
               success: function(data) {
                 if (data.success) {
                   alert(data.message);
