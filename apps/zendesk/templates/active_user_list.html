@@ -160,7 +160,6 @@
           //Send list to API
           $('#export_file').click(function(e){ 
             e.preventDefault();
-            //console.log('Exporting data into a file: ', current_data.message);
             $.ajax({
               url: '{% url "zendesk-api-v1:export_users" %}',
               method: 'POST',
@@ -168,7 +167,7 @@
               headers: {
                 'X-CSRFToken': csrfToken
               },
-              data: current_data.message,
+              //data: current_data.message,
               /*
               data: function(item, index){
                 console.log();

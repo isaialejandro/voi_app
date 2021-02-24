@@ -107,3 +107,4 @@ venv.bak/
 #Develop Runserver Files
 wsgi.py
 manage.py
+apps/application/migrations/0015_auto_20210223_2121.py

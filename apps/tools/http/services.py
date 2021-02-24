@@ -107,22 +107,19 @@ class UserGroup:
             json_response = response.json()
             group_list = []
             for g in json_response['groups']:
-                group_list.append({
-                    'name': g['name']
-                })
+                group_list.append(g['name'])
             r['group(s)'] = group_list
-            #print('# ', count , r['group(s)']) 
+            print('# ', count , r['group(s)']) 
             count += 1
         return user_list
 
 
 class Export:
-    def __init__(self, file, header):
+    def __init__(self, file):
         self.file = file
-        self.header = header
     def export_to_csv(self):
         file = self.file
-        df = pd.DataFrame(file, columns=self.header)
+        df = pd.DataFrame(file)
         output_path = os.path.dirname(os.path.abspath('README.md')) #Fix.
         print('Output:', output_path)
         df.to_csv(

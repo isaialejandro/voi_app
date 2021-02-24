@@ -27,7 +27,7 @@ class ZendeskUser(models.Model):
     hist = models.ForeignKey('ZendeskUserHistory', on_delete=models.DO_NOTHING, null=True)
 
     def __str__(self):
-        return self.name + ' - ' + '{}'.format(self.hist.date) #self.hist.date.strftime('%d-%m-%Y %I:%M:%S %p')
+        return self.name + ' - ' + (self.hist.date.strftime('%d-%m-%Y %I:%M:%S %p') if self.hist.date else None)
 
 class ZendeskUserHistory(models.Model):
     class Meta:

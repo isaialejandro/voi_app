@@ -45,14 +45,15 @@ class GetActiveUsersAPI(APIView):
             print('Getting User Groups . . .')
             get_user_group = UserGroup(user_list, domain)
             final_user_list = get_user_group.get_user_group()
-            print('Final user list: ', final_user_list)
+            #print('Final user list: ', final_user_list)
             for u in final_user_list:
+                group = str(u['group(s)']).replace('[', '').replace("'", "").replace("]", "")
                 zendeskUser = ZendeskUser(
                     user_id=u['id'],
                     name=u['name'],
                     email=u['email'],
                     role=u['role'],
-                    group=u['group(s)']
+                    group=group
                 )
                 zendeskUser.save()
             hist = self.create_hist(final_user_list)
@@ -84,7 +85,10 @@ class GetActiveUsersAPI(APIView):
                 exec_user=User.objects.get(id=self.request.user.id)
             )
             zendesk_hist.save()
-            for u in ZendeskUser.objects.all():
+            #for u in ZendeskUser.objects.filter().latest('date'):
+            print('HIST ID: ', zendesk_hist)
+            for u in ZendeskUser.objects.filter(hist_id=zendesk_hist.id):
+                #print('LASTEST USERS: ', u.hist)
                 u.hist=ZendeskUserHistory.objects.get(id=zendesk_hist.id)
                 u.save()
             return zendesk_hist
@@ -98,24 +102,26 @@ class ExportUserAPI(APIView):
 
     def post(self, request):
         data = {}
-        user_list = []
-        q = request.GET.get('user_list')
-        #print('OBJECT: \n', request.data)
+        final_user_list = []
 
         try:
-            full_data = request.data
-            c = 0
-            for k, v in full_data.items():
-                #print()
-                match_substr = 'data[' + str(c) + ']'
-                r =[v for k, v in full_data.items() if match_substr in k]
-                user_list.append(r)
+            user_history = ZendeskUserHistory.objects.last()
+            print('LAST: ', user_history)
+            user_list = ZendeskUser.objects.filter(hist=user_history.id)
+            c = 1
+            for u in user_list:
+                #print(str(c) + ' Final group list: ', u.name)
+                final_user_list.append({
+                    'Name': u.name,
+                    'Email': u.email,
+                    'Role': u.role,
+                    'Group(s)': u.group
+                })
                 c = c + 1
-            headers = ['Id', 'Name', 'Email', 'Role', 'Active', 'Group(s)']
 
-            """export = Export(user_list, headers)
+            export = Export(final_user_list)
             export.export_to_csv()
-            print('Exported:', export)"""
+            print('Exported:', export)
             data['success'] = True
             data['message'] = 'File exported Successfully!'
         except Exception as f:
