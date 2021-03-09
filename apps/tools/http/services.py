@@ -1,4 +1,4 @@
-import os, logging, base64
+import os, logging, base64, pathlib
 from datetime import datetime
 
 import requests
@@ -120,10 +120,11 @@ class Export:
     def export_to_csv(self):
         file = self.file
         df = pd.DataFrame(file)
-        output_path = os.path.dirname(os.path.abspath('README.md')) #Fix.
+        output_path = os.path.dirname(os.path.abspath('user_files/')) #Fix.
+        #output_path = pathlib.Path().absolute()
         print('Output:', output_path)
         df.to_csv(
-            output_path + '/Active_Zendesk_usesrs_' + 
+            output_path + '/user_files/' + '/Active_Zendesk_usesrs_' + 
                 datetime.now().strftime('%d-%m-%Y - %H.%m.%s') + '.csv',
             index=False,
             encoding='utf-8'

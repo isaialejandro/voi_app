@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 
 from apps.tools.choices import TYPE, REGISTRY, INC_SOURCE, PAPERLESS
 
-now = datetime.now()
+now = timezone.now
 
 
 class ZendeskUser(models.Model):
@@ -27,7 +27,8 @@ class ZendeskUser(models.Model):
     hist = models.ForeignKey('ZendeskUserHistory', on_delete=models.DO_NOTHING, null=True)
 
     def __str__(self):
-        return self.name + ' - ' + (self.hist.date.strftime('%d-%m-%Y %I:%M:%S %p') if self.hist.date else None)
+        return self.name + ' - ' + 'Exec Date: ' + \
+        (self.hist.date.strftime('%d-%m-%Y %I:%M:%S %p') if self.hist.date else '')
 
 class ZendeskUserHistory(models.Model):
     class Meta:
@@ -40,11 +41,11 @@ class ZendeskUserHistory(models.Model):
     total_occupied_licenses = models.CharField(max_length=3, null=True, blank=True)
     current_admins = models.CharField(max_length=3, null=True, blank=True)
     current_agents = models.CharField(max_length=3, null=True, blank=True)
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField(default=now)
     exec_user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
 
     def __str__(self):
-        return '%s Occupied Licenses - ' % self.total_occupied_licenses + '{}'.format(self.date) #self.date.strftime('%d-%m-%Y %I:%M:%S %p')
+        return '%s Occupied Licenses - ' % self.total_occupied_licenses + '{}'.format(self.date.strftime("%d %b %Y %H:%M:%S"))
 
 #---
 """

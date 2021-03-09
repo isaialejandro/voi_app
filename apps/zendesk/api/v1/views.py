@@ -45,7 +45,9 @@ class GetActiveUsersAPI(APIView):
             print('Getting User Groups . . .')
             get_user_group = UserGroup(user_list, domain)
             final_user_list = get_user_group.get_user_group()
-            #print('Final user list: ', final_user_list)
+            
+            hist = self.create_hist(final_user_list)
+
             for u in final_user_list:
                 group = str(u['group(s)']).replace('[', '').replace("'", "").replace("]", "")
                 zendeskUser = ZendeskUser(
@@ -53,10 +55,11 @@ class GetActiveUsersAPI(APIView):
                     name=u['name'],
                     email=u['email'],
                     role=u['role'],
-                    group=group
+                    group=group,
+                    hist=ZendeskUserHistory.objects.get(id=hist.id)
                 )
                 zendeskUser.save()
-            hist = self.create_hist(final_user_list)
+
             data['total_occupied'] = hist.total_occupied_licenses
             data['current_admins'] = hist.current_admins
             data['current_agents'] = hist.current_agents
@@ -78,6 +81,7 @@ class GetActiveUsersAPI(APIView):
                     total_agents.append( i if i == 'agent' else None )
             total_agents = [len(a) for a in total_agents if a == 'agent']
             total_admins = [len(a) for a in total_admins if a == 'admin']
+
             zendesk_hist = ZendeskUserHistory(
                 total_occupied_licenses=total_licenses,
                 current_admins=str(len(total_admins)),
@@ -85,15 +89,11 @@ class GetActiveUsersAPI(APIView):
                 exec_user=User.objects.get(id=self.request.user.id)
             )
             zendesk_hist.save()
-            #for u in ZendeskUser.objects.filter().latest('date'):
-            print('HIST ID: ', zendesk_hist)
-            for u in ZendeskUser.objects.filter(hist_id=zendesk_hist.id):
-                #print('LASTEST USERS: ', u.hist)
-                u.hist=ZendeskUserHistory.objects.get(id=zendesk_hist.id)
-                u.save()
+
             return zendesk_hist
         except Exception as g:
             print('Error trying to create History: ', g)
+            return g
 
 class ExportUserAPI(APIView):
     
@@ -106,11 +106,9 @@ class ExportUserAPI(APIView):
 
         try:
             user_history = ZendeskUserHistory.objects.last()
-            print('LAST: ', user_history)
             user_list = ZendeskUser.objects.filter(hist=user_history.id)
             c = 1
             for u in user_list:
-                #print(str(c) + ' Final group list: ', u.name)
                 final_user_list.append({
                     'Name': u.name,
                     'Email': u.email,
@@ -121,7 +119,6 @@ class ExportUserAPI(APIView):
 
             export = Export(final_user_list)
             export.export_to_csv()
-            print('Exported:', export)
             data['success'] = True
             data['message'] = 'File exported Successfully!'
         except Exception as f:
