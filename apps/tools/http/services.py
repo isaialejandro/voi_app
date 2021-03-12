@@ -1,8 +1,12 @@
-import os, logging, base64, pathlib
+import os, logging, base64, pathlib, sys
 from datetime import datetime
+
+from dotenv import load_dotenv
 
 import requests
 import pandas as pd
+
+load_dotenv()
 
 
 class GetAPI:
@@ -12,8 +16,8 @@ class GetAPI:
     def auth(self):
         response = None
         try:
-            usr = 'isai.alejandro@voioutsourcing.com.mx'
-            token = 'nK8eEU5MARifXI7aPqD4HJypgEf1VtJs7MtBh0nd'
+            usr = os.getenv('ZENDESK_AUTH_USER')
+            token = os.getenv('ZENDESK_AUTH_PWD')
 
             data = usr + '/token:' + token
             str_bytes = data.encode('ascii')
@@ -28,9 +32,10 @@ class GetAPI:
             full_api = self.domain + self.path
             response = session.get(full_api)
         except Exception as i:
-            logging.error('Error trying to access to requested API . . .\n', i)
+            logging.error('Error trying to access to requested API in main function . . .\n', i)
         return response
     def get(self):
+        #Get request of entire object.
         response = self.auth()
         if response.status_code != 200:
             msg = 'An error was occurred trying to get API response.'
@@ -54,10 +59,12 @@ class GetZendeskUser:
     def __init__(self, response):
         self.response = response
     def get_user(self):
+        """Get all users from whole API response (filtering users)."""
         json_response = self.response.json()
+
         count = 1
         user_list = []
-        for item in json_response['users']:          
+        for item in json_response[listname]:
             user_list.append({
                 'id': item['id'],
                 'name': item['name'],
@@ -115,18 +122,23 @@ class UserGroup:
 
 
 class Export:
-    def __init__(self, file):
+    def __init__(self, file, filename):
         self.file = file
+        self.filename = filename
     def export_to_csv(self):
         file = self.file
         df = pd.DataFrame(file)
-        output_path = os.path.dirname(os.path.abspath('user_files/')) #Fix.
-        #output_path = pathlib.Path().absolute()
+        output_path = os.path.dirname(os.path.abspath('user_files/'))
         print('Output:', output_path)
+        
         df.to_csv(
-            output_path + '/user_files/' + '/Active_Zendesk_usesrs_' + 
-                datetime.now().strftime('%d-%m-%Y - %H.%m.%s') + '.csv',
+            output_path + '/user_files/' + self.filename,
             index=False,
             encoding='utf-8'
         )
+        #Downloading file direclty with requests python module:
+        #r = requests.get(output_path + '/user_files/' + self.filename)
+        #with open('full_path', 'wb') as f:
+        #    f.write(r.content)
+
         print('File exported successfully!')

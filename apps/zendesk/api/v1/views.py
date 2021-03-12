@@ -1,4 +1,4 @@
-import sys, json
+import os
 from itertools import groupby
 from operator import itemgetter 
 from datetime import datetime
@@ -14,10 +14,14 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from dotenv import load_dotenv
+
 from apps.zendesk.models import ZendeskUser
 
 from apps.tools.http.services import GetAPI, GetZendeskUser, UserGroup, Export
 from apps.zendesk.models import ZendeskUser, ZendeskUserHistory
+
+load_dotenv()
 
 
 now = datetime.now()
@@ -31,15 +35,14 @@ class GetActiveUsersAPI(APIView):
     def get(self, request):
         data = {}
         hist = None
-        domain = 'https://volaris.zendesk.com/'
-        path = 'api/v2/users.json'
-        filter_query = '?role[]=admin&role[]=agent'
+        domain = os.getenv('ZENDESK_API_DOMAIN')
+        path = os.getenv('ZENDESK_USERS_PATH')
+        filter_query = os.getenv('ZENDESK_USERS_FILTER')
         path = path + filter_query
         final_user_list = None
         try:
             data_api = GetAPI(domain, path)
             response = data_api.get()
-
             get_user = GetZendeskUser(response)
             user_list = get_user.get_user()
             print('Getting User Groups . . .')
@@ -68,7 +71,7 @@ class GetActiveUsersAPI(APIView):
             data['status_code'] = '200'
             return Response(data)
         except Exception as t:
-            data['message'] = str(t)
+            data['message'] = t
             print('Error trying to retrieve API: ', str(t))
     def create_hist(self, user_list):
         try:
@@ -117,11 +120,51 @@ class ExportUserAPI(APIView):
                 })
                 c = c + 1
 
-            export = Export(final_user_list)
+            filename = 'Active_Zendesk_usesrs_' + \
+                datetime.now().strftime('%d-%m-%Y - %H.%m.%s') + '.csv'
+            export = Export(final_user_list, filename)
             export.export_to_csv()
             data['success'] = True
+            data['filename'] = filename
             data['message'] = 'File exported Successfully!'
         except Exception as f:
             data['message'] = str(f)
             print('EXC: ', f)
+        return Response(data)
+
+
+class GetTickets(APIView):
+
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        """
+        Return All tickets from date range.
+        """
+        domain = os.getenv('ZENDESK_API_DOMAIN')
+        path = os.getenv('ZENDESK_TICKETS_PATH')
+        #filter_query = os.getenv('ZENDESK_TICKETS_FILTER')
+        filter_query = ''
+        path = path + filter_query
+
+        try:
+            data = {}
+            data_api = GetAPI(domain, path)
+            response = data_api.get()
+
+            json_response = response.json()
+            tickets = [t for t in json_response['tickets']]
+
+            filename = 'Zendesk_tickets_' + \
+                datetime.now().strftime('%d-%m-%Y - %H.%m.%s') + '.csv'
+            export = Export(tickets, filename)
+            export.export_to_csv()
+
+            #data['tickets'] = tickets
+            data['success'] = True
+        except Exception as g:
+            print('Error: ', str(g))
+            data['message'] = g
+
         return Response(data)

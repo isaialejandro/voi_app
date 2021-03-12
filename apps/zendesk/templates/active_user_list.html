@@ -42,7 +42,7 @@
                     <form method="post" action="#">
                       {% csrf_token %}
                       <div class="text-center">
-                        <button class="btn btn-success" id='export_file' disabled="disabled" data-href="#">Export to *csv</button>
+                        <a class="btn btn-success" id='export_file' download="userfile" disabled="disabled" data-href="#">Export to *csv</a>
                       </div>  
                     </form>
                 </div>
@@ -151,7 +151,7 @@
                 }
               },
               error: function(data) {
-                console.log('Error, something happened: ', data.message);
+                console.log('Error, something happened: \n', data);
                 l.ladda( 'stop' );
               },
             });
@@ -167,16 +167,11 @@
               headers: {
                 'X-CSRFToken': csrfToken
               },
-              //data: current_data.message,
-              /*
-              data: function(item, index){
-                console.log();
-                console.log();
-                console.log();
-              },*/
               success: function(data) {
                 if (data.success) {
                   alert(data.message);
+                  //var filename = data.filename;
+                  //window.location.href = 'user_files/' + filename;
                 }
               },
               error: function(data){
