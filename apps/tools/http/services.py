@@ -64,7 +64,7 @@ class GetZendeskUser:
 
         count = 1
         user_list = []
-        for item in json_response[listname]:
+        for item in json_response['users']:
             user_list.append({
                 'id': item['id'],
                 'name': item['name'],

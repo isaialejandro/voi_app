@@ -133,6 +133,7 @@
           var csrfToken = cookie.substring(cookie.indexOf('=') + 1)
           
           get_data.click(function() { //Get users button
+            $('#export_file').attr('disabled', true);
             l.ladda( 'start' );
             $.ajax({
               url: '{% url "zendesk-api-v1:get_active_users" %}',
@@ -147,7 +148,8 @@
                   admins_number.empty().html(data.current_admins);
                   end_users_number.empty().html('x');
                   l.ladda( 'stop' );
-                  $('#export_file').prop('disabled', false);
+                  //$('#export_file').prop('disabled', false);
+                  $('#export_file').removeAttr('disabled')
                 }
               },
               error: function(data) {
