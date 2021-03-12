@@ -42,15 +42,13 @@ BASE_APPS = [
 
 
 LOCAL_APPS = [
-    'apps.ticket',
-    'apps.applicant',
-    'apps.application',
     'apps.user',
+    'apps.application',
+    'apps.applicant',
     'apps.tools',
     'apps.bi_modules',
-    'apps.extra_incidents',
     'apps.bajas_semanales',
-    'apps.wiki_module',
+    'apps.zendesk',
 ]
 
 THIRD_PARTY_APPS = [
@@ -159,3 +157,7 @@ IMPORT_EXPORT_USE_TRANSACTIONS = True
 #Email BackEnd
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
+
+
+#Set max of number fields to delete via Django ORM:
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 300000

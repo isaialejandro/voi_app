@@ -485,63 +485,6 @@
           });
 
 
-          //FINALIZE BajaSemenal
-          $('.finalize').click(function(){
-            var id = $(this).data('id');
-            swal({
-                    title: "Finalize it?",
-                    text: "This incident will close definitly",
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: "Yes, finalize it!",
-                    cancelButtonText: "Cancel",
-                    closeOnConfirm: false,
-                    closeOnCancel: false },
-                function (isConfirm) {
-                    if (isConfirm) {
-                        swal({
-                            title: "{{ inc_number }}",
-                            text: "{{ success_msg }}",
-                            type: "success",
-                            showConfirmButton: false,
-                        });
-
-                        if(id) {
-                            $.ajax({
-                              url: "{% url 'extra_incidents-api-v1:finalize' %}",
-                              type: 'json',
-                              method: 'post',
-                              data: {
-                                "id": id,
-                                "flag": 1,
-                              },
-                              beforeSend: function(xhr, settings) {
-                                  if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
-                                      // Only send the token to relative URLs i.e. locally.
-                                      xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-                                  }
-                              },
-                              success: function(data){
-                                if(data.success){
-                                  window.location.href="/extra_incidents/list/";
-                                }
-                              },
-                              error: function(data){
-                                console.log('Error: ', data.message);
-                              }
-                            });
-                        } else {
-                          conso.e.log('No id identified..');
-                        }
-
-                    } else {
-                        swal("Cancelled", "Incident won´t be erased", "error");
-                    }
-                });
-          });
-
-
         });
     </script>
 {% endblock %}

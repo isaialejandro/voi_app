@@ -24,3 +24,5 @@ STATICFILES_DIRS = [
 ]
 STATIC_URL = '/voi/staticfiles/'
 #MEDIA_ROOT = '/voi/staticfiles/'
+
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000 # higher than the count of fields

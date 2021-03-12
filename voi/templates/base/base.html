@@ -3,6 +3,10 @@
 <html>
 
 <head>
+    <!-- JavaScript Cookig CDN for API requests -->
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+    <!-- JavaScript Cookig CDN for API requests -->
+
     {% block css %}
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -523,67 +527,6 @@
             $(document).ready(function() {
 
             });
-
-
-            function ShowModal(title, content, args, btn){
-
-              var m_title = $('#modal_title');
-              var m_content = $('#modal_content');
-              var m_btn = $('#modal_btn');
-              var close_btn = btn
-              var args = args
-
-              m_title.empty().html(title);
-              m_content.empty().html(content);
-              m_btn.empty().append(btn);
-
-              $('#modal-form').modal('show');
-
-              $('#btn_modal_close').click(function(){
-
-                  //Se manda a llamar la API para cerrar el ticket
-                  if($('#close_comment')){
-
-                    var close_comment = $('#close_comment').val();
-
-                    if(close_comment == ''){
-                      alert('Summary is required.');
-                    }else{
-                      $.ajax({
-                        url: '{% url 'ticket-api-v1:close_ticket' %}',
-                        method: 'POST',
-                        dataType: 'json',
-                        data: {
-                          "id": args['id'],
-                          "close_comment": close_comment,
-                          'user_id': args['user_id'],
-                          csrfmiddlewaretoken: window.CSRF_TOKEN
-                        },
-                        beforeSend: function(xhr, settings) {
-                            if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
-                                // Only send the token to relative URLs i.e. locally.
-                                xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-                            }
-                        },
-                        success: function(data){
-                          ShowModal(data.title, data.message, '', data.button);
-                        },
-                        error: function(data){
-                          console.log(data);
-                        }
-                      });
-                    }
-                  }else{
-                    alert('No detecta close comment field');
-                  }
-              });
-
-              //Recarga de la página por el botón generado en el back.
-              $('#btn_modal_back_close').click(function(){
-                window.location.href = '/'
-              });
-
-            }
 
             //Get Cookie Function for CSRF_Token
             function getCookie(name) {
