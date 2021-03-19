@@ -1,4 +1,4 @@
-import os
+import sys, os
 from itertools import groupby
 from operator import itemgetter 
 from datetime import datetime
@@ -37,14 +37,15 @@ class GetActiveUsersAPI(APIView):
         hist = None
         domain = os.getenv('ZENDESK_API_DOMAIN')
         path = os.getenv('ZENDESK_USERS_PATH')
-        filter_query = os.getenv('ZENDESK_USERS_FILTER')
-        path = path + filter_query
+        api_filter_query = os.getenv('ZENDESK_USERS_FILTER')
         final_user_list = None
         try:
-            data_api = GetAPI(domain, path)
-            response = data_api.get()
-            get_user = GetZendeskUser(response)
+            data_api = GetAPI(domain, path, api_filter_query)
+            json_response = data_api.get()
+            get_user = GetZendeskUser(json_response)
+            print('Getting User List ONLY . . .')
             user_list = get_user.get_user()
+
             print('Getting User Groups . . .')
             get_user_group = UserGroup(user_list, domain)
             final_user_list = get_user_group.get_user_group()

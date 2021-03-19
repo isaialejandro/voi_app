@@ -1,4 +1,4 @@
-import os, logging, base64, pathlib, sys
+import os, logging, base64, pathlib, sys, json
 from datetime import datetime
 
 from dotenv import load_dotenv
@@ -10,10 +10,13 @@ load_dotenv()
 
 
 class GetAPI:
-    def __init__(self, domain, path):
-        self.domain = domain
-        self.path = path
-    def auth(self):
+    #def __init__(self, url):
+        #self.url = url
+    def __init__(self, domain, path, api_filter):
+        self.domain = domain,
+        self.path = path,
+        self.api_filter = api_filter
+    def auth(self, new_url=None):
         response = None
         try:
             usr = os.getenv('ZENDESK_AUTH_USER')
@@ -29,19 +32,50 @@ class GetAPI:
                 'Content-Type': 'application/json',
                 'Authorization': 'Basic ' + base64_str
             }
-            full_api = self.domain + self.path
-            response = session.get(full_api)
+
+            if new_url is None:
+                domain = ''.join(self.domain)
+                path = ''.join(self.path)
+                api_filter = self.api_filter
+                url = domain + path + api_filter
+                response = session.get(url)
+            else:
+                response = session.get(new_url)
         except Exception as i:
             logging.error('Error trying to access to requested API in main function . . .\n', i)
         return response
     def get(self):
-        #Get request of entire object.
+        """Get request of entire object."""
+
+        domain = ''.join(self.domain)
+        path = ''.join(self.path)
+        api_filter = self.api_filter
+        url = domain + path + api_filter
+        print('Current URL to Request: ', url)
+        full_json_response = {}
+        
         response = self.auth()
         if response.status_code != 200:
             msg = 'An error was occurred trying to get API response.'
             logging.error(msg)
             raise AuthorizationError(response.status_code, msg)
-        return response
+        else:
+            json_response = response.json()
+            next_page = json_response['next_page']
+            while next_page:
+                response = self.auth(new_url=next_page)
+                new_data = response.json()
+                # Hacer merge entre todos los jsons obtenidos de cada solicitud por paginación a la API.
+                full_json_response.update(new_data)
+                next_page = new_data['next_page']
+
+        # String dump of the merged DICT
+        jsonString_merged = json.dumps(full_json_response)
+        """print(
+            'MERGED JSON: ', jsonString_merged,
+            '\nType of merged JSON string: ', type(jsonString_merged)
+            )"""
+        return jsonString_merged        
         
         
 class AuthorizationError(Exception):
@@ -56,12 +90,11 @@ class AuthorizationError(Exception):
 
 
 class GetZendeskUser:
-    def __init__(self, response):
-        self.response = response
+    def __init__(self, json_response):
+        self.json_response = json_response
     def get_user(self):
         """Get all users from whole API response (filtering users)."""
-        json_response = self.response.json()
-
+        json_response = self.json_response
         count = 1
         user_list = []
         for item in json_response['users']:
@@ -72,29 +105,8 @@ class GetZendeskUser:
                 'role': item['role'],
                 'active': item['active'],
                 'group(s)': None
-
             })
             count += 1
-            
-        """Get first get response and iterate trough next possible pagination"""
-        next_page = json_response['next_page']
-        if next_page:
-            domain = next_page.split('/', 1)[1][1:] + '/'
-            path = next_page.split('/')[-1]
-            data_api = GetAPI('https://' + domain, path)
-            response = data_api.get()
-            get_user = GetZendeskUser(response)
-            next_user_list_iterarion = get_user.get_user()
-
-            for u in next_user_list_iterarion:
-                user_list.append({
-                    'id': u['id'],
-                    'name': u['name'],
-                    'email': u['email'],
-                    'role': u['role'],
-                    'active': u['active'],
-                    'group(s)': None
-                })
         return user_list
 
 
