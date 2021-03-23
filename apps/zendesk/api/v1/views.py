@@ -69,10 +69,10 @@ class GetActiveUsersAPI(APIView):
             data['success'] = True
             data['message'] = final_user_list
             data['status_code'] = '200'
-            return Response(data)
         except Exception as t:
             data['message'] = t
             print('Error trying to retrieve API: ', str(t))
+        return Response(data)
     def create_hist(self, user_list):
         try:
             total_licenses = len(user_list)
@@ -97,6 +97,7 @@ class GetActiveUsersAPI(APIView):
         except Exception as g:
             print('Error trying to create History: ', g)
             return g
+
 
 class ExportUserAPI(APIView):
     
@@ -136,23 +137,20 @@ class GetTickets(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, format=None):
+    #@transaction.atomic
+    def get(self, request):
         """Return All tickets from date range."""
-        
+
         domain = os.getenv('ZENDESK_API_DOMAIN')
         path = os.getenv('ZENDESK_TICKETS_PATH')
-        #filter_query = os.getenv('ZENDESK_TICKETS_FILTER')
-        filter_query = ''
-        path = path + filter_query
-
+        filter_query = os.getenv('ZENDESK_TICKETS_FILTER')
+        #filter_query = ''
+        #path = path + filter_query
         try:
             data = {}
-            data_api = GetAPI(domain, path)
-            response = data_api.get()
-
-            json_response = response.json()
+            data_api = GetAPI(domain, path, filter_query)
+            json_response = data_api.get()
             tickets = [t for t in json_response['tickets']]
-
             filename = 'Zendesk_tickets_' + \
                 datetime.now().strftime('%d-%m-%Y - %H.%m.%s') + '.csv'
             export = Export(tickets, filename)

@@ -64,7 +64,8 @@ class GetAPI:
                 response = self.auth(new_url=next_page)
                 new_data = response.json()
                 
-                # Hacer merge entre todos los jsons obtenidos de cada solicitud por paginación a la API.
+                # Hacer merge entre todos los jsons obtenidos de cada
+                # solicitud por paginación a la API.
                 full_json_response.append(new_data)
                 next_page = new_data['next_page']
         return full_json_response        
