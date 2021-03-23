@@ -1,4 +1,5 @@
 import os, logging, base64, pathlib, sys, json
+from collections import ChainMap
 from datetime import datetime
 
 from dotenv import load_dotenv
@@ -10,8 +11,6 @@ load_dotenv()
 
 
 class GetAPI:
-    #def __init__(self, url):
-        #self.url = url
     def __init__(self, domain, path, api_filter):
         self.domain = domain,
         self.path = path,
@@ -36,7 +35,7 @@ class GetAPI:
             if new_url is None:
                 domain = ''.join(self.domain)
                 path = ''.join(self.path)
-                api_filter = self.api_filter
+                api_filter = '' if not self.api_filter else self.api_filter
                 url = domain + path + api_filter
                 response = session.get(url)
             else:
@@ -46,14 +45,10 @@ class GetAPI:
         return response
     def get(self):
         """Get request of entire object."""
-
-        domain = ''.join(self.domain)
-        path = ''.join(self.path)
-        api_filter = self.api_filter
-        url = domain + path + api_filter
-        print('Current URL to Request: ', url)
-        full_json_response = {}
-        
+        #domain = ''.join(self.domain)
+        #path = ''.join(self.path)
+        #api_filter = '' if not self.api_filter else self.api_filter
+        #url = domain + path + api_filter
         response = self.auth()
         if response.status_code != 200:
             msg = 'An error was occurred trying to get API response.'
@@ -62,20 +57,17 @@ class GetAPI:
         else:
             json_response = response.json()
             next_page = json_response['next_page']
+            full_json_response = []
+            full_json_response.append(json_response)
             while next_page:
+                print('Current URL to Request: ', next_page)
                 response = self.auth(new_url=next_page)
                 new_data = response.json()
+                
                 # Hacer merge entre todos los jsons obtenidos de cada solicitud por paginación a la API.
-                full_json_response.update(new_data)
+                full_json_response.append(new_data)
                 next_page = new_data['next_page']
-
-        # String dump of the merged DICT
-        jsonString_merged = json.dumps(full_json_response)
-        """print(
-            'MERGED JSON: ', jsonString_merged,
-            '\nType of merged JSON string: ', type(jsonString_merged)
-            )"""
-        return jsonString_merged        
+        return full_json_response        
         
         
 class AuthorizationError(Exception):
@@ -97,38 +89,42 @@ class GetZendeskUser:
         json_response = self.json_response
         count = 1
         user_list = []
-        for item in json_response['users']:
-            user_list.append({
-                'id': item['id'],
-                'name': item['name'],
-                'email': item['email'],
-                'role': item['role'],
-                'active': item['active'],
-                'group(s)': None
-            })
-            count += 1
+        for item in json_response:
+            for i in item['users']:
+                user_list.append({
+                    'id': i['id'],
+                    'name': i['name'],
+                    'email': i['email'],
+                    'role': i['role'],
+                    'active': i['active'],
+                    'group(s)': None
+                })
+                count +=1
         return user_list
 
 
 class UserGroup:
     def __init__(self, user_list, domain):
         self.user_list = user_list
-        self.domain = domain  
+        self.domain = domain
     def get_user_group(self):
         user_list = self.user_list
         domain = self.domain
-        path = '/api/v2/users/'
+        path = 'api/v2/users/'
 
         count = 1
         for r in user_list:
-            get_api = GetAPI(domain, path + str(r['id']) + '/groups.json')
-            response = get_api.get()
-            json_response = response.json()
+            data_api = GetAPI(domain, path + str(r['id']) + '/groups.json', api_filter=None)
+            response = data_api.get()
+            group = response[0] # Getting Group dict only.
+            group = group['groups']
+
             group_list = []
-            for g in json_response['groups']:
+            for g in group:
                 group_list.append(g['name'])
+            
             r['group(s)'] = group_list
-            print('# ', count , r['group(s)']) 
+            print('# ', count , r['group(s)'])
             count += 1
         return user_list
 

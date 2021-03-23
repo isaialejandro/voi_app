@@ -40,18 +40,17 @@ class GetActiveUsersAPI(APIView):
         api_filter_query = os.getenv('ZENDESK_USERS_FILTER')
         final_user_list = None
         try:
-            data_api = GetAPI(domain, path, api_filter_query)
+            data_api = GetAPI(domain, path, api_filter=api_filter_query)
             json_response = data_api.get()
             get_user = GetZendeskUser(json_response)
-            print('Getting User List ONLY . . .')
+            print('Getting User List . . .')
             user_list = get_user.get_user()
 
             print('Getting User Groups . . .')
-            get_user_group = UserGroup(user_list, domain)
-            final_user_list = get_user_group.get_user_group()
+            user_group = UserGroup(user_list, domain)
+            final_user_list = user_group.get_user_group()
             
             hist = self.create_hist(final_user_list)
-
             for u in final_user_list:
                 group = str(u['group(s)']).replace('[', '').replace("'", "").replace("]", "")
                 zendeskUser = ZendeskUser(
@@ -107,7 +106,6 @@ class ExportUserAPI(APIView):
     def post(self, request):
         data = {}
         final_user_list = []
-
         try:
             user_history = ZendeskUserHistory.objects.last()
             user_list = ZendeskUser.objects.filter(hist=user_history.id)
@@ -120,7 +118,6 @@ class ExportUserAPI(APIView):
                     'Group(s)': u.group
                 })
                 c = c + 1
-
             filename = 'Active_Zendesk_usesrs_' + \
                 datetime.now().strftime('%d-%m-%Y - %H.%m.%s') + '.csv'
             export = Export(final_user_list, filename)
@@ -140,9 +137,8 @@ class GetTickets(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
-        """
-        Return All tickets from date range.
-        """
+        """Return All tickets from date range."""
+        
         domain = os.getenv('ZENDESK_API_DOMAIN')
         path = os.getenv('ZENDESK_TICKETS_PATH')
         #filter_query = os.getenv('ZENDESK_TICKETS_FILTER')
