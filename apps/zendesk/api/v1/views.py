@@ -16,9 +16,11 @@ from rest_framework.response import Response
 
 from dotenv import load_dotenv
 
+import pandas as pd
+
 from apps.zendesk.models import ZendeskUser
 
-from apps.tools.http.services import GetAPI, GetZendeskUser, UserGroup, Export
+from apps.tools.http.services import GetAPI, GetZendeskUser, UserGroup, Export, ExportDict
 from apps.zendesk.models import ZendeskUser, ZendeskUserHistory
 
 load_dotenv()
@@ -137,29 +139,30 @@ class GetTickets(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
-    #@transaction.atomic
     def get(self, request):
         """Return All tickets from date range."""
 
         domain = os.getenv('ZENDESK_API_DOMAIN')
         path = os.getenv('ZENDESK_TICKETS_PATH')
         filter_query = os.getenv('ZENDESK_TICKETS_FILTER')
-        #filter_query = ''
-        #path = path + filter_query
+
         try:
             data = {}
             data_api = GetAPI(domain, path, filter_query)
             json_response = data_api.get()
-            tickets = [t for t in json_response['tickets']]
+
+            ticket_list = []
+            for item in json_response: 
+                for t in item['tickets']: # Getting Ticket list only. Incremental API
+                    ticket_list.append(t)
             filename = 'Zendesk_tickets_' + \
                 datetime.now().strftime('%d-%m-%Y - %H.%m.%s') + '.csv'
-            export = Export(tickets, filename)
+            export = Export(ticket_list, filename)
             export.export_to_csv()
 
-            #data['tickets'] = tickets
+            data['tickets'] = 'Number of total items in List: ', len(ticket_list)
             data['success'] = True
         except Exception as g:
             print('Error: ', str(g))
-            data['message'] = g
-
+            data['message'] = str(g)
         return Response(data)

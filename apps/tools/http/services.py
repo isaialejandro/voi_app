@@ -37,6 +37,7 @@ class GetAPI:
                 path = ''.join(self.path)
                 api_filter = '' if not self.api_filter else self.api_filter
                 url = domain + path + api_filter
+                print('First API request: ', url)
                 response = session.get(url)
             else:
                 response = session.get(new_url)
@@ -45,10 +46,7 @@ class GetAPI:
         return response
     def get(self):
         """Get request of entire object."""
-        #domain = ''.join(self.domain)
-        #path = ''.join(self.path)
-        #api_filter = '' if not self.api_filter else self.api_filter
-        #url = domain + path + api_filter
+
         response = self.auth()
         if response.status_code != 200:
             msg = 'An error was occurred trying to get API response.'
@@ -59,16 +57,40 @@ class GetAPI:
             next_page = json_response['next_page']
             full_json_response = []
             full_json_response.append(json_response)
+
+            c = 1
             while next_page:
-                print('Current URL to Request: ', next_page)
-                response = self.auth(new_url=next_page)
-                new_data = response.json()
-                
-                # Hacer merge entre todos los jsons obtenidos de cada
-                # solicitud por paginación a la API.
-                full_json_response.append(new_data)
-                next_page = new_data['next_page']
-        return full_json_response        
+                try:
+                    print('Current URL to Request: ', next_page)
+                    response = self.auth(new_url=next_page)
+                    new_data = response.json()
+                    print('Count: ', new_data['count'])
+
+                    """
+                    If the request object has "end_time" dict:
+                    """
+                    """current_end_time = new_data['end_time']
+                    print('variable: ', type(current_end_time), ' - ', 'number: ', type(1577981101))
+                    if ( int(current_end_time) == int(1577981101) ):
+                        print('Current end time: ', current_end_time, ' - ', type(current_end_time))
+                        print('Breaking While . . .\n')
+                        break"""
+                    
+                    if c == 80:
+                        break 
+                    c +=1
+                    print('Flag: ', c)
+
+                    """
+                    Hacer merge entre todos los jsons obtenidos de cada
+                    solicitud por paginación a la API.
+                    """
+                    full_json_response.append(new_data)
+                    next_page = new_data['next_page']
+                except Exception as d:
+                    print('Exception. There is not ', d, ' encountered here. Avoiding . . .\n')
+                    break
+            return full_json_response        
         
         
 class AuthorizationError(Exception):
@@ -77,7 +99,8 @@ class AuthorizationError(Exception):
     an access token.
     """
     def __init__(self, http_code, message):
-        super(AuthorizationError, self).__init__(message)
+        msg = message, '\nStatus Code: ', http_code
+        super(AuthorizationError, self).__init__(msg)
         self.http_code = http_code
         print(http_code)
 
@@ -149,5 +172,24 @@ class Export:
         #r = requests.get(output_path + '/user_files/' + self.filename)
         #with open('full_path', 'wb') as f:
         #    f.write(r.content)
-
         print('File exported successfully!')
+
+
+class ExportDict:
+    def __init__(self, dictionary, filename):
+        self.dictionary = dictionary
+        self.filename = filename
+    def export_dict_to_csv(self):
+        final_dict = self.dictionary
+        filename = self.filename
+
+        #df = pd.DataFrame.from_dict(final_dict, orient='index')
+        df = pd.DataFrame(final_dict)
+        output_path = os.path.dirname(os.path.abspath('user_files/'))
+        print('Output:', output_path)
+        df.to_csv(
+            output_path + '/user_files/' + filename,
+            index=False,
+            encoding='utf-8'
+        )
+        return True
