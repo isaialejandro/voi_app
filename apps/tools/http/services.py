@@ -173,23 +173,3 @@ class Export:
         #with open('full_path', 'wb') as f:
         #    f.write(r.content)
         print('File exported successfully!')
-
-
-class ExportDict:
-    def __init__(self, dictionary, filename):
-        self.dictionary = dictionary
-        self.filename = filename
-    def export_dict_to_csv(self):
-        final_dict = self.dictionary
-        filename = self.filename
-
-        #df = pd.DataFrame.from_dict(final_dict, orient='index')
-        df = pd.DataFrame(final_dict)
-        output_path = os.path.dirname(os.path.abspath('user_files/'))
-        print('Output:', output_path)
-        df.to_csv(
-            output_path + '/user_files/' + filename,
-            index=False,
-            encoding='utf-8'
-        )
-        return True

@@ -20,7 +20,7 @@ import pandas as pd
 
 from apps.zendesk.models import ZendeskUser
 
-from apps.tools.http.services import GetAPI, GetZendeskUser, UserGroup, Export, ExportDict
+from apps.tools.http.services import GetAPI, GetZendeskUser, UserGroup, Export
 from apps.zendesk.models import ZendeskUser, ZendeskUserHistory
 
 load_dotenv()
