@@ -30,6 +30,7 @@ class ZendeskUser(models.Model):
         return self.name + ' - ' + 'Exec Date: ' + \
         (self.hist.date.strftime('%d-%m-%Y %I:%M:%S %p') if self.hist.date else '')
 
+
 class ZendeskUserHistory(models.Model):
     class Meta:
         verbose_name = 'Request History'
