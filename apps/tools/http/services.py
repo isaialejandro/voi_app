@@ -134,7 +134,7 @@ class UserGroup:
     def get_user_group(self):
         user_list = self.user_list
         domain = self.domain
-        path = 'api/v2/users/'
+        path = '/api/v2/users/'
 
         count = 1
         for r in user_list:
@@ -151,25 +151,3 @@ class UserGroup:
             print('# ', count , r['group(s)'])
             count += 1
         return user_list
-
-
-class Export:
-    def __init__(self, file, filename):
-        self.file = file
-        self.filename = filename
-    def export_to_csv(self):
-        file = self.file
-        df = pd.DataFrame(file)
-        output_path = os.path.dirname(os.path.abspath('user_files/'))
-        print('Output:', output_path)
-        
-        df.to_csv(
-            output_path + '/user_files/' + self.filename,
-            index=False,
-            encoding='utf-8'
-        )
-        #Downloading file direclty with requests python module:
-        #r = requests.get(output_path + '/user_files/' + self.filename)
-        #with open('full_path', 'wb') as f:
-        #    f.write(r.content)
-        print('File exported successfully!')

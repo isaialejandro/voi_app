@@ -136,12 +136,13 @@
             $('#export_file').attr('disabled', true);
             l.ladda( 'start' );
             $.ajax({
-              url: '{% url "zendesk-api-v1:get_active_users" %}',
+              url: '{% url "zendesk-api-v1:get_users" %}',
               method: 'get',
               dataType: 'json',
               success: function(data) {
-                console.log('Getting user list: ', data.message);
+                console.log('Getting user list . . . ');
                 if(data.success) {
+                  console.log('User list obtanied successfully.');
                   current_data = data;
                   users_number.empty().html(data.total_occupied);
                   agents_number.empty().html(data.current_agents);

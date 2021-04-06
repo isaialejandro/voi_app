@@ -1,3 +1,4 @@
+from apps.tools.file_processing.file import File
 import sys, os
 from itertools import groupby
 from operator import itemgetter 
@@ -20,7 +21,7 @@ import pandas as pd
 
 from apps.zendesk.models import ZendeskUser
 
-from apps.tools.http.services import GetAPI, GetZendeskUser, UserGroup, Export
+from apps.tools.http.services import GetAPI, GetZendeskUser, UserGroup
 from apps.zendesk.models import ZendeskUser, ZendeskUserHistory
 
 load_dotenv()
@@ -29,6 +30,7 @@ load_dotenv()
 now = datetime.now()
 
 class GetActiveUsersAPI(APIView):
+    """Retrieve the active users lists only in json format."""
 
     authentication_classes = [ SessionAuthentication, BasicAuthentication ]
     permission_classes = [ IsAuthenticated ]
@@ -121,10 +123,14 @@ class ExportUserAPI(APIView):
                     'Group(s)': u.group
                 })
                 c = c + 1
+
             filename = 'Active_Zendesk_usesrs_' + \
-                datetime.now().strftime('%d-%m-%Y - %H.%m.%s') + '.csv'
-            export = Export(final_user_list, filename)
-            export.export_to_csv()
+                datetime.now().strftime('%d-%m-%Y - %H.%m.%s')
+            filepath = os.path.dirname(os.path.abspath('user_files/')) + '/user_files/'
+            file_type = '.csv'
+            export = File(filepath, file_type)
+            export.exportToFile(created_at=final_user_list, filename=filename)
+
             data['success'] = True
             data['filename'] = filename
             data['message'] = 'File exported Successfully!'
@@ -135,12 +141,11 @@ class ExportUserAPI(APIView):
 
 
 class GetTickets(APIView):
-
+    """Return All tickets from date range."""
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        """Return All tickets from date range."""
 
         domain = os.getenv('ZENDESK_API_DOMAIN')
         path = os.getenv('ZENDESK_TICKETS_PATH')
@@ -153,7 +158,7 @@ class GetTickets(APIView):
 
             ticket_list = []
             for item in json_response: 
-                for t in item['tickets']: # Getting Ticket list only. Incremental API
+                for t in item['tickets']: # Getting Ticket list only, from incremental API
                     ticket_list.append(t)
             filename = 'Zendesk_tickets_' + \
                 datetime.now().strftime('%d-%m-%Y - %H.%m.%s') + '.csv'
@@ -166,3 +171,80 @@ class GetTickets(APIView):
             print('Error: ', str(g))
             data['message'] = str(g)
         return Response(data)
+
+class StructureTicket(APIView):
+    """
+    API that get all unstructured datasets outputs from 
+    "GetTickets()", build an entire DataFRame and 
+    separate every desired dataset in dataframes.
+    It create a new file for each month \nEg. Enero-2020 , Febrero2020, etc.\n
+    This function needs to be called every time when a new dataFrame needs to be
+    created for future processes.\n
+
+    For this execution, datasets needs to be in the folder: /zendesk_tickets/.
+    """
+
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        data = {}
+        return Response(data)
+    def buildDataFrame(self):
+        """
+        Get data into a list form 
+        """
+        path = '/Users/isaialejandro/Documents/workSpace/Django/voireg/voi_app/zendesk_tickets/unstructured_datasets/'
+        file_format = '*csv'
+        getFile = File(path + file_format)
+        file_list = getFile.getFile()
+
+        data_list = []
+        c = 1
+        for f in file_list:
+            print('#', c)
+            df = pd.read_csv(f, index_col=None, header=0)
+            data_list.append(df)
+            c += 1
+        df = pd.concat(data_list, axis=0, ignore_index=True)
+        print('DF head: \n', df.head())
+        return df
+
+    def post(self, request):
+        content = request.GET.get('_content')
+        print('CONTENT: ', content)
+
+        data = {}
+        print('Building DataFrame. .  .')
+        data_df = self.buildDataFrame()
+        months = {
+            'Enero|': '2020-01',
+            'Febrero': '2020-02',
+            'Marzo': '2020-03',
+            'Abril': '2020-04',
+            'Mayo': '2020-05',
+            'Junio': '2020-06',
+            'Julio': '2020-07',
+            'Agosto': '2020-08',
+            'Septiembre': '2020-09',
+            'Octubre': '2020-10',
+            'Noviembre': '2020-11' ,
+            'Diciembre': '2020-12'
+        }
+        c = 1
+        for k, v in months.items():
+            try:
+                created_at_df = data_df[data_df['created_at'].str.contains(months[k], na=False)]
+                current_yearmonth = k.replace('|', '') + v[:-3]
+                filename = str(c) + '_ZendeskTickets-' + current_yearmonth
+
+                # Quitar. Se repite en línea #196.
+                path = '/Users/isaialejandro/Documents/workSpace/Django/voireg/voi_app/zendesk_tickets/final_data/'
+                file = File(path)
+                file.exportToFile(created_at=created_at_df, filename=filename)
+                c += 1
+            except Exception as x:
+                print('ERROR: ', x)
+                sys.exit(1)
+        data['success'] = 'All files exported successfully!!'
+        return Response(data)   
