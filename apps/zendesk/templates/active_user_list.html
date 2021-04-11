@@ -45,6 +45,10 @@
                         <a class="btn btn-success" id='export_file' download="userfile" disabled="disabled" data-href="#">Export to *csv</a>
                       </div>  
                     </form>
+
+                    <div class="text-center">
+                        <a class="btn btn-success" id='download_file' download="userfile" data-href="{{fileUrl}}">Download - {{fileName}}</a>
+                      </div>
                 </div>
             </div>
           </div>
@@ -173,8 +177,6 @@
               success: function(data) {
                 if (data.success) {
                   alert(data.message);
-                  //var filename = data.filename;
-                  //window.location.href = 'user_files/' + filename;
                 }
               },
               error: function(data){

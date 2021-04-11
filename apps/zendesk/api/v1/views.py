@@ -129,6 +129,7 @@ class ExportUserAPI(APIView):
             filepath = os.path.dirname(os.path.abspath('user_files/')) + '/user_files/'
             file_type = '.csv'
             export = File(filepath, file_type)
+            # Trigger the generation and file download for user purposes.
             export.exportToFile(created_at=final_user_list, filename=filename)
 
             data['success'] = True
@@ -136,7 +137,7 @@ class ExportUserAPI(APIView):
             data['message'] = 'File exported Successfully!'
         except Exception as f:
             data['message'] = str(f)
-            print('EXC: ', f)
+            print('Exc: ', f)
         return Response(data)
 
 
@@ -161,9 +162,12 @@ class GetTickets(APIView):
                 for t in item['tickets']: # Getting Ticket list only, from incremental API
                     ticket_list.append(t)
             filename = 'Zendesk_tickets_' + \
-                datetime.now().strftime('%d-%m-%Y - %H.%m.%s') + '.csv'
-            export = Export(ticket_list, filename)
-            export.export_to_csv()
+                datetime.now().strftime('%d-%m-%Y - %H.%m.%s')
+            filepath = os.path.dirname(os.path.abspath('user_files/')) + \
+                '/zendesk_tickets/unstructured_datasets/'
+            file_type = '.csv'
+            export = File(filepath, file_type)
+            export.exportToFile(created_at=ticket_list, filename=filename)
 
             data['tickets'] = 'Number of total items in List: ', len(ticket_list)
             data['success'] = True
@@ -194,7 +198,8 @@ class StructureTicket(APIView):
         """
         Get data into a list form 
         """
-        path = '/Users/isaialejandro/Documents/workSpace/Django/voireg/voi_app/zendesk_tickets/unstructured_datasets/'
+        path = os.path.dirname(os.path.abspath('user_files/')) + \
+            '/zendesk_tickets/unstructured_datasets/' 
         file_format = '*csv'
         getFile = File(path + file_format)
         file_list = getFile.getFile()
@@ -211,8 +216,8 @@ class StructureTicket(APIView):
         return df
 
     def post(self, request):
-        content = request.GET.get('_content')
-        print('CONTENT: ', content)
+        # content = request.GET.get('_content')
+        # print('CONTENT: ', content)
 
         data = {}
         print('Building DataFrame. .  .')
