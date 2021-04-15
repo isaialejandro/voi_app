@@ -1,4 +1,3 @@
-from apps.tools.file_processing.file import File
 import sys, os
 from itertools import groupby
 from operator import itemgetter 
@@ -22,6 +21,8 @@ import pandas as pd
 from apps.zendesk.models import ZendeskUser
 
 from apps.tools.http.services import GetAPI, GetZendeskUser, UserGroup
+#from apps.tools.file_processing.file import File
+from apps.tools.views import File
 from apps.zendesk.models import ZendeskUser, ZendeskUserHistory
 
 load_dotenv()
@@ -66,7 +67,10 @@ class GetActiveUsersAPI(APIView):
                     hist=ZendeskUserHistory.objects.get(id=hist.id)
                 )
                 zendeskUser.save()
+            filename = 'Active_Zendesk_usesrs_' + \
+                datetime.now().strftime('%d-%m-%Y - %H.%m.%s')
 
+            data['filename'] = filename + '.csv'
             data['total_occupied'] = hist.total_occupied_licenses
             data['current_admins'] = hist.current_admins
             data['current_agents'] = hist.current_agents
@@ -108,7 +112,7 @@ class ExportUserAPI(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
+    def get(self, request):
         data = {}
         final_user_list = []
         try:
@@ -124,16 +128,14 @@ class ExportUserAPI(APIView):
                 })
                 c = c + 1
 
-            filename = 'Active_Zendesk_usesrs_' + \
-                datetime.now().strftime('%d-%m-%Y - %H.%m.%s')
-            filepath = os.path.dirname(os.path.abspath('user_files/')) + '/user_files/'
-            file_type = '.csv'
-            export = File(filepath, file_type)
+            filename = self.request.GET.get('filename')
+            filepath = os.path.dirname(os.path.abspath('voi/')) + '/voi/media/user_files/'
             # Trigger the generation and file download for user purposes.
-            export.exportToFile(created_at=final_user_list, filename=filename)
-
+            export = File(filepath, filename)
+            export.exportToFile(user_list=final_user_list)
+            
             data['success'] = True
-            data['filename'] = filename
+            #data['filename'] = filename
             data['message'] = 'File exported Successfully!'
         except Exception as f:
             data['message'] = str(f)
@@ -158,7 +160,7 @@ class GetTickets(APIView):
             json_response = data_api.get()
 
             ticket_list = []
-            for item in json_response: 
+            for item in json_response:
                 for t in item['tickets']: # Getting Ticket list only, from incremental API
                     ticket_list.append(t)
             filename = 'Zendesk_tickets_' + \

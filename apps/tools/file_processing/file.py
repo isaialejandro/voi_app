@@ -6,7 +6,7 @@ from django.conf import settings
 
 import pandas as pd
 
-
+"""
 class File:
     def __init__(self, filepath, file_type):
         self.filepath = filepath
@@ -22,9 +22,9 @@ class File:
             print('Except: ', g)
 
     def exportToFile(self, created_at=None, filename=None):
-        """
-        Export csv file with all datakeys like file rows.
-        """
+        
+        #Export csv file with all datakeys like file rows.
+        
         #Validate if current file to export is or not a pandas DataFrame.
         if not isinstance(created_at, pd.DataFrame):
             df = pd.DataFrame(created_at)
@@ -46,7 +46,7 @@ class File:
 
     def download_file(self, filename=None, media_path=None, file_type=None):
 
-        """Function that download generated files by other processes, in a custom format."""
+        #Function that download generated files by other processes, in a custom format.
 
         media_path = media_path
         file_type = file_type
@@ -57,3 +57,4 @@ class File:
         response['Content-Type'] = 'text/csv' + file_type # 'text/csv'
         response['Content-Disposition'] = 'attachment; filename=' + filename + file_type
         return response
+"""

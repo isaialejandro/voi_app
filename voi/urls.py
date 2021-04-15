@@ -40,6 +40,7 @@ zendesk = apps.get_app_config('zendesk').verbose_name
 tools = apps.get_app_config('tools').verbose_name
 
 
+
 class Dashboard(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
 
     def get(self, request):
@@ -58,11 +59,13 @@ urlpatterns = [
     path('bi_modules/', include(('apps.bi_modules.urls', bi_modules), namespace='bi_modules')),
     path('bajas/', include(('apps.bajas_semanales.urls', bajas_semanales), namespace='bajas_semanales')),
     path('zendesk/', include(('apps.zendesk.urls', zendesk), namespace='zendesk')),
+    path('tools/', include(('apps.tools.urls', zendesk), namespace='tools')),
 
     path('api-auth/', include('rest_framework.urls')),
     path('bajas_semanales-api-v1/', include(('apps.bajas_semanales.api.v1.urls', bajas_semanales), namespace='bajas-semanales-api-v1')),
     path('bi_modules-api-v1/', include(('apps.bi_modules.api.v1.urls', bi_modules), namespace='bi_modules-api-v1')),
     path('zendesk-api-v1/', include(('apps.zendesk.api.v1.urls', zendesk), namespace='zendesk-api-v1')),
+    path('tools-api-v1/', include(('apps.tools.api.v1.urls', tools), namespace='tools-api-v1')),
 ] + static(settings.STATIC_URL,
     document_root=settings.STATIC_ROOT) + \
     static(settings.MEDIA_URL,
