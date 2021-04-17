@@ -86,18 +86,6 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-2">
-            <div class="widget navy-bg p-lg text-center">
-                <div class="m-b-md">
-                    <i class="fa fa-user-o fa-4x"></i>
-                    <h1 class="m-xs" id="end_users_no">xx</h1>
-                    <small>End</small>
-                    <h3 class="font-bold no-margins">
-                        Users
-                    </h3>
-                </div>
-            </div>
-        </div>
       </div>
 
     </div>
@@ -183,8 +171,8 @@
               },
               success: function(data) {
                 if (data.success) {
-                  alert(data.message);
                   window.location.href = "/tools-api-v1/tools-api-v1/export?filename=" + current_filename;
+                  alert(data.message);
                 }
               },
               error: function(data){
