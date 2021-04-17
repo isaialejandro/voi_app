@@ -23,6 +23,6 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "staticfiles"),
 ]
 STATIC_URL = '/voi/staticfiles/'
-#MEDIA_ROOT = '/voi/staticfiles/'
-
+MEDIA_ROOT = BASE_DIR + '/media' #os.path.join(BASE_DIR, '/media/')
+MEDIA_URL = '/media/'
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000 # higher than the count of fields

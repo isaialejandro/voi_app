@@ -42,7 +42,7 @@
                     <form method="post" action="#">
                       {% csrf_token %}
                       <div class="text-center">
-                        <a class="btn btn-success" id='export_file' download="userfile" disabled="disabled" data-href="#">Export to *csv</a>
+                        <a class="btn btn-success" id='export_file' download="userfile" disabled="disabled" data-href="#">Export </a>
                       </div>  
                     </form>
                 </div>
@@ -86,18 +86,6 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-2">
-            <div class="widget navy-bg p-lg text-center">
-                <div class="m-b-md">
-                    <i class="fa fa-user-o fa-4x"></i>
-                    <h1 class="m-xs" id="end_users_no">xx</h1>
-                    <small>End</small>
-                    <h3 class="font-bold no-margins">
-                        Users
-                    </h3>
-                </div>
-            </div>
-        </div>
       </div>
 
     </div>
@@ -122,7 +110,7 @@
           var end_users_number = $('#end_users_no');
           var l = $( '.ladda-button-demo' ).ladda();
           //var export_file = $('#export_file');
-          var current_data = '';
+          var current_filename = '';
 
           users_number.empty().html('- -');
           agents_number.empty().html('- -');
@@ -143,7 +131,8 @@
                 console.log('Getting user list . . . ');
                 if(data.success) {
                   console.log('User list obtanied successfully.');
-                  current_data = data;
+                  current_filename = data.filename;
+
                   users_number.empty().html(data.total_occupied);
                   agents_number.empty().html(data.current_agents);
                   admins_number.empty().html(data.current_admins);
@@ -151,6 +140,12 @@
                   l.ladda( 'stop' );
                   //$('#export_file').prop('disabled', false);
                   $('#export_file').removeAttr('disabled')
+                  $('#export_file').empty().html('Export ' + current_filename + ' to a file');
+                  
+                }
+                else {
+                  console.log('Error, something happened. Else: \n', data.responseJSON['detail']);
+                  l.ladda( 'stop' );  
                 }
               },
               error: function(data) {
@@ -160,21 +155,24 @@
             });
           });
 
-          //Send list to API
-          $('#export_file').click(function(e){ 
-            e.preventDefault();
+          //User list to API
+          $('#export_file').click(function(){ 
+            console.log('Current filename: ', current_filename);
+            //e.preventDefault();
             $.ajax({
               url: '{% url "zendesk-api-v1:export_users" %}',
-              method: 'POST',
+              method: 'GET',
               dataType: 'json',
-              headers: {
+              /*headers: {
                 'X-CSRFToken': csrfToken
+              },*/
+              data: {
+                'filename': current_filename,
               },
               success: function(data) {
                 if (data.success) {
+                  window.location.href = "/tools-api-v1/tools-api-v1/export?filename=" + current_filename;
                   alert(data.message);
-                  //var filename = data.filename;
-                  //window.location.href = 'user_files/' + filename;
                 }
               },
               error: function(data){
@@ -182,6 +180,23 @@
               },
             });
           });
+
+          /*$('#download_file').click(function(){
+            $.ajax({
+              url: "", //{% url 'tools-api-v1:download_file' %}
+              dataType: 'json',
+              method: 'GET',
+              data: {
+                filename: current_filename
+              },
+              success: function(data){
+                console.log('Data: ', data);
+              },
+              error: function(data){
+                console.log(data.error);
+              },
+            });
+          });*/
 
           /* CSRF Token */
           function getCookie(name) {

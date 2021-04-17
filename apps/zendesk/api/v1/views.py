@@ -1,15 +1,11 @@
-from apps.tools.file_processing.file import File
 import sys, os
-from itertools import groupby
-from operator import itemgetter 
+
 from datetime import datetime
 
 from django.db import transaction
 
-from django.views.generic.list import ListView, View
 from django.contrib.auth.models import User
 
-from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -22,6 +18,7 @@ import pandas as pd
 from apps.zendesk.models import ZendeskUser
 
 from apps.tools.http.services import GetAPI, GetZendeskUser, UserGroup
+from apps.tools.views import File
 from apps.zendesk.models import ZendeskUser, ZendeskUserHistory
 
 load_dotenv()
@@ -30,7 +27,8 @@ load_dotenv()
 now = datetime.now()
 
 class GetActiveUsersAPI(APIView):
-    """Retrieve the active users lists only in json format."""
+
+    """Get the active users lists only in json format."""
 
     authentication_classes = [ SessionAuthentication, BasicAuthentication ]
     permission_classes = [ IsAuthenticated ]
@@ -66,7 +64,10 @@ class GetActiveUsersAPI(APIView):
                     hist=ZendeskUserHistory.objects.get(id=hist.id)
                 )
                 zendeskUser.save()
+            filename = 'Active_Zendesk_usesrs_' + \
+                datetime.now().strftime('%d-%m-%Y - %H.%m.%s')
 
+            data['filename'] = filename + '.csv'
             data['total_occupied'] = hist.total_occupied_licenses
             data['current_admins'] = hist.current_admins
             data['current_agents'] = hist.current_agents
@@ -104,11 +105,14 @@ class GetActiveUsersAPI(APIView):
 
 
 class ExportUserAPI(APIView):
-    
+
+    """ Export zendesk users data into a *csv file, in a subfolder allocated in the default 
+        media project. """
+
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
+    def get(self, request):
         data = {}
         final_user_list = []
         try:
@@ -124,24 +128,24 @@ class ExportUserAPI(APIView):
                 })
                 c = c + 1
 
-            filename = 'Active_Zendesk_usesrs_' + \
-                datetime.now().strftime('%d-%m-%Y - %H.%m.%s')
-            filepath = os.path.dirname(os.path.abspath('user_files/')) + '/user_files/'
-            file_type = '.csv'
-            export = File(filepath, file_type)
-            export.exportToFile(created_at=final_user_list, filename=filename)
-
+            filename = self.request.GET.get('filename')
+            filepath = os.path.dirname(os.path.abspath('voi/')) + '/voi/media/user_files/'
+            # Trigger the generation and file download for user purposes.
+            export = File(filepath, filename)
+            export.exportToFile(user_list=final_user_list)
+            
             data['success'] = True
-            data['filename'] = filename
             data['message'] = 'File exported Successfully!'
         except Exception as f:
             data['message'] = str(f)
-            print('EXC: ', f)
+            print('Exc: ', f)
         return Response(data)
 
 
 class GetTickets(APIView):
-    """Return All tickets from date range."""
+
+    """Return All tickets from a date range."""
+
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -157,13 +161,17 @@ class GetTickets(APIView):
             json_response = data_api.get()
 
             ticket_list = []
-            for item in json_response: 
-                for t in item['tickets']: # Getting Ticket list only, from incremental API
+            for item in json_response:
+                # Getting Ticket list only, from incremental API
+                for t in item['tickets']:
                     ticket_list.append(t)
             filename = 'Zendesk_tickets_' + \
-                datetime.now().strftime('%d-%m-%Y - %H.%m.%s') + '.csv'
-            export = Export(ticket_list, filename)
-            export.export_to_csv()
+                datetime.now().strftime('%d-%m-%Y - %H.%m.%s')
+            filepath = os.path.dirname(os.path.abspath('user_files/')) + \
+                '/zendesk_tickets/unstructured_datasets/'
+            file_type = '.csv'
+            export = File(filepath, file_type)
+            export.exportToFile(created_at=ticket_list, filename=filename)
 
             data['tickets'] = 'Number of total items in List: ', len(ticket_list)
             data['success'] = True
@@ -172,7 +180,9 @@ class GetTickets(APIView):
             data['message'] = str(g)
         return Response(data)
 
+
 class StructureTicket(APIView):
+
     """
     API that get all unstructured datasets outputs from 
     "GetTickets()", build an entire DataFRame and 
@@ -194,7 +204,8 @@ class StructureTicket(APIView):
         """
         Get data into a list form 
         """
-        path = '/Users/isaialejandro/Documents/workSpace/Django/voireg/voi_app/zendesk_tickets/unstructured_datasets/'
+        path = os.path.dirname(os.path.abspath('user_files/')) + \
+            '/zendesk_tickets/unstructured_datasets/' 
         file_format = '*csv'
         getFile = File(path + file_format)
         file_list = getFile.getFile()
@@ -211,8 +222,6 @@ class StructureTicket(APIView):
         return df
 
     def post(self, request):
-        content = request.GET.get('_content')
-        print('CONTENT: ', content)
 
         data = {}
         print('Building DataFrame. .  .')

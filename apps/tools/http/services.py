@@ -15,6 +15,7 @@ class GetAPI:
         self.domain = domain,
         self.path = path,
         self.api_filter = api_filter
+
     def auth(self, new_url=None):
         response = None
         try:
@@ -44,7 +45,9 @@ class GetAPI:
         except Exception as i:
             logging.error('Error trying to access to requested API in main function . . .\n', i)
         return response
+        
     def get(self):
+
         """Get request of entire object."""
 
         response = self.auth()
@@ -66,9 +69,7 @@ class GetAPI:
                     new_data = response.json()
                     print('Count: ', new_data['count'])
 
-                    """
-                    If the request object has "end_time" dict:
-                    """
+                    # If the request object has "end_time" dict:
                     """current_end_time = new_data['end_time']
                     print('variable: ', type(current_end_time), ' - ', 'number: ', type(1577981101))
                     if ( int(current_end_time) == int(1577981101) ):
@@ -81,34 +82,23 @@ class GetAPI:
                     c +=1
                     print('Flag: ', c)
 
-                    """
-                    Hacer merge entre todos los jsons obtenidos de cada
-                    solicitud por paginación a la API.
-                    """
+                    # Hacer merge entre todos los jsons obtenidos de cada
+                    # solicitud por paginación a la API.
                     full_json_response.append(new_data)
                     next_page = new_data['next_page']
                 except Exception as d:
-                    print('Exception. There is not ', d, ' encountered here. Avoiding . . .\n')
+                    print('Exception. ', d, ' NOT found here. Avoiding . . .\n')
                     break
             return full_json_response        
         
-        
-class AuthorizationError(Exception):
-    """
-    Raised from the client if the server generated an error while generating
-    an access token.
-    """
-    def __init__(self, http_code, message):
-        msg = message, '\nStatus Code: ', http_code
-        super(AuthorizationError, self).__init__(msg)
-        self.http_code = http_code
-        print(http_code)
-
 
 class GetZendeskUser:
+
     def __init__(self, json_response):
         self.json_response = json_response
+
     def get_user(self):
+
         """Get all users from whole API response (filtering users)."""
         json_response = self.json_response
         count = 1
@@ -140,7 +130,9 @@ class UserGroup:
         for r in user_list:
             data_api = GetAPI(domain, path + str(r['id']) + '/groups.json', api_filter=None)
             response = data_api.get()
-            group = response[0] # Getting Group dict only.
+
+            # Getting Group dict only.
+            group = response[0]
             group = group['groups']
 
             group_list = []
@@ -151,3 +143,17 @@ class UserGroup:
             print('# ', count , r['group(s)'])
             count += 1
         return user_list
+
+
+class AuthorizationError(Exception):
+
+    """
+    Raised from the client if the server generated an error while generating
+    an access token.
+    """
+
+    def __init__(self, http_code, message):
+        msg = message, '\nStatus Code: ', http_code
+        super(AuthorizationError, self).__init__(msg)
+        self.http_code = http_code
+        print(http_code)
