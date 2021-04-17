@@ -45,10 +45,6 @@
                         <a class="btn btn-success" id='export_file' download="userfile" disabled="disabled" data-href="#">Export </a>
                       </div>  
                     </form>
-
-                    <div class="text-center">
-                        <a class="btn btn-success" id='download_file' download="userfile" href="#">Download File</a>
-                      </div>
                 </div>
             </div>
           </div>
@@ -188,6 +184,7 @@
               success: function(data) {
                 if (data.success) {
                   alert(data.message);
+                  window.location.href = "/tools-api-v1/tools-api-v1/export?filename=" + current_filename;
                 }
               },
               error: function(data){
@@ -196,10 +193,9 @@
             });
           });
 
-          $('#download_file').click(function(){
-            //window.location.href("/zendesk-api/user/export?filename=" + current_filename);
+          /*$('#download_file').click(function(){
             $.ajax({
-              url: "{% url 'tools-api-v1:download_file' %}",
+              url: "", //{% url 'tools-api-v1:download_file' %}
               dataType: 'json',
               method: 'GET',
               data: {
@@ -212,7 +208,7 @@
                 console.log(data.error);
               },
             });
-          });
+          });*/
 
           /* CSRF Token */
           function getCookie(name) {

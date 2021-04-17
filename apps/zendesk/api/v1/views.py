@@ -1,14 +1,11 @@
 import sys, os
-from itertools import groupby
-from operator import itemgetter 
+
 from datetime import datetime
 
 from django.db import transaction
 
-from django.views.generic.list import ListView, View
 from django.contrib.auth.models import User
 
-from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -21,7 +18,6 @@ import pandas as pd
 from apps.zendesk.models import ZendeskUser
 
 from apps.tools.http.services import GetAPI, GetZendeskUser, UserGroup
-#from apps.tools.file_processing.file import File
 from apps.tools.views import File
 from apps.zendesk.models import ZendeskUser, ZendeskUserHistory
 
@@ -31,7 +27,8 @@ load_dotenv()
 now = datetime.now()
 
 class GetActiveUsersAPI(APIView):
-    """Retrieve the active users lists only in json format."""
+
+    """Get the active users lists only in json format."""
 
     authentication_classes = [ SessionAuthentication, BasicAuthentication ]
     permission_classes = [ IsAuthenticated ]
@@ -108,7 +105,10 @@ class GetActiveUsersAPI(APIView):
 
 
 class ExportUserAPI(APIView):
-    
+
+    """ Export zendesk users data into a *csv file, in a subfolder allocated in the default 
+        media project. """
+
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -135,7 +135,6 @@ class ExportUserAPI(APIView):
             export.exportToFile(user_list=final_user_list)
             
             data['success'] = True
-            #data['filename'] = filename
             data['message'] = 'File exported Successfully!'
         except Exception as f:
             data['message'] = str(f)
@@ -144,7 +143,9 @@ class ExportUserAPI(APIView):
 
 
 class GetTickets(APIView):
-    """Return All tickets from date range."""
+
+    """Return All tickets from a date range."""
+
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -161,7 +162,8 @@ class GetTickets(APIView):
 
             ticket_list = []
             for item in json_response:
-                for t in item['tickets']: # Getting Ticket list only, from incremental API
+                # Getting Ticket list only, from incremental API
+                for t in item['tickets']:
                     ticket_list.append(t)
             filename = 'Zendesk_tickets_' + \
                 datetime.now().strftime('%d-%m-%Y - %H.%m.%s')
@@ -178,7 +180,9 @@ class GetTickets(APIView):
             data['message'] = str(g)
         return Response(data)
 
+
 class StructureTicket(APIView):
+
     """
     API that get all unstructured datasets outputs from 
     "GetTickets()", build an entire DataFRame and 
@@ -218,8 +222,6 @@ class StructureTicket(APIView):
         return df
 
     def post(self, request):
-        # content = request.GET.get('_content')
-        # print('CONTENT: ', content)
 
         data = {}
         print('Building DataFrame. .  .')
