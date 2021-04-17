@@ -107,4 +107,12 @@ venv.bak/
 #Develop Runserver Files
 wsgi.py
 manage.py
-apps/application/migrations/0015_auto_20210223_2121.py
+
+
+# Visual Studio Code # 
+.vscode/* 
+!.vscode/settings.json 
+!.vscode/tasks.json 
+!.vscode/launch.json 
+!.vscode/extensions.json 
+.history
