@@ -1,0 +1,296 @@
+{% extends 'base/base.html' %}
+{% load static from staticfiles %}
+
+{% block title %}
+    Bajas Semanales
+{% endblock %}
+
+{% block extracss %}
+  <link href="{% static 'css/plugins/daterangepicker/daterangepicker-bs3.css' %}" rel="stylesheet">
+  <link href="{% static 'css/animate.css' %}" rel="stylesheet">
+  <link href="{% static 'css/style.css' %}" rel="stylesheet">
+  <!-- Ladda style -->
+  <link href="{% static 'css/plugins/ladda/ladda-themeless.min.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-9">
+            <h2>Widgets</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="index.html">Home</a>
+                </li>
+                <li class="active">
+                    <strong>Widgets</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="wrapper wrapper-content animated fadeInRight">
+      <div class="row">
+          <div class="col-lg-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Get Active <small>Zendesk Useres</small></h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="text-center">
+                      <button class="ladda-button ladda-button-demo btn btn-primary" id="get_data" data-style="zoom-in">Get users</button>
+                    </div>
+                    <form method="post" action="#">
+                      {% csrf_token %}
+                      <div class="text-center">
+                        <a class="btn btn-success" id='export_file' download="userfile" disabled="disabled" data-href="#">Export </a>
+                      </div>  
+                    </form>
+                </div>
+            </div>
+          </div>
+
+        <div class="col-lg-2">
+            <div class="widget navy-bg p-lg text-center">
+                <div class="m-b-md">
+                    <i class="fa fa-users fa-4x"></i>
+                    <h1 class="m-xs" id="users_no">xx</h1>
+                    <small>Active</small>
+                    <h3 class="font-bold no-margins">
+                        Users
+                    </h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-2">
+            <div class="widget yellow-bg p-lg text-center">
+                <div class="m-b-md">
+                    <i class="fa fa-shield fa-4x"></i>
+                    <h1 class="m-xs" id="agents_no">xx</h1>
+                    <small>Active</small>
+                    <h3 class="font-bold no-margins">
+                        Agents
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2">
+            <div class="widget red-bg p-lg text-center">
+                <div class="m-b-md">
+                    <i class="fa fa-gear fa-4x"></i>
+                    <h1 class="m-xs" id="admins_no">xx</h1>
+                    <small>Active</small>
+                    <h3 class="font-bold no-margins">
+                        Admins
+                    </h3>
+                </div>
+            </div>
+        </div>
+      </div>
+
+    </div>
+
+{% endblock %}
+
+{% block extrajs %}
+    <!-- Ladda -->
+    <script src="{% static 'js/plugins/ladda/spin.min.js' %}"></script>
+    <script src="{% static 'js/plugins/ladda/ladda.min.js' %}"></script>
+    <script src="{% static 'js/plugins/ladda/ladda.jquery.min.js' %}"></script>
+
+    <script>
+
+        $(document).ready(function(){
+          
+          var get_data = $('#get_data');
+          var export_btn = $('#export_btn');
+          var users_number = $('#users_no');
+          var agents_number = $('#agents_no');
+          var admins_number = $('#admins_no');
+          var end_users_number = $('#end_users_no');
+          var l = $( '.ladda-button-demo' ).ladda();
+          //var export_file = $('#export_file');
+          var current_filename = '';
+
+          users_number.empty().html('- -');
+          agents_number.empty().html('- -');
+          admins_number.empty().html('- -');
+          end_users_number.empty().html('- -');
+
+          var cookie = document.cookie
+          var csrfToken = cookie.substring(cookie.indexOf('=') + 1)
+          
+          get_data.click(function() { //Get users button
+            $('#export_file').attr('disabled', true);
+            l.ladda( 'start' );
+            $.ajax({
+              url: '{% url "zendesk-api-v1:get_users" %}',
+              method: 'get',
+              dataType: 'json',
+              success: function(data) {
+                console.log('Getting user list . . . ');
+                if(data.success) {
+                  console.log('User list obtanied successfully.');
+                  current_filename = data.filename;
+
+                  users_number.empty().html(data.total_occupied);
+                  agents_number.empty().html(data.current_agents);
+                  admins_number.empty().html(data.current_admins);
+                  end_users_number.empty().html('x');
+                  l.ladda( 'stop' );
+                  //$('#export_file').prop('disabled', false);
+                  $('#export_file').removeAttr('disabled')
+                  $('#export_file').empty().html('Export ' + current_filename + ' to a file');
+                  
+                }
+                else {
+                  console.log('Error, something happened. Else: \n', data.responseJSON['detail']);
+                  l.ladda( 'stop' );  
+                }
+              },
+              error: function(data) {
+                console.log('Error, something happened: \n', data);
+                l.ladda( 'stop' );
+              },
+            });
+          });
+
+          //User list to API
+          $('#export_file').click(function(){ 
+            console.log('Current filename: ', current_filename);
+            //e.preventDefault();
+            $.ajax({
+              url: '{% url "zendesk-api-v1:export_users" %}',
+              method: 'GET',
+              dataType: 'json',
+              /*headers: {
+                'X-CSRFToken': csrfToken
+              },*/
+              data: {
+                'filename': current_filename,
+              },
+              success: function(data) {
+                if (data.success) {
+                  window.location.href = "/tools-api-v1/tools-api-v1/export?filename=" + current_filename;
+                  alert(data.message);
+                }
+              },
+              error: function(data){
+                alert(data.message);
+              },
+            });
+          });
+
+          /*$('#download_file').click(function(){
+            $.ajax({
+              url: "", //{% url 'tools-api-v1:download_file' %}
+              dataType: 'json',
+              method: 'GET',
+              data: {
+                filename: current_filename
+              },
+              success: function(data){
+                console.log('Data: ', data);
+              },
+              error: function(data){
+                console.log(data.error);
+              },
+            });
+          });*/
+
+          /* CSRF Token */
+          function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        /* CSRF Token */
+        const csrftoken = getCookie('csrftoken');
+
+
+          /*ladda-button-demo.click(function(){
+          });*/
+
+
+
+          //GET BAJASEMANAL IN MODAL
+          /*btn_update.on('click', function(){
+            var id = $(this).data("id");
+            //Passing id record to Save Changes modal btn for post method.
+            btn_modal_save.data('id', id)
+
+            $.ajax({
+              url: "{% url 'bajas-semanales-api-v1:recheck_baja' %}",
+              dataType: 'json',
+              method: 'get',
+              data: {
+                "id": id
+              },
+              success: function(data){
+                if(data.success){
+
+                  $.each(data.baja_semanal, function(index, item){
+                    modal_title.empty().html(item.type);
+                    modal_little_desc.empty().html(item.subject);
+
+
+                    subject_input.empty().val(item.subject);
+                    user_code_input.empty().val(item.user_code);
+                    user_name_input.empty().val(item.user_name);
+                    request_date_input.empty().val(item.request_date);
+                  });
+
+                  s_type.empty();
+                  $.each(data.tipo_bajas, function(index, item){
+                    if(item.selected == true){
+                      s_type.append('<option value="'+ item.id +'" selected="selected">'+ item.text +'</option>');
+                    } else {
+                      s_type.append('<option value="'+ item.id +'">'+ item.text +'</option>');
+                    }
+                  });
+
+                  s_app.empty().trigger("change");
+                  $.each(data.results, function(index, item){
+
+                     if(item.selected == true){
+                         var newOption = new Option(item.text, item.id, true, true);
+                         s_app.append(newOption).trigger('change');
+                     }
+                     if(item.selected == false){
+                       var newOption = new Option(item.text, item.id, false, false);
+                       s_app.append(newOption);
+                     }
+                  });
+
+                  modal_update.modal('show');
+                } else {
+                  console.log('Msg: ', data.message);
+                }
+              },
+              error: function(data){
+                console.log('Error to try to get recheck data modal: ', data);
+              }
+            });
+          });
+
+          modal_update.on('show.bs.modal', function() {
+            s_app.select2({dropdownParent: modal_update});
+            console.log('show');
+          })
+          modal_update.on('hidden.bs.modal', function() {
+            s_app.select2('destroy');
+          })
+          */
+        });
+    </script>
+{% endblock %}

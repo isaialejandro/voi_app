@@ -33,8 +33,8 @@ class GetSelectsData(APIView):
 
             for t in TipoBaja.objects.filter(is_active=True):
                 tipo_bajas_list.append({
-                    "id": a.id,
-                    "text": a.name
+                    "id": t.id,
+                    "text": t.name
                 })
 
             data = tipo_bajas_list

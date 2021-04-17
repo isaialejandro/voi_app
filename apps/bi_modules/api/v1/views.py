@@ -4,6 +4,7 @@ import uuid
 import random
 import glob
 import sys
+import logging
 
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
@@ -14,12 +15,23 @@ from rest_framework import authentication, permissions
 
 from django.contrib.auth.models import User
 
-import numpy as np
 import pandas as pd
 
 from apps.bi_modules.models import Account
 from apps.bi_modules.api.v1.serializers import AccountSerializer
 
+
+now = datetime.now()
+#Logging:
+"""
+logging.basicConfig(
+
+    filename ='Account_processing - ' + str(now.strftime("%d-%m-%Y %H:%M:%S")) ,
+    level=logging.INFO,
+    format='%(asctime)s: %(levelname)s:%(message)s',
+    datefmt='%d-%m-%Y %I:%M:%S %p'
+    )
+"""
 
 class AccountList(ListAPIView):
 
@@ -40,7 +52,7 @@ class MatchAcountFiles(APIView):
     """
 
     """
-    Saving to Formatted *txt File:
+    Output to Formatted *txt File:
     *AccountPeriod
     *Cuentas
     *ReferenceDate
@@ -49,17 +61,13 @@ class MatchAcountFiles(APIView):
     *LocalAmount
     """
 
-    permission_classes = [IsAuthenticated]
-    #permission_classes = []
-    #parser_classes = [FileUploadParser]
+    permission_classes = [ IsAuthenticated ]
 
     def get(self, request):
-
         data = {}
         return Response(data)
 
     def RoudToTwoDigits(self, df,  column):
-        
         print('Rounding column: ', column, ' to 2 digits . . .')
         rounded_list = []
 
@@ -69,147 +77,142 @@ class MatchAcountFiles(APIView):
         return df
 
     def ConvertToDatetime(self, df, column):
-
         """
-        Receive specific column of entire DF for format the Date.
+        Receive specific date column of entire DF for date formatting.
         """
-        print('Parsing dates of column: ', column, '\n')
-
-        def get_new_format(d_time):
-            
+        def get_new_format(d_time): 
             prev_date = datetime.strptime(str(d_time), '%Y-%m-%d  %H:%M:%S')
-            final_format = prev_date.strftime('%m/%d/%Y')
+            final_format = prev_date.strftime('%m/%d/%Y 12:00:00')
             return final_format
 
-        date_list = []
-        for date in df[column]:
-
-            #Parsing each item to: "Y-m-d H-M-S"
-            datetetime_obj = dateutil.parser.parse(date)
-            time  = ' %H:%M:%S'
-            bad_format_01 = '%Y-%m-%d  %H:%M:%S'
-            bad_format_02 = '%d%b%Y  %H:%M:%S'
-            #Final desired format: "%m/%d/%Y"
-
-            try:
-                prev_date = datetime.strptime(str(datetetime_obj), bad_format_01)
-                new_format = get_new_format(prev_date)
-            except Exception as e:
-                print('Input format not found!')
-                
-            date_list.append(new_format)
-
-        df[column] = date_list
-        return df
+        try:
+            logging.info('Date formatting BEGIN.\nParsing dates of column: ' + column + '\n')
+            date_list = []
+            for date in df[column]:
+                #Parsing each item to: "Y-m-d H-M-S"
+                datetetime_obj = dateutil.parser.parse(date)
+                #Final desired format: "%m/%d/%Y"
+                try:
+                    prev_date = datetime.strptime(str(datetetime_obj), '%Y-%m-%d %H:%M:%S')
+                    new_format = get_new_format(prev_date)
+                    date_list.append(new_format)
+                    #df[column] = df[column].replace([date], new_format)
+                except Exception as e:
+                    logging.warning('Input not found:\n')
+                    logging.error(e)
+                    sys.exit()
+            df[column] = date_list
+            logging.info('Date formatting END successfully.\n')
+            return df
+        except Exception as g:
+            logging.error('Enccountered exception trying to format date columns.\nSystem exit:\n', g)
+            sys.exit(g)
 
     def FormatPNR(self, df, column):
-
         """
         Receive DF with all processed files and specific column name for formatting.
         """
-        current_col = column
         pnr_list = []
-
-        for col in df[current_col]:
-            pnr_list.append(col[:-4])
-
+        current_col = column
+        logging.info('STARTING PNR Format . . .')
+        for col in df[current_col]:    
+            #strip_record = col.strip()
+            pnr_list.append(col[0:6])
+            #df[current_col] = df[current_col].replace([col], col[0:6])
         df[current_col] = pnr_list
-
+        logging.info('PNR Format FINISH successfully.')
         return df
 
-    def CountFileRows(self, file_list):
-        
+    def CountFileRows(self, file_list): #NOT IN USE
         for f in file_list:
-
             #Getting filename & Counting all *csv Rows:
             filename = f.split('/')[-1]
             total_rows = len(csv.index)
             total_local_amount = csv.agg({'local_amount': ['sum'] })
-
-            print('Reading: <<' + filename + '>> file . . .\n\n')
-            sumatoria.append({
-                "File: ": filename,
-                "Total Rows:": total_rows,
-                "Aggregate": total_local_amount,
-            })
+            #sumatoria.append({
+            #    "File: ": filename,
+            #    "Total Rows:": total_rows,
+            #    "Aggregate": total_local_amount,
+            #})
 
     def GetCSV(self, path):
-
         try:
-            files_list = glob.glob(path + '*.csv')  #request.FILES
-
+            files_list = glob.glob(path + '*.csv')
             csv_list = []
+            #Getting unsorted columns form each file:
+            current_cols = [
+                'Account Period',
+                'Debit Account Number', #Cuentas
+                'LocalAmount',
+                'Transaction Key',
+                'LocalCurrency',
+                'Reference Date'
+            ]
+
+            no = 1
             for file in files_list:
-
-                print('Processing File: \n', file.split('/')[-1] , '\n\n')
-
-                csv_list.append(
-                    pd.read_csv(file, index_col=None, usecols=[
-                        'account_period',
-                        'debit_account_number', #Cuentas
-                        'local_amount',
-                        'local_currency',
-                        'transaction_key',
-                        'reference_date',
-                    ])
-                )
+                filename = file.split('/')[-1]
+                csv_list.append(pd.read_csv(file, index_col=None, header=0, usecols=current_cols))
+                logging.info('Getting file #' + str(no) + ': ' + filename)
+                no += 1
 
             full_data = pd.concat(csv_list, ignore_index=True)
+            #Sorting columns:
+            full_data = full_data.reindex(columns=[
+                'Account Period',
+                'Debit Account Number', #Cuentas
+                'Reference Date',
+                'Transaction Key',
+                'LocalCurrency',
+                'LocalAmount'
+            ])
+
             full_data.columns = [
                 'Account Period',
                 'Cuentas',
-                'Local Amount',
-                'Local Currency',
-                'Transaction Key',
                 'Reference Date',
+                'Transaction Key',
+                'Local Currency',
+                'Local Amount'
             ]
             df = pd.DataFrame(full_data)
-
+            logging.info('All files ready for process . . .')
             return df
         except BaseException as e:
             print('Error trying to read file (s).\nCheck your files route:')
+            logging.error('Error trying to read file (s).\nCheck your files route:', e)
             sys.exit(e)
 
     def post(self, request, format=None):
-        
-        #File Output
-        linux_output_path = '/home/isaialejandro/Documentos/Django_projects/voi_app/accounts/JunY42020/output_Y4Jun2020.txt'
-        osx_output_path = '/Users/isaialejandro/Downloads/Y4Jun2020/output_Y4Jun2020.csv'
-
-
-        path = '/Users/isaialejandro/Downloads/Y4Jun2020/'
-
+        #File Output:
+        osx_output_path = '/Users/isaialejandro/Downloads/Y4Jun2020/test/output_Y4Jun2020' + str(now.strftime("%Y-%m-%d_%H-%M-%S")) + '.txt'
+        path = '/Users/isaialejandro/Downloads/Y4Jun2020/test/'
         #Getting All files in DataFrame from "get_csv()"
         df_csvs = self.GetCSV(path)
-
         #Passing entire DataFrame for format PNR column.
-        df_formatted_01 = self.FormatPNR(df_csvs, 'Transaction Key')
-
+        df_formatted = self.FormatPNR(df_csvs, 'Transaction Key')
         #Formating Date of 2 fields:
-        df_formatted_02 = self.ConvertToDatetime(df_formatted_01, 'Account Period')
-        df_formatted_03 =  self.ConvertToDatetime(df_formatted_02, 'Reference Date')
-
-        #Rounding column data to 2 digits:
-        #df_formatted_04 =self.RoudToTwoDigits(df_formatted_03, 'Local Amount')
-        
+        df_formatted = self.ConvertToDatetime(df_formatted, 'Account Period')
+        df_formatted =  self.ConvertToDatetime(df_formatted, 'Reference Date')
+        df_formatted['Cuentas'] = df_formatted['Cuentas'].astype(str)
+        #Aggregate LocalAmount column here:
+        df_formatted.loc['Total Local Amount', 'Local Amount'] = df_formatted['Local Amount'].sum()
         #Exporting to *TXT:
-        print('Exporting to *.TXT . . .')
-        df_formatted_03.to_csv(osx_output_path, sep='\t', encoding='utf-8', index=False)
-        print('File exported successfully to: \n', osx_output_path)
-        
-
-        #Temporal random int generator:
-        """
-        import random
-        new_ids = []
-        for r in range(843748, 2990101):
-            new_ids.append(r)
-
-        df1 = pd.DataFrame(new_ids)
-        df1.to_csv('/home/isaialejandro/Documentos/Django_projects/voi_app/accounts/JunY42020/random_int.csv')
-        """
-
+        logging.info('Exporting file to: ' + osx_output_path)
+        df_formatted.to_csv(osx_output_path, sep=',', encoding='utf-8', index=False)
+        logging.info('File successfully exported. \nProcess FINISHED.')
         #return Response(data={
         #    "Files": "{} files uploaded".format(len(files_list)),
         #    })
         return Response(data={"ok":"ok"})
+
+
+
+
+#Temporal random int generator:
+"""
+import random
+new_ids = []
+for r in range(843748, 2990101):
+    new_ids.append(r)
+"""
