@@ -27,7 +27,7 @@ STATICFILES_DIRS = [
 ]
 
 # Cloud Storage
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# vSTATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 # Setup for media files
