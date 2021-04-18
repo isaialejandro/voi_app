@@ -15,16 +15,17 @@ DATABASES = {
     }
 
 
-#StaticFiles for production
-#STATIC_URL = '/staticfiles/'
-
-STATIC_URL = '/staticfiles/'
-STATIC_ROOT = 'static/'
+# STatic files setup for Production ENV:
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "staticfiles"),
+    os.path.join(BASE_DIR, "static"),
 
 ]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 #For media files
 MEDIA_URL = '/media/'
