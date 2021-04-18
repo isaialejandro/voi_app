@@ -107,6 +107,7 @@ venv.bak/
 #Develop Runserver Files
 wsgi.py
 manage.py
+develop.py
 
 
 # Visual Studio Code # 
