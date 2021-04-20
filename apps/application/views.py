@@ -21,7 +21,7 @@ from apps.application.forms import ApplicationForm
 
 from apps.applicant.models import Applicant
 
-from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin
+from apps.tools.mixins import NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin
 
 #from braces.views import LoginRequiredMixin
 

@@ -19,6 +19,8 @@ from apps.zendesk.models import ZendeskUser
 
 from apps.tools.http.services import GetAPI, GetZendeskUser, UserGroup
 from apps.tools.views import File
+from apps.tools.mixins import LoginRequiredMixin, PermissionRequiredMixin, \
+     NeverCacheMixin, CSRFExemptMixin
 from apps.zendesk.models import ZendeskUser, ZendeskUserHistory
 
 load_dotenv()
@@ -26,7 +28,7 @@ load_dotenv()
 
 now = datetime.now()
 
-class GetActiveUsersAPI(APIView):
+class GetActiveUsersAPI(LoginRequiredMixin, PermissionRequiredMixin, NeverCacheMixin, APIView):
 
     """Get the active users lists only in json format."""
 
@@ -104,7 +106,7 @@ class GetActiveUsersAPI(APIView):
             return g
 
 
-class ExportUserAPI(APIView):
+class ExportUserAPI(LoginRequiredMixin, PermissionRequiredMixin, NeverCacheMixin, APIView):
 
     """ Export zendesk users data into a *csv file, in a subfolder allocated in the default 
         media project. """
@@ -142,7 +144,7 @@ class ExportUserAPI(APIView):
         return Response(data)
 
 
-class GetTickets(APIView):
+class GetTickets(LoginRequiredMixin, PermissionRequiredMixin, NeverCacheMixin, APIView):
 
     """Return All tickets from a date range."""
 
@@ -181,7 +183,7 @@ class GetTickets(APIView):
         return Response(data)
 
 
-class StructureTicket(APIView):
+class StructureTicket(LoginRequiredMixin, PermissionRequiredMixin, NeverCacheMixin, APIView):
 
     """
     API that get all unstructured datasets outputs from 

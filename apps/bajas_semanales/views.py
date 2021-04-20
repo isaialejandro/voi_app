@@ -28,7 +28,7 @@ from apps.bajas_semanales.models import TipoBaja, BajaSemanal
 from apps.bajas_semanales.forms import BajaSemanalForm, TipoBajaForm
 from apps.bajas_semanales.filters import BajaSemanalFilter
 
-from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin,\
+from apps.tools.mixins import NeverCacheMixin, CSRFExemptMixin,\
  PermissionRequiredMixin
 
 now = timezone.now()
