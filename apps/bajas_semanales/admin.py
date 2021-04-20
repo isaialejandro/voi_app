@@ -5,7 +5,7 @@ from import_export.admin import ImportExportModelAdmin
 from apps.bajas_semanales.models import TipoBaja, BajaSemanal
 from apps.bajas_semanales.resources import BajaSemanalResource
 
-
+"""
 @admin.register(TipoBaja)
 #class TipoBajaAdmin(admin.ModelAdmin):
 class TipoBajaAdmin(ImportExportModelAdmin):
@@ -27,3 +27,4 @@ class BajaSemanalAdmin(ImportExportModelAdmin):
         'already_checked',
         'last_user_update'
     )
+"""
