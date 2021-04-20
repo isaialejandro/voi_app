@@ -10,7 +10,7 @@ from django.contrib import messages
 
 from django.views.generic import View, TemplateView
 
-from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin
+from apps.tools.mixins import NeverCacheMixin, CSRFExemptMixin
 
 from apps.bi_modules.models import CuentasPorCobrarHistory
 

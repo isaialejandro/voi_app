@@ -29,7 +29,7 @@ from django.views.generic import View
 
 from braces.views import LoginRequiredMixin
 
-from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin
+from apps.tools.mixins import NeverCacheMixin, CSRFExemptMixin
 
 
 application = apps.get_app_config('application').verbose_name
