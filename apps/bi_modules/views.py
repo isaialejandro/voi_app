@@ -44,8 +44,6 @@ class IngresosYCuentasPorCobrarView(View):
                 return render(request, 'cuentas_por_cobrar_dashboard.html')
 
 
-    #def process_files():
-
     def post(self, request, *args):
 
         new_process = CuentasPorCobrarHistory()
