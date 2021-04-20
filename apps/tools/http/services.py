@@ -20,7 +20,7 @@ class GetAPI:
         response = None
         try:
             usr = os.getenv('ZENDESK_AUTH_USER')
-            token = os.getenv('ZENDESK_AUTH_PWD')
+            token = os.getenv('ZENDESK_AUTH_TOKEN')
 
             data = usr + '/token:' + token
             str_bytes = data.encode('ascii')

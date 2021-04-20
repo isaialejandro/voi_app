@@ -21,35 +21,9 @@ from apps.application.forms import ApplicationForm
 
 from apps.applicant.models import Applicant
 
-from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin
-
-#from braces.views import LoginRequiredMixin
+from apps.tools.mixins import NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin
 
 now = datetime.datetime.now()
-
-
-"""
-class ApplicationList(NeverCacheMixin, CSRFExemptMixin, ListView):
-
-    model = Application
-    template_name='list.html'
-    paginate_by = 3  # if pagination is desired
-
-    def get_context_data(self, **kwargs):
-
-        usr = self.request.POST.get('username')
-        pwd = self.request.POST.get('password')
-
-        user = authenticate(request, user= usr, password=pwd)
-
-        if not request.user.is_authenticated:
-            return render(request, '404.html')
-        else:
-            context = super().get_context_data(**kwargs)
-            context['applications'] = Application.objects.filter(is_active=True)
-            context['applicants'] = Applicant.objects.filter(is_active=True)
-            return context
-"""
 
 class ApplicationList(NeverCacheMixin, CSRFExemptMixin, View):
 
@@ -71,7 +45,6 @@ class ApplicationList(NeverCacheMixin, CSRFExemptMixin, View):
             return render(request, 'list.html', context)
         else:
             return render(request, '404.html')
-
 
 class CreateApplication(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
 

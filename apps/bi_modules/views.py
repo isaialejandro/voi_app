@@ -10,7 +10,7 @@ from django.contrib import messages
 
 from django.views.generic import View, TemplateView
 
-from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin
+from apps.tools.mixins import NeverCacheMixin, CSRFExemptMixin
 
 from apps.bi_modules.models import CuentasPorCobrarHistory
 
@@ -43,8 +43,6 @@ class IngresosYCuentasPorCobrarView(View):
                 ' in *csv, check your files.')
                 return render(request, 'cuentas_por_cobrar_dashboard.html')
 
-
-    #def process_files():
 
     def post(self, request, *args):
 

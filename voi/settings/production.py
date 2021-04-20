@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .base import *
 
 import dj_database_url

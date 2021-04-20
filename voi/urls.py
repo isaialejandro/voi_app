@@ -29,7 +29,7 @@ from django.views.generic import View
 
 from braces.views import LoginRequiredMixin
 
-from apps.tools.decorators import NeverCacheMixin, CSRFExemptMixin
+from apps.tools.mixins import NeverCacheMixin, CSRFExemptMixin
 
 
 application = apps.get_app_config('application').verbose_name
@@ -51,7 +51,7 @@ class Dashboard(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
 
 
 urlpatterns = [
-    path('c4r0nt3/', admin.site.urls),
+    path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
 
     path('dashboard/', Dashboard.as_view(), name='dashboard'),
