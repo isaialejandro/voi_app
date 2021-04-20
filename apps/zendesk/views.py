@@ -7,7 +7,7 @@ from apps.tools.mixins import LoginRequiredMixin, NeverCacheMixin, \
     PermissionRequiredMixin, CSRFExemptMixin
 
 class Zendesk(LoginRequiredMixin, NeverCacheMixin, \
-                PermissionRequiredMixin, CSRFExemptMixin, ListView):
+                CSRFExemptMixin, ListView):
 
     model = ZendeskUser
     template_name = 'active_user_list.html'
