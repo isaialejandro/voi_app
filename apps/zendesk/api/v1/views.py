@@ -19,8 +19,7 @@ from apps.zendesk.models import ZendeskUser
 
 from apps.tools.http.services import GetAPI, GetZendeskUser, UserGroup
 from apps.tools.views import File
-from apps.tools.mixins import LoginRequiredMixin, PermissionRequiredMixin, \
-     NeverCacheMixin, CSRFExemptMixin
+from apps.tools.mixins import LoginRequiredMixin, NeverCacheMixin
 from apps.zendesk.models import ZendeskUser, ZendeskUserHistory
 
 load_dotenv()
@@ -28,7 +27,7 @@ load_dotenv()
 
 now = datetime.now()
 
-class GetActiveUsersAPI(LoginRequiredMixin, PermissionRequiredMixin, NeverCacheMixin, APIView):
+class GetActiveUsersAPI(LoginRequiredMixin, NeverCacheMixin, APIView):
 
     """Get the active users lists only in json format."""
 
@@ -40,8 +39,8 @@ class GetActiveUsersAPI(LoginRequiredMixin, PermissionRequiredMixin, NeverCacheM
         data = {}
         hist = None
         domain = os.getenv('ZENDESK_API_DOMAIN')
-        path = os.getenv('ZENDESK_USERS_PATH')
-        api_filter_query = os.getenv('ZENDESK_USERS_FILTER')
+        path = os.getenv('ZENDESK_USER_API')
+        api_filter_query = os.getenv('ZENDESK_USER_FILTER')
         final_user_list = None
         try:
             data_api = GetAPI(domain, path, api_filter=api_filter_query)
@@ -106,7 +105,7 @@ class GetActiveUsersAPI(LoginRequiredMixin, PermissionRequiredMixin, NeverCacheM
             return g
 
 
-class ExportUserAPI(LoginRequiredMixin, PermissionRequiredMixin, NeverCacheMixin, APIView):
+class ExportUserAPI(LoginRequiredMixin, NeverCacheMixin, APIView):
 
     """ Export zendesk users data into a *csv file, in a subfolder allocated in the default 
         media project. """
@@ -144,7 +143,7 @@ class ExportUserAPI(LoginRequiredMixin, PermissionRequiredMixin, NeverCacheMixin
         return Response(data)
 
 
-class GetTickets(LoginRequiredMixin, PermissionRequiredMixin, NeverCacheMixin, APIView):
+class GetTickets(LoginRequiredMixin, NeverCacheMixin, APIView):
 
     """Return All tickets from a date range."""
 
@@ -154,8 +153,8 @@ class GetTickets(LoginRequiredMixin, PermissionRequiredMixin, NeverCacheMixin, A
     def get(self, request):
 
         domain = os.getenv('ZENDESK_API_DOMAIN')
-        path = os.getenv('ZENDESK_TICKETS_PATH')
-        filter_query = os.getenv('ZENDESK_TICKETS_FILTER')
+        path = os.getenv('ZENDESK_TICKET_API')
+        filter_query = os.getenv('ZENDESK_TICKET_FILTER')
 
         try:
             data = {}
@@ -183,7 +182,7 @@ class GetTickets(LoginRequiredMixin, PermissionRequiredMixin, NeverCacheMixin, A
         return Response(data)
 
 
-class StructureTicket(LoginRequiredMixin, PermissionRequiredMixin, NeverCacheMixin, APIView):
+class StructureTicket(LoginRequiredMixin, NeverCacheMixin, APIView):
 
     """
     API that get all unstructured datasets outputs from 
