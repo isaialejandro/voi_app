@@ -158,6 +158,7 @@
           //User list to API
           $('#export_file').click(function(){ 
             console.log('Current filename: ', current_filename);
+            get_data.prop('disabled', 'disabled')
             //e.preventDefault();
             $.ajax({
               url: '{% url "zendesk-api-v1:export_users" %}',
