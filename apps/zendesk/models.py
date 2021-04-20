@@ -12,7 +12,7 @@ now = timezone.now
 
 class ZendeskUser(models.Model):
     class Meta:
-        verbose_name = 'Zendesk User'
+        #verbose_name = 'Zendesk User'
         permissions = (
             ('view_active_zendesk_user_list', 'View active Zendesk userlist'),
             ('get_active_zendesk_user_list', 'Get active Zendesk userlist'),
