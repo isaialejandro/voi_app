@@ -51,7 +51,7 @@ class Dashboard(NeverCacheMixin, CSRFExemptMixin, LoginRequiredMixin, View):
 
 
 urlpatterns = [
-    path('c4r0nt3/', admin.site.urls),
+    path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
 
     path('dashboard/', Dashboard.as_view(), name='dashboard'),

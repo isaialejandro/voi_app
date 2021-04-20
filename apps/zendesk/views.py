@@ -16,7 +16,3 @@ class Zendesk(LoginRequiredMixin, NeverCacheMixin, \
         context = super().get_context_data(**kwargs)
         #context['active_users'] = True
         return context
-
-
-
-#class ActiveUsersHist(ListView):
