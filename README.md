@@ -8,7 +8,7 @@ App for critical incidents history.
 2.- put to the new .env file something like this:
     DEV_DB_NAME = 'something'
     DEV_DB_USR = 'kiss me'
-    DEB_DB_PWD = 'im horny'
+    DEB_DB_PWD = 'something here'
     DEV_DB_HOST = 'seriously man'
     DEV_DB_PORT = 123456
 3.- Go to base.py settings file, import following:
